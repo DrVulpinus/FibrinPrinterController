@@ -127,6 +127,14 @@ public class ProcessExecution extends Thread{
 		}
 	}
 	
+	
+	/**
+	 * This cancels the current operation and forces
+	 * everything to be restarted
+	 */
+	public void cancelOperation(){
+		this.interrupt();
+	}
 	//This Class should provide all of the functionality to combine all of the different elements that have been created/calculated
 	//and then use them to coordinate and execute a coherent series of events to perform the operation.
 	
@@ -169,6 +177,9 @@ public class ProcessExecution extends Thread{
 	public void run(){
 		paths.checkValues();
 		for (ProcessStage processStage : executionPath) {
+			if (isInterrupted()){
+				return;
+			}
 			currentStage = processStage;
 			stageStarted(); //We have now started a new stage
 			switch (currentStage) {

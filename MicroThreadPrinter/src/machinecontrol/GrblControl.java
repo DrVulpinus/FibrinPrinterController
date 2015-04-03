@@ -69,6 +69,17 @@ public class GrblControl implements COMLineRecieved, ArrayAddListener{
 	public boolean disconnect(){
 		return grblPort.disconnectPort();
 	}
+	/**
+	 * This method sends a reset command to the grbl board forcing all 
+	 * operations to stop and everything with need to be started from the beginning
+	 */
+	public void emergencyStop(){
+		if (grblPort.isConnected()){
+			grblPort.sendDataLine("\u0018");
+		}
+	}
+	
+	
 	public boolean checkForGrbl(){
 		grblPort.removeAllListeners();
 		grblPort.connectPort();
