@@ -190,7 +190,6 @@ public class GrblControl implements COMLineRecieved, ArrayAddListener{
 		return true;
 	}
 	public void getStatus(){
-		System.out.println("Is More Status Allowed: " + allowMoreStatus);
 		if (allowMoreStatus){
 			grblPort.sendDataLine("?");
 			allowMoreStatus = false;
@@ -201,10 +200,8 @@ public class GrblControl implements COMLineRecieved, ArrayAddListener{
 	@Override
 	public void newLineRecieved() {	//This gets called each time a new response is received from the GRBl	
 		String response = grblPort.readNextLine();
-		System.out.println(response);
 		if (response.equals("ok")){
-			//We got the right thing!
-			
+			//We got the right thing!			
 		}
 		if (response.startsWith("<")&& response.endsWith(">")){
 			allowMoreStatus = true;
@@ -214,16 +211,13 @@ public class GrblControl implements COMLineRecieved, ArrayAddListener{
 			String data[] = response.split(",");
 			switch (data[0].toUpperCase()) {
 			case "IDLE":
-				System.out.println("Running");
 				machineState = MachineState.IDLE;
 				break;
 			case "RUN":
-				System.out.println("Running");
 				machineState = MachineState.RUNNING;
 				return;
 				//break;
 			case "QUEUE":
-				System.out.println("Running");
 				machineState = MachineState.QUEUE;
 				return;
 			default:
@@ -245,7 +239,6 @@ public class GrblControl implements COMLineRecieved, ArrayAddListener{
 	public void itemAdded() {
 		if (isCOMReady){
 			isCOMReady = false; //An Item was added to an empty list, i.e. the cascade has stopped
-			System.out.println("Time to send something: " + sendLines.get(0));
 			grblPort.sendDataLine(sendLines.get(0));
 			sendLines.remove(0);
 		}
