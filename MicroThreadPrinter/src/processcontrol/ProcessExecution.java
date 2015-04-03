@@ -205,7 +205,7 @@ public class ProcessExecution extends Thread{
 				}
 				while(!grblCtrl.isIdle()){
 					try {
-						Thread.sleep(250);
+						Thread.sleep(500);
 					} catch (InterruptedException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -233,7 +233,7 @@ public class ProcessExecution extends Thread{
 				}
 				while(!grblCtrl.isIdle()){
 					try {
-						Thread.sleep(250);
+						Thread.sleep(500);
 					} catch (InterruptedException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -250,7 +250,7 @@ public class ProcessExecution extends Thread{
 				while (tmr.getTimeMillis() >= 0){
 					timerView.setText(tmr.getTimeString());
 					try {
-						Thread.sleep(250);
+						Thread.sleep(500);
 					} catch (InterruptedException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -267,7 +267,7 @@ public class ProcessExecution extends Thread{
 				}
 				while(!grblCtrl.isIdle()){
 					try {
-						Thread.sleep(250);
+						Thread.sleep(500);
 					} catch (InterruptedException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
