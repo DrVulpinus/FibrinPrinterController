@@ -177,6 +177,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 	private JRadioButton rdbtnOperationComplete;
 	private JTextField txtProcesstimer;
 	private JPanel pnlStretchDraw;
+	private JButton btnRunOperationAuto;
 	
 	/**
 	 * Launch the application.
@@ -499,6 +500,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 			pnlRun.add(getRBHoming(), "cell 1 4");
 			pnlRun.add(getBtnRunOperation(), "cell 0 5,growx");
 			pnlRun.add(getRBAdjustStretch(), "cell 1 5");
+			pnlRun.add(getBtnRunOperationAuto(), "cell 0 6");
 			pnlRun.add(getRBReadyPurge(), "cell 1 6");
 			pnlRun.add(getRBPurging(), "cell 1 7");
 			pnlRun.add(getRBExtruding(), "cell 1 8");
@@ -1486,6 +1488,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 	private JRadioButton getRBInitRun() {
 		if (rdbtnInitializeRun == null) {
 			rdbtnInitializeRun = new JRadioButton("Initialize Run");
+			rdbtnInitializeRun.setEnabled(false);
 			btnGrpProcessStage.add(rdbtnInitializeRun);
 		}
 		return rdbtnInitializeRun;
@@ -1493,66 +1496,88 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 	private JRadioButton getRBReadyHome() {
 		if (rdbtnReadyToHome == null) {
 			rdbtnReadyToHome = new JRadioButton("Ready To Home");
+			rdbtnReadyToHome.setEnabled(false);
+			btnGrpProcessStage.add(rdbtnReadyToHome);
 		}
 		return rdbtnReadyToHome;
 	}
 	private JRadioButton getRBHoming() {
 		if (rdbtnHoming == null) {
 			rdbtnHoming = new JRadioButton("Homing");
+			rdbtnHoming.setEnabled(false);
+			btnGrpProcessStage.add(rdbtnHoming);
 		}
 		return rdbtnHoming;
 	}
 	private JRadioButton getRBAdjustStretch() {
 		if (rdbtnAdjustingStretchBar == null) {
 			rdbtnAdjustingStretchBar = new JRadioButton("Adjusting Stretch Bar");
+			rdbtnAdjustingStretchBar.setEnabled(false);
+			btnGrpProcessStage.add(rdbtnAdjustingStretchBar);
 		}
 		return rdbtnAdjustingStretchBar;
 	}
 	private JRadioButton getRBReadyPurge() {
 		if (rdbtnReadyToPurge == null) {
 			rdbtnReadyToPurge = new JRadioButton("Ready To Purge");
+			rdbtnReadyToPurge.setEnabled(false);
+			btnGrpProcessStage.add(rdbtnReadyToPurge);
 		}
 		return rdbtnReadyToPurge;
 	}
 	private JRadioButton getRBPurging() {
 		if (rdbtnPurging == null) {
 			rdbtnPurging = new JRadioButton("Purging");
+			rdbtnPurging.setEnabled(false);
+			btnGrpProcessStage.add(rdbtnPurging);
 		}
 		return rdbtnPurging;
 	}
 	private JRadioButton getRBExtruding() {
 		if (rdbtnExtruding == null) {
 			rdbtnExtruding = new JRadioButton("Extruding");
+			rdbtnExtruding.setEnabled(false);
+			btnGrpProcessStage.add(rdbtnExtruding);
 		}
 		return rdbtnExtruding;
 	}
 	private JRadioButton getRBWaitForClean() {
 		if (rdbtnWaitingForCleaningpolymerizing == null) {
 			rdbtnWaitingForCleaningpolymerizing = new JRadioButton("Waiting for Cleaning/Polymerizing");
+			rdbtnWaitingForCleaningpolymerizing.setEnabled(false);
+			btnGrpProcessStage.add(rdbtnWaitingForCleaningpolymerizing);
 		}
 		return rdbtnWaitingForCleaningpolymerizing;
 	}
 	private JRadioButton getRBPolymerizing() {
 		if (rdbtnPolymerizing == null) {
 			rdbtnPolymerizing = new JRadioButton("Polymerizing");
+			rdbtnPolymerizing.setEnabled(false);
+			btnGrpProcessStage.add(rdbtnPolymerizing);
 		}
 		return rdbtnPolymerizing;
 	}
 	private JRadioButton getRBReadyStretch() {
 		if (rdbtnReadyToStretch == null) {
 			rdbtnReadyToStretch = new JRadioButton("Ready To Stretch");
+			rdbtnReadyToStretch.setEnabled(false);
+			btnGrpProcessStage.add(rdbtnReadyToStretch);
 		}
 		return rdbtnReadyToStretch;
 	}
 	private JRadioButton getRBStretching() {
 		if (rdbtnStretching == null) {
 			rdbtnStretching = new JRadioButton("Stretching");
+			rdbtnStretching.setEnabled(false);
+			btnGrpProcessStage.add(rdbtnStretching);
 		}
 		return rdbtnStretching;
 	}
 	private JRadioButton getRBOperationComplete() {
 		if (rdbtnOperationComplete == null) {
 			rdbtnOperationComplete = new JRadioButton("Operation Complete");
+			rdbtnOperationComplete.setEnabled(false);
+			btnGrpProcessStage.add(rdbtnOperationComplete);
 		}
 		return rdbtnOperationComplete;
 	}
@@ -1575,6 +1600,17 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 			pnlStretchDraw.add(getMG2());
 		}
 		return pnlStretchDraw;
+	}
+	private JButton getBtnRunOperationAuto() {
+		if (btnRunOperationAuto == null) {
+			btnRunOperationAuto = new JButton("Run Operation Auto Poly");
+			btnRunOperationAuto.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent arg0) {
+					runOperation(false);
+				}
+			});
+		}
+		return btnRunOperationAuto;
 	}
 }
 
