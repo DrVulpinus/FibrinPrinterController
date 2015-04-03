@@ -55,9 +55,9 @@ public class PumpControl {
 	}
 	public void configurePump(){
 		connect();
-		pumpPort.sendDataLine("dia " + prefs.getSyringeDia() + "\r\n");
-		pumpPort.sendDataLine("mode I\r\n");
-		pumpPort.sendDataLine("ratei " + "00500" + " " + prefs.getSyringeUnits() + "\r\n");
+		pumpPort.sendDataLine("dia " + prefs.getSyringeDia());
+		pumpPort.sendDataLine("mode I");
+		pumpPort.sendDataLine("ratei " + "00500" + " " + prefs.getSyringeUnits());
 	}
 	public boolean connect(){
 		return pumpPort.connectPort();

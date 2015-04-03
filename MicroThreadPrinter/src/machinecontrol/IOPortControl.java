@@ -61,8 +61,9 @@ public class IOPortControl implements SerialPortEventListener{
 	}
 	public void sendDataLine(String _dataLine){
 		try {
-			outs.writeChars(_dataLine);
+			outs.writeChars(_dataLine+"\r\n");
 			outs.flush();
+			System.out.println(_dataLine);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

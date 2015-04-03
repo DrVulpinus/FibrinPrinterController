@@ -185,7 +185,7 @@ public class ProcessExecution extends Thread{
 				grblCtrl.homeGrbl();
 				while(!grblCtrl.isIdle()){
 					try {
-						Thread.sleep(250);
+						Thread.sleep(500);
 					} catch (InterruptedException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
