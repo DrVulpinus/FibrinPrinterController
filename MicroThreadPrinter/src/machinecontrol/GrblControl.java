@@ -190,7 +190,7 @@ public class GrblControl implements COMLineRecieved, ArrayAddListener{
 		return true;
 	}
 	public void getStatus(){
-		
+		System.out.println("Is More Status Allowed: " + allowMoreStatus);
 		if (allowMoreStatus){
 			grblPort.sendDataLine("?");
 			allowMoreStatus = false;

@@ -169,6 +169,16 @@ public class ProcessExecution extends Thread{
 		super.start();
 	}
 	
+	
+	public void doSleep(long _millis){
+		try {
+			Thread.sleep(_millis);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
 	/**
 	 * The run method here increments through each stage of currently configured run in a state-machine.
 	 * In this way it is quite easy to setup different run modes to run through a different set of steps.
@@ -194,13 +204,12 @@ public class ProcessExecution extends Thread{
 				break;
 			case HOMING:
 				grblCtrl.homeGrbl();
+				while(grblCtrl.isIdle()){
+					doSleep(500);
+					grblCtrl.getStatus();
+				}
 				while(!grblCtrl.isIdle()){
-					try {
-						Thread.sleep(500);
-					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
+					doSleep(500);
 					grblCtrl.getStatus();
 				}
 				// TODO: Go to 0,0
@@ -210,17 +219,16 @@ public class ProcessExecution extends Thread{
 				break;
 			case ALIGNING_STRETCH_BAR:							
 				//Do the necessary things to setup the bar
-				for (GCode code : paths.getInitCodes()) {
-					
+				for (GCode code : paths.getInitCodes()) {					
 					grblCtrl.addNewGCode(code);
 				}
+				System.out.println("Added All GCodes");
+				while(grblCtrl.isIdle()){
+					doSleep(500);
+					grblCtrl.getStatus();
+				}
 				while(!grblCtrl.isIdle()){
-					try {
-						Thread.sleep(500);
-					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
+					doSleep(500);
 					grblCtrl.getStatus();
 				}
 				break;
@@ -242,13 +250,13 @@ public class ProcessExecution extends Thread{
 					System.out.println(code.toString());
 					grblCtrl.addNewGCode(code);
 				}
+				System.out.println("Added All GCodes");
+				while(grblCtrl.isIdle()){
+					doSleep(500);
+					grblCtrl.getStatus();
+				}
 				while(!grblCtrl.isIdle()){
-					try {
-						Thread.sleep(500);
-					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
+					doSleep(500);
 					grblCtrl.getStatus();
 				}
 				//Start PolyTimer
