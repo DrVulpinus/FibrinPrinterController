@@ -611,58 +611,64 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 			btnRunOperation = new JButton("Run Operation");
 			btnRunOperation.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					
-					//This block of code parses the polymerization time string in the Formatted text box 
-					//and then converts that time into a number of seconds
-					
-					int polyTime = 0;
-					String[] timeString = getFrmtdtxtfldPolyTime().getText().split(":");
-					int hours = Integer.parseInt(timeString[0]);
-					int minutes = Integer.parseInt(timeString[1]);
-					int seconds = Integer.parseInt(timeString[2]);					
-					polyTime = (hours*3600) + (minutes*60) + (seconds);
-					
-					//Create a path creator, configure it, and then generate the path.
-					pathCreator = new PathCreator();
-					pathCreator.setParams((int) getSpBedX().getValue(),
-							(int) getSpBedY().getValue(),
-							(int) getSpSideMargins().getValue(),
-							(int) getSpExtRate().getValue(),
-							(int) getSpThreadLength().getValue(),
-							(int) getSpFeed().getValue(),
-							(int) getSpThreadSpace().getValue(),
-							(int) getSpTSPT().getValue(),
-							polyTime,
-							(int) getSpBarThick().getValue(),
-							(int) getSpNumThreads().getValue(),
-							(int) getSpStretchPer().getValue(),
-							(int) getSpStretchRate().getValue());
-					
-					pathCreator.doCalculations();
-					
-					pumpDev.connect();
-					grblDev.connect();
-					processExec = new ProcessExecution(pumpDev, grblDev, pathCreator, getTxtProcesstimer());
-					if (getChckbxPerformExtrusion().isSelected()){
-						if(getChckbxPerformStretch().isSelected()){
-							processExec.setupCompleteRunManual();
-						}
-						else{
-							processExec.setupExtrudeOnlyAuto();
-						}
-					}
-					else{
-						processExec.setupStretchOnlyAuto();
-					}
-					processExec.addStageListener(MainForm.this);
-					processExec.start();
-					
-					
-					
+					runOperation(true);					
 				}
 			});
 		}
 		return btnRunOperation;
+	}
+	
+	
+	public void runOperation(boolean manualPoly){
+		//This block of code parses the polymerization time string in the Formatted text box 
+		//and then converts that time into a number of seconds
+		
+		int polyTime = 0;
+		String[] timeString = getFrmtdtxtfldPolyTime().getText().split(":");
+		int hours = Integer.parseInt(timeString[0]);
+		int minutes = Integer.parseInt(timeString[1]);
+		int seconds = Integer.parseInt(timeString[2]);					
+		polyTime = (hours*3600) + (minutes*60) + (seconds);
+		
+		//Create a path creator, configure it, and then generate the path.
+		pathCreator = new PathCreator();
+		pathCreator.setParams((int) getSpBedX().getValue(),
+				(int) getSpBedY().getValue(),
+				(int) getSpSideMargins().getValue(),
+				(int) getSpExtRate().getValue(),
+				(int) getSpThreadLength().getValue(),
+				(int) getSpFeed().getValue(),
+				(int) getSpThreadSpace().getValue(),
+				(int) getSpTSPT().getValue(),
+				polyTime,
+				(int) getSpBarThick().getValue(),
+				(int) getSpNumThreads().getValue(),
+				(int) getSpStretchPer().getValue(),
+				(int) getSpStretchRate().getValue());
+		
+		pathCreator.doCalculations();
+		
+		pumpDev.connect();
+		grblDev.connect();
+		processExec = new ProcessExecution(pumpDev, grblDev, pathCreator, getTxtProcesstimer());
+		if (getChckbxPerformExtrusion().isSelected()){
+			if(getChckbxPerformStretch().isSelected()){
+				if (manualPoly){
+				processExec.setupCompleteRunManual();
+				}
+				else{
+					processExec.setupCompleteRunSemiAuto();
+				}
+			}
+			else{
+				processExec.setupExtrudeOnlyAuto();
+			}
+		}
+		else{
+			processExec.setupStretchOnlyAuto();
+		}
+		processExec.addStageListener(MainForm.this);
+		processExec.start();
 	}
 	private JLabel getLblSyringeDiameter() {
 		if (lblSyringeDiameter == null) {

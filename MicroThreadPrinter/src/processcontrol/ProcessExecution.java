@@ -18,7 +18,7 @@ public class ProcessExecution extends Thread{
 	PathCreator paths;
 	ProcessStage currentStage;
 	JTextField timerView;
-	Timer tmr = new Timer();
+	Timer tmr;
 	private ArrayList<ProcessStage> executionPath = new ArrayList<ProcessStage>();
 	
 	private ArrayList<ProcessStageListener> listeners = new ArrayList<ProcessStageListener>();
@@ -27,6 +27,7 @@ public class ProcessExecution extends Thread{
 		grblCtrl = _grblCtrl;
 		paths = _paths;
 		timerView = _timerView;
+		tmr = new Timer(_timerView);
 		executionPath.add(ProcessStage.PRESTART);
 	}
 	
@@ -45,19 +46,18 @@ public class ProcessExecution extends Thread{
 				ProcessStage.READY_TO_ALIGN_STRETCH, ProcessStage.ALIGNING_STRETCH_BAR,
 				ProcessStage.READY_TO_START_PUMP, ProcessStage.PURGING_PUMP,
 				ProcessStage.READY_TO_EXTRUDE, ProcessStage.EXTRUDING,
-				ProcessStage.CLEAN_PUMP,
+				ProcessStage.CLEAN_PUMP, ProcessStage.MANUALPOLYMERIZING,
 				ProcessStage.READY_TO_STRETCH, ProcessStage.STRETCHING,
 				ProcessStage.OPERATION_COMPLETE);
 	}
 	public void setupCompleteRunSemiAuto(){
 		setupRun(ProcessStage.INITIALIZE_PUMP, 
-				ProcessStage.HOMING,
-				ProcessStage.ALIGNING_STRETCH_BAR,
-				ProcessStage.PURGING_PUMP,
-				ProcessStage.EXTRUDING,
-				ProcessStage.CLEAN_PUMP,
-				ProcessStage.READY_TO_STRETCH, 
-				ProcessStage.STRETCHING,
+				ProcessStage.READY_TO_HOME, ProcessStage.HOMING,
+				ProcessStage.READY_TO_ALIGN_STRETCH, ProcessStage.ALIGNING_STRETCH_BAR,
+				ProcessStage.READY_TO_START_PUMP, ProcessStage.PURGING_PUMP,
+				ProcessStage.READY_TO_EXTRUDE, ProcessStage.EXTRUDING,
+				ProcessStage.CLEAN_PUMP, ProcessStage.POLYMERIZING,
+				ProcessStage.READY_TO_STRETCH, ProcessStage.STRETCHING,
 				ProcessStage.OPERATION_COMPLETE);
 	}
 	public void setupCompleteRunFullAuto(){
@@ -117,6 +117,8 @@ public class ProcessExecution extends Thread{
 			}
 		}
 	}
+	
+
 	
 	/**
 	 * If program execution has been paused for an external hold, this cancels the hold and allows for execution to continue
@@ -264,10 +266,12 @@ public class ProcessExecution extends Thread{
 			case CLEAN_PUMP:
 				pumpCtrl.stopPump();
 				break;
+			case MANUALPOLYMERIZING:
+				tmr.startTimer();
+				break;
 			case POLYMERIZING:
 				tmr.startCountDownTimer(paths.getPolyTime());
 				while (tmr.getTimeMillis() >= 0){
-					timerView.setText(tmr.getTimeString());
 					try {
 						Thread.sleep(500);
 					} catch (InterruptedException e) {
