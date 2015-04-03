@@ -819,7 +819,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 	}
 	private JLabel getLblMms() {
 		if (lblMms == null) {
-			lblMms = new JLabel("mm/s");
+			lblMms = new JLabel("mm/min");
 		}
 		return lblMms;
 	}
@@ -942,7 +942,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 	}
 	private JLabel getLabel_3() {
 		if (lblMms_1 == null) {
-			lblMms_1 = new JLabel("mm/s");
+			lblMms_1 = new JLabel("mm/min");
 		}
 		return lblMms_1;
 	}
