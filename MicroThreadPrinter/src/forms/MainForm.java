@@ -75,6 +75,8 @@ import java.beans.PropertyChangeEvent;
 import javax.swing.JRadioButton;
 import javax.swing.ButtonGroup;
 import java.awt.Font;
+import java.awt.SystemColor;
+import java.awt.Color;
 
 public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 
@@ -162,22 +164,25 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 	private JButton btnLoadProfile;
 	private MachineGraphic mG;
 	private MachineGraphic mG2;
-	private JRadioButton rdbtnInitializeRun;
 	private final ButtonGroup btnGrpProcessStage = new ButtonGroup();
-	private JRadioButton rdbtnReadyToHome;
-	private JRadioButton rdbtnHoming;
-	private JRadioButton rdbtnAdjustingStretchBar;
-	private JRadioButton rdbtnReadyToPurge;
-	private JRadioButton rdbtnPurging;
-	private JRadioButton rdbtnExtruding;
-	private JRadioButton rdbtnWaitingForCleaningpolymerizing;
-	private JRadioButton rdbtnPolymerizing;
-	private JRadioButton rdbtnReadyToStretch;
-	private JRadioButton rdbtnStretching;
-	private JRadioButton rdbtnOperationComplete;
 	private JTextField txtProcesstimer;
 	private JPanel pnlStretchDraw;
 	private JButton btnRunOperationAuto;
+	private JLabel lblInitializeRun;
+	private JLabel lblReadyToHome;
+	private JLabel lblHoming;
+	private JLabel lblAdjustingStretchBar;
+	private JLabel lblReadyToPurge;
+	private JLabel lblPurging;
+	private JLabel lblReadyToExtrude;
+	private JLabel lblWaitingForCleaningpolymerizing;
+	private JLabel lblPolymerizing;
+	private JLabel lblReadyToStretch;
+	private JLabel lblStretching;
+	private JLabel lblOperationComplete;
+	private ArrayList<JLabel> stageLabels = new ArrayList<JLabel>();
+	private JLabel lblExtruding;
+	private JCheckBox chckbxManualPumpCtrl;
 	
 	/**
 	 * Launch the application.
@@ -221,6 +226,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 		}
 		
 		prefs.addPreferenceChangeListener(this);
+		
 	}
 	void logFileGenerationTest(){
 		ProcessLogger logger = new ProcessLogger(prefs, getTxtJobName().getText(), getTxtJobDescription().getText());
@@ -307,11 +313,22 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 		boolean settingsOK = false;
 		try {
 			grblDev = new GrblControl(getCb_GrblPort().getSelectedItem().toString());
-			pumpDev = new PumpControl(prefs,getCb_PumpPort().getSelectedItem().toString());
-			if (grblDev.verifySettings() && pumpDev.verifySettings()){
-				settingsOK = true;
-				System.out.println("Verification Succeeded");
+			if (getChckbxManualPumpCtrl().isSelected()){
+				pumpDev = null;
+				if (grblDev.verifySettings()){
+					settingsOK = true;
+					System.out.println("Verification Succeeded");
+				}
 			}
+			else{
+				pumpDev = new PumpControl(prefs,getCb_PumpPort().getSelectedItem().toString());
+				if (grblDev.verifySettings() && pumpDev.verifySettings()){
+					settingsOK = true;
+					System.out.println("Verification Succeeded");
+				}
+			}
+			
+			
 		} catch (Exception e) {
 			
 		}
@@ -391,6 +408,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 			pnlCfg.add(getBtnAutoConfigurePorts(), "cell 0 0");
 			pnlCfg.add(getLblGrblPort(), "cell 1 0,alignx trailing");
 			pnlCfg.add(getCb_GrblPort(), "cell 2 0,growx");
+			pnlCfg.add(getChckbxManualPumpCtrl(), "cell 0 1");
 			pnlCfg.add(getLblPumpPort(), "cell 1 1,alignx trailing");
 			pnlCfg.add(getCb_PumpPort(), "cell 2 1,growx");
 			pnlCfg.add(getChckbxGenerateLogFiles(), "cell 0 2");
@@ -487,29 +505,30 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 					verifyAllSettings();
 				}
 			});
-			pnlRun.setLayout(new MigLayout("", "[][grow]", "[][][][][][][][][][][][][][][]"));
+			pnlRun.setLayout(new MigLayout("", "[][grow]", "[][][][][][][][][][][][][][][][]"));
 			pnlRun.add(getLblJobName(), "cell 0 0,alignx trailing");
 			pnlRun.add(getTxtJobName(), "cell 1 0,growx");
 			pnlRun.add(getLblJobDescription(), "cell 0 1,alignx trailing");
 			pnlRun.add(getTxtJobDescription(), "cell 1 1,growx");
 			pnlRun.add(getBtnLoadProfile(), "cell 0 2,growx");
-			pnlRun.add(getRBInitRun(), "cell 1 2");
+			pnlRun.add(getLabelInitializeRun(), "cell 1 2");
 			pnlRun.add(getBtnSaveCurrentProfile(), "cell 0 3,growx");
-			pnlRun.add(getRBReadyHome(), "cell 1 3");
+			pnlRun.add(getLabelReadyToHome(), "cell 1 3");
 			pnlRun.add(getBtnVerifyAndTest(), "cell 0 4,growx");
-			pnlRun.add(getRBHoming(), "cell 1 4");
+			pnlRun.add(getLabelHoming(), "cell 1 4");
 			pnlRun.add(getBtnRunOperation(), "cell 0 5,growx");
-			pnlRun.add(getRBAdjustStretch(), "cell 1 5");
+			pnlRun.add(getLabelAdjustStretchBar(), "cell 1 5");
 			pnlRun.add(getBtnRunOperationAuto(), "cell 0 6");
-			pnlRun.add(getRBReadyPurge(), "cell 1 6");
-			pnlRun.add(getRBPurging(), "cell 1 7");
-			pnlRun.add(getRBExtruding(), "cell 1 8");
-			pnlRun.add(getRBWaitForClean(), "cell 1 9");
-			pnlRun.add(getRBPolymerizing(), "cell 1 10");
-			pnlRun.add(getRBReadyStretch(), "cell 1 11");
-			pnlRun.add(getRBStretching(), "cell 1 12");
-			pnlRun.add(getRBOperationComplete(), "cell 1 13");
-			pnlRun.add(getTxtProcesstimer(), "cell 1 14,growx");
+			pnlRun.add(getLabelReadyToPurge(), "cell 1 6");
+			pnlRun.add(getLabelPurging(), "cell 1 7");
+			pnlRun.add(getLabelReadyToExtrude(), "cell 1 8");
+			pnlRun.add(getLabelExtruding(), "cell 1 9");
+			pnlRun.add(getLabelWaitingForCleaning(), "cell 1 10");
+			pnlRun.add(getLabelPolymerizing(), "cell 1 11");
+			pnlRun.add(getLabelReadyToStretch(), "cell 1 12");
+			pnlRun.add(getLabelStretching(), "cell 1 13");
+			pnlRun.add(getLabelOperationComplete(), "cell 1 14");
+			pnlRun.add(getTxtProcesstimer(), "cell 1 15,growx");
 		}
 		return pnlRun;
 	}
@@ -624,7 +643,10 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 	public void runOperation(boolean manualPoly){
 		//This block of code parses the polymerization time string in the Formatted text box 
 		//and then converts that time into a number of seconds
-		
+		for (JLabel label : stageLabels) {
+			label.setBackground(Color.RED);
+			label.setForeground(Color.BLACK);
+		}
 		int polyTime = 0;
 		String[] timeString = getFrmtdtxtfldPolyTime().getText().split(":");
 		int hours = Integer.parseInt(timeString[0]);
@@ -649,8 +671,12 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 				(int) getSpStretchRate().getValue());
 		
 		pathCreator.doCalculations();
-		
-		pumpDev.connect();
+		if (getChckbxManualPumpCtrl().isSelected()){
+			pumpDev = null;
+		}
+		else{
+			pumpDev.connect();
+		}
 		grblDev.connect();
 		processExec = new ProcessExecution(pumpDev, grblDev, pathCreator, getTxtProcesstimer());
 		if (getChckbxPerformExtrusion().isSelected()){
@@ -1397,30 +1423,34 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 	
 	@Override
 	public void stageStarted(ProcessStage newStage) {
+		for (JLabel label : stageLabels) {
+			label.setBackground(Color.RED);
+			label.setForeground(Color.BLACK);
+		}
 		switch (processExec.getCurrentStage()){
 		case ALIGNING_STRETCH_BAR:
-			getRBAdjustStretch().setSelected(true);
+			getLabelAdjustStretchBar().setBackground(Color.GREEN);
 			break;
 		case CLEAN_PUMP:
-			getRBWaitForClean().setSelected(true);
+			getLabelWaitingForCleaning().setBackground(Color.GREEN);
 			break;
 		case EXTRUDING:
-			getRBExtruding().setSelected(true);
+			getLabelExtruding().setBackground(Color.GREEN);
 			break;
 		case EXTRUSION_COMPLETE:
 			
 			break;
 		case HOMING:
-			getRBHoming().setSelected(true);
+			getLabelHoming().setBackground(Color.GREEN);
 			break;
 		case INITIALIZE_PUMP:
-			getRBInitRun().setSelected(true);
+			getLabelInitializeRun().setBackground(Color.GREEN);
 			break;
 		case OPERATION_COMPLETE:
-			getRBOperationComplete().setSelected(true);
+			getLabelOperationComplete().setBackground(Color.GREEN);
 			break;
 		case POLYMERIZING:
-			getRBPolymerizing().setSelected(true);
+			getLabelPolymerizing().setBackground(Color.GREEN);
 			break;
 		case PRESTART:
 			
@@ -1428,7 +1458,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 		case PRE_EXT_WIPE:
 			break;
 		case PURGING_PUMP:
-			getRBPurging().setSelected(true);
+			getLabelPurging().setBackground(Color.GREEN);
 			break;
 		case READY_TO_ALIGN_STRETCH:
 			
@@ -1437,16 +1467,16 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 			
 			break;
 		case READY_TO_HOME:
-			getRBReadyHome().setSelected(true);
+			getLabelReadyToHome().setBackground(Color.GREEN);
 			break;
 		case READY_TO_START_PUMP:
-			getRBReadyPurge().setSelected(true);
+			getLabelReadyToPurge().setBackground(Color.GREEN);
 			break;
 		case READY_TO_STRETCH:
-			getRBReadyStretch().setSelected(true);
+			getLabelReadyToStretch().setBackground(Color.GREEN);
 			break;
 		case STRETCHING:
-			getRBStretching().setSelected(true);
+			getLabelStretching().setBackground(Color.GREEN);
 			break;
 		case STRETCH_COMPLETE:
 			break;
@@ -1485,102 +1515,6 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 		processExec.finishHold();
 		
 	}
-	private JRadioButton getRBInitRun() {
-		if (rdbtnInitializeRun == null) {
-			rdbtnInitializeRun = new JRadioButton("Initialize Run");
-			rdbtnInitializeRun.setEnabled(false);
-			btnGrpProcessStage.add(rdbtnInitializeRun);
-		}
-		return rdbtnInitializeRun;
-	}
-	private JRadioButton getRBReadyHome() {
-		if (rdbtnReadyToHome == null) {
-			rdbtnReadyToHome = new JRadioButton("Ready To Home");
-			rdbtnReadyToHome.setEnabled(false);
-			btnGrpProcessStage.add(rdbtnReadyToHome);
-		}
-		return rdbtnReadyToHome;
-	}
-	private JRadioButton getRBHoming() {
-		if (rdbtnHoming == null) {
-			rdbtnHoming = new JRadioButton("Homing");
-			rdbtnHoming.setEnabled(false);
-			btnGrpProcessStage.add(rdbtnHoming);
-		}
-		return rdbtnHoming;
-	}
-	private JRadioButton getRBAdjustStretch() {
-		if (rdbtnAdjustingStretchBar == null) {
-			rdbtnAdjustingStretchBar = new JRadioButton("Adjusting Stretch Bar");
-			rdbtnAdjustingStretchBar.setEnabled(false);
-			btnGrpProcessStage.add(rdbtnAdjustingStretchBar);
-		}
-		return rdbtnAdjustingStretchBar;
-	}
-	private JRadioButton getRBReadyPurge() {
-		if (rdbtnReadyToPurge == null) {
-			rdbtnReadyToPurge = new JRadioButton("Ready To Purge");
-			rdbtnReadyToPurge.setEnabled(false);
-			btnGrpProcessStage.add(rdbtnReadyToPurge);
-		}
-		return rdbtnReadyToPurge;
-	}
-	private JRadioButton getRBPurging() {
-		if (rdbtnPurging == null) {
-			rdbtnPurging = new JRadioButton("Purging");
-			rdbtnPurging.setEnabled(false);
-			btnGrpProcessStage.add(rdbtnPurging);
-		}
-		return rdbtnPurging;
-	}
-	private JRadioButton getRBExtruding() {
-		if (rdbtnExtruding == null) {
-			rdbtnExtruding = new JRadioButton("Extruding");
-			rdbtnExtruding.setEnabled(false);
-			btnGrpProcessStage.add(rdbtnExtruding);
-		}
-		return rdbtnExtruding;
-	}
-	private JRadioButton getRBWaitForClean() {
-		if (rdbtnWaitingForCleaningpolymerizing == null) {
-			rdbtnWaitingForCleaningpolymerizing = new JRadioButton("Waiting for Cleaning/Polymerizing");
-			rdbtnWaitingForCleaningpolymerizing.setEnabled(false);
-			btnGrpProcessStage.add(rdbtnWaitingForCleaningpolymerizing);
-		}
-		return rdbtnWaitingForCleaningpolymerizing;
-	}
-	private JRadioButton getRBPolymerizing() {
-		if (rdbtnPolymerizing == null) {
-			rdbtnPolymerizing = new JRadioButton("Polymerizing");
-			rdbtnPolymerizing.setEnabled(false);
-			btnGrpProcessStage.add(rdbtnPolymerizing);
-		}
-		return rdbtnPolymerizing;
-	}
-	private JRadioButton getRBReadyStretch() {
-		if (rdbtnReadyToStretch == null) {
-			rdbtnReadyToStretch = new JRadioButton("Ready To Stretch");
-			rdbtnReadyToStretch.setEnabled(false);
-			btnGrpProcessStage.add(rdbtnReadyToStretch);
-		}
-		return rdbtnReadyToStretch;
-	}
-	private JRadioButton getRBStretching() {
-		if (rdbtnStretching == null) {
-			rdbtnStretching = new JRadioButton("Stretching");
-			rdbtnStretching.setEnabled(false);
-			btnGrpProcessStage.add(rdbtnStretching);
-		}
-		return rdbtnStretching;
-	}
-	private JRadioButton getRBOperationComplete() {
-		if (rdbtnOperationComplete == null) {
-			rdbtnOperationComplete = new JRadioButton("Operation Complete");
-			rdbtnOperationComplete.setEnabled(false);
-			btnGrpProcessStage.add(rdbtnOperationComplete);
-		}
-		return rdbtnOperationComplete;
-	}
 	private JTextField getTxtProcesstimer() {
 		if (txtProcesstimer == null) {
 			txtProcesstimer = new JTextField();
@@ -1611,6 +1545,117 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 			});
 		}
 		return btnRunOperationAuto;
+	}
+	private JLabel getLabelInitializeRun() {
+		if (lblInitializeRun == null) {
+			lblInitializeRun = new JLabel(" Initialize Run");
+			lblInitializeRun.setFont(new Font("Tahoma", Font.PLAIN, 13));
+			lblInitializeRun.setHorizontalAlignment(SwingConstants.CENTER);
+			stageLabels.add(lblInitializeRun);
+		}
+		return lblInitializeRun;
+	}
+	private JLabel getLabelReadyToHome() {
+		if (lblReadyToHome == null) {
+			lblReadyToHome = new JLabel(" Ready To Home");
+			lblReadyToHome.setFont(new Font("Tahoma", Font.PLAIN, 13));
+			stageLabels.add(lblReadyToHome);
+		}
+		return lblReadyToHome;
+	}
+	private JLabel getLabelHoming() {
+		if (lblHoming == null) {
+			lblHoming = new JLabel(" Homing");
+			lblHoming.setFont(new Font("Tahoma", Font.PLAIN, 13));
+			stageLabels.add(lblHoming);
+		}
+		return lblHoming;
+	}
+	private JLabel getLabelAdjustStretchBar() {
+		if (lblAdjustingStretchBar == null) {
+			lblAdjustingStretchBar = new JLabel(" Adjusting Stretch Bar");
+			lblAdjustingStretchBar.setFont(new Font("Tahoma", Font.PLAIN, 13));
+			stageLabels.add(lblAdjustingStretchBar);
+		}
+		return lblAdjustingStretchBar;
+	}
+	private JLabel getLabelReadyToPurge() {
+		if (lblReadyToPurge == null) {
+			lblReadyToPurge = new JLabel(" Ready To Purge");
+			lblReadyToPurge.setFont(new Font("Tahoma", Font.PLAIN, 13));
+			stageLabels.add(lblReadyToPurge);
+		}
+		return lblReadyToPurge;
+	}
+	private JLabel getLabelPurging() {
+		if (lblPurging == null) {
+			lblPurging = new JLabel(" Purging");
+			lblPurging.setFont(new Font("Tahoma", Font.PLAIN, 13));
+			stageLabels.add(lblPurging);
+		}
+		return lblPurging;
+	}
+	private JLabel getLabelReadyToExtrude() {
+		if (lblReadyToExtrude == null) {
+			lblReadyToExtrude = new JLabel(" Ready To Extrude");
+			lblReadyToExtrude.setFont(new Font("Tahoma", Font.PLAIN, 13));
+			stageLabels.add(lblReadyToExtrude);
+		}
+		return lblReadyToExtrude;
+	}
+	private JLabel getLabelWaitingForCleaning() {
+		if (lblWaitingForCleaningpolymerizing == null) {
+			lblWaitingForCleaningpolymerizing = new JLabel(" Waiting for Cleaning/Polymerizing");
+			lblWaitingForCleaningpolymerizing.setFont(new Font("Tahoma", Font.PLAIN, 13));
+			stageLabels.add(lblWaitingForCleaningpolymerizing);
+		}
+		return lblWaitingForCleaningpolymerizing;
+	}
+	private JLabel getLabelPolymerizing() {
+		if (lblPolymerizing == null) {
+			lblPolymerizing = new JLabel(" Polymerizing");
+			lblPolymerizing.setFont(new Font("Tahoma", Font.PLAIN, 13));
+			stageLabels.add(lblPolymerizing);
+		}
+		return lblPolymerizing;
+	}
+	private JLabel getLabelReadyToStretch() {
+		if (lblReadyToStretch == null) {
+			lblReadyToStretch = new JLabel(" Ready to Stretch");
+			lblReadyToStretch.setFont(new Font("Tahoma", Font.PLAIN, 13));
+			stageLabels.add(lblReadyToStretch);
+		}
+		return lblReadyToStretch;
+	}
+	private JLabel getLabelStretching() {
+		if (lblStretching == null) {
+			lblStretching = new JLabel(" Stretching");
+			lblStretching.setFont(new Font("Tahoma", Font.PLAIN, 13));
+			stageLabels.add(lblStretching);
+		}
+		return lblStretching;
+	}
+	private JLabel getLabelOperationComplete() {
+		if (lblOperationComplete == null) {
+			lblOperationComplete = new JLabel(" Operation Complete");
+			lblOperationComplete.setFont(new Font("Tahoma", Font.PLAIN, 13));
+			stageLabels.add(lblOperationComplete);
+		}
+		return lblOperationComplete;
+	}
+	private JLabel getLabelExtruding() {
+		if (lblExtruding == null) {
+			lblExtruding = new JLabel(" Extruding");
+			lblExtruding.setFont(new Font("Tahoma", Font.PLAIN, 13));
+			stageLabels.add(lblExtruding);
+		}
+		return lblExtruding;
+	}
+	private JCheckBox getChckbxManualPumpCtrl() {
+		if (chckbxManualPumpCtrl == null) {
+			chckbxManualPumpCtrl = new JCheckBox("Manual Pump Ctrl");
+		}
+		return chckbxManualPumpCtrl;
 	}
 }
 

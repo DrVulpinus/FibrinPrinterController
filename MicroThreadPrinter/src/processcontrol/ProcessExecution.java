@@ -199,7 +199,9 @@ public class ProcessExecution extends Thread{
 				
 				break;
 			case INITIALIZE_PUMP:
+				if(pumpCtrl != null){
 				pumpCtrl.configurePump();
+				}
 				break;
 			case READY_TO_HOME:
 				waitForExt();
@@ -238,7 +240,9 @@ public class ProcessExecution extends Thread{
 				waitForExt();
 				break;
 			case PURGING_PUMP:
-				pumpCtrl.startPump();
+				if(pumpCtrl != null){
+					pumpCtrl.startPump();
+				}
 				break;
 			case READY_TO_EXTRUDE:
 				waitForExt();
@@ -264,7 +268,9 @@ public class ProcessExecution extends Thread{
 				//Start PolyTimer
 				break;
 			case CLEAN_PUMP:
-				pumpCtrl.stopPump();
+				if (pumpCtrl != null){
+					pumpCtrl.stopPump();
+				}
 				break;
 			case MANUALPOLYMERIZING:
 				tmr.startTimer();
