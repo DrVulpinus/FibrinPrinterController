@@ -23,6 +23,7 @@ public class IOPortControl implements SerialPortEventListener{
 		return NRSerialPort.getAvailableSerialPorts();
 	}
 	public void addNewLineListener(COMLineRecieved _listener){
+		listeners.clear();
 		listeners.add(_listener);
 	}
 	public void removeAllListeners(){

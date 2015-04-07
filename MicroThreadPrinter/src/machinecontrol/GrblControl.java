@@ -58,10 +58,7 @@ public class GrblControl implements COMLineRecieved, ArrayAddListener{
 	}
 	public boolean connect(){
 		if (grblPort.connectPort()){
-			/*if(sr.getState() == State.NEW){
-				sr.start();
-			}*/
-			grblPort.addNewLineListener(this);
+			
 			return true;
 		}
 		return false;
@@ -131,12 +128,11 @@ public class GrblControl implements COMLineRecieved, ArrayAddListener{
 				getGrblSettings();
 				System.out.println("Found the Grbl");
 				disconnect();
-				grblPort.addNewLineListener(this);
 				return true;
 			}
 		}
 		}
-		grblPort.addNewLineListener(this);
+		
 		disconnect();
 		return false;		
 	}
@@ -196,8 +192,6 @@ public class GrblControl implements COMLineRecieved, ArrayAddListener{
 */
 
 	public void homeGrbl(){
-		grblPort.removeAllListeners();
-		grblPort.addNewLineListener(this);
 		try {
 			Thread.sleep(1000);
 		} catch (InterruptedException e) {
@@ -257,6 +251,14 @@ public class GrblControl implements COMLineRecieved, ArrayAddListener{
     		grblPort.sendDataLine(sendLines.get(0));
     		sendLines.remove(0);
     	}
+		else{
+			/*
+			 * If we are done performing automatic line sending, then we should stop listening for automated replies
+			 * The reason for this is so that if we want to send something with a specially formatted reply, we can do
+			 * that as long as automatic sending is disabled
+			 */
+			grblPort.removeAllListeners(); 
+		}
 		// TODO: Need to add error checking functionality here
 		
 	}
@@ -268,6 +270,7 @@ public class GrblControl implements COMLineRecieved, ArrayAddListener{
 		 * trigger it to restart by send one line manually
 		 */
 		if (sendLines.size() == 1){
+			grblPort.addNewLineListener(this);
 			grblPort.sendDataLine(sendLines.get(0));
 			sendLines.remove(0);
 		}
