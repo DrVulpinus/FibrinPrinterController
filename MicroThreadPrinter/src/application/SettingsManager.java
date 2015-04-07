@@ -26,13 +26,23 @@ public class SettingsManager {
 	private static final String PERFORM_STRETCH = "perform_stretch";
 	private static final String STRETCH_RATE = "stretch_rate";
 	private static final String STRETCH_PERCENT = "stretch_percent";
-	private static final String STRETCH_DIVIDE = "stretch_divide";
-	private static final String EXTRUDE_DIVIDE = "extrude_divide";
+	private static final String DIVIDER_WIDTH = "divider_width";
+	private static final String WINDOW_WIDTH = "window_width";
+	private static final String WINDOW_HEIGHT = "window_height";
 	Preferences prefs = Preferences.userNodeForPackage(this.getClass());
 	public void addPreferenceChangeListener(PreferenceChangeListener _pcl){
 		prefs.addPreferenceChangeListener(_pcl);
 	}
 	
+	public int getDividerWidth(){
+		return prefs.getInt(DIVIDER_WIDTH, 100);
+	}
+	public int getWindowWidth(){
+		return prefs.getInt(WINDOW_WIDTH, 500);
+	}
+	public int getWindowHeight(){
+		return prefs.getInt(WINDOW_HEIGHT, 500);
+	}
 	public String getSyringeUnits(){
 		return prefs.get(SYRINGE_UNITS, "ul/m");
 	}
@@ -96,12 +106,7 @@ public class SettingsManager {
 	public int getTSPT(){
 		return prefs.getInt(THREAD_START_PAUSE_TIME, 0);
 	}
-	public double getStretchDivide(){
-		return prefs.getDouble(STRETCH_DIVIDE, .5d);
-	}
-	public double getExtrudeDivide(){
-		return prefs.getDouble(EXTRUDE_DIVIDE, .5d);
-	}
+	
 	
 	
 	
@@ -168,11 +173,14 @@ public class SettingsManager {
 	public void setTSPT(int _val){
 		prefs.putInt(THREAD_START_PAUSE_TIME, _val);
 	}
-	public void setStretchDividePos(double _val){
-		prefs.putDouble(STRETCH_DIVIDE, _val);
+	public void setDividerWidth(int _val){
+		prefs.putInt(DIVIDER_WIDTH, _val);
 	}
-	public void setExtrudeDividePos(double _val){
-		prefs.putDouble(EXTRUDE_DIVIDE, _val);
+	public void setWindowWidth(int _val){
+		prefs.putInt(WINDOW_WIDTH,_val);
+	}
+	public void setWindowHeight(int _val){
+		prefs.putInt(WINDOW_HEIGHT,_val);
 	}
 	
 }

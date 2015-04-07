@@ -78,6 +78,7 @@ import java.awt.Font;
 import java.awt.SystemColor;
 import java.awt.Color;
 import javax.swing.UIManager;
+import java.beans.PropertyChangeListener;
 
 public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 
@@ -250,7 +251,8 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 		frame.addComponentListener(new ComponentAdapter() {
 			@Override
 			public void componentResized(ComponentEvent e) {
-				//System.out.println("Width: " + frame.getWidth() + " Height: " + frame.getHeight());
+				prefs.setWindowHeight(frame.getHeight());
+				prefs.setWindowWidth(frame.getWidth());
 			}
 		});
 		frame.addWindowListener(new WindowAdapter() {
@@ -265,11 +267,12 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 				
 			}
 		});
-		frame.setBounds(100, 100, 500, 500);
+		frame.setBounds(100, 100, prefs.getWindowWidth(), prefs.getWindowHeight());
 		frame.setMinimumSize(new Dimension(500, 500));
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(new BorderLayout(0, 0));
 		frame.getContentPane().add(getTabbedPane(), BorderLayout.CENTER);
+		
 		updateRanges();
 	}
 	private void selectedPortChanged(){
@@ -794,9 +797,18 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 	private JSplitPane getSplitPane_1() {
 		if (sPExtrusion == null) {
 			sPExtrusion = new JSplitPane();
+			sPExtrusion.addPropertyChangeListener(new PropertyChangeListener() {
+				public void propertyChange(PropertyChangeEvent arg0) {
+					prefs.setDividerWidth(sPExtrusion.getDividerLocation());
+					if (getSPStretch().getDividerLocation() != sPExtrusion.getDividerLocation()){
+						getSPStretch().setDividerLocation(sPExtrusion.getDividerLocation());
+					}
+					
+				}
+			});
 			sPExtrusion.setRightComponent(getPnlExtCfg());
 			sPExtrusion.setLeftComponent(getPnlExtDraw());
-			sPExtrusion.setDividerLocation(prefs.getExtrudeDivide());
+			sPExtrusion.setDividerLocation(prefs.getDividerWidth());
 		}
 		return sPExtrusion;
 	}
@@ -947,9 +959,14 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 	private JSplitPane getSPStretch() {
 		if (sPStretch == null) {
 			sPStretch = new JSplitPane();
+			sPStretch.addPropertyChangeListener(new PropertyChangeListener() {
+				public void propertyChange(PropertyChangeEvent evt) {
+					getSplitPane_1().setDividerLocation(sPStretch.getDividerLocation());
+				}
+			});
 			sPStretch.setRightComponent(getPnlStretchCfg());
 			sPStretch.setLeftComponent(getPnlStretchDraw());
-			sPStretch.setDividerLocation(prefs.getStretchDivide());
+			sPExtrusion.setDividerLocation(prefs.getDividerWidth());
 		}
 		return sPStretch;
 	}
