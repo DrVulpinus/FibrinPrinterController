@@ -20,7 +20,18 @@ public boolean add(GCode _code){
 	}
 	return out;
 }
-
+public void addForImmediateSend(GCode _code){
+	super.add(0, _code.toString());
+	for (ArrayAddListener arrayAddListener : listeners) {
+		arrayAddListener.itemAdded();
+	}
+}
+public void addForImmediateSend(String _e){	
+	super.add(0, _e);
+	for (ArrayAddListener arrayAddListener : listeners) {
+		arrayAddListener.itemAdded();
+	}	
+}
 
 public void addAddListener(ArrayAddListener _listener){
 	listeners.add(_listener);
