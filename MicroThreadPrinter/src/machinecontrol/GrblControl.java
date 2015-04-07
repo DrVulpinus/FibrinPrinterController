@@ -11,7 +11,6 @@ public class GrblControl implements COMLineRecieved, ArrayAddListener{
 	private COMOutLines sendLines = new COMOutLines(); //New Commands are put here, each time a new command is added it sends it, and will continue sending commands until there are none left
 	
 	private IOPortControl grblPort;
-	private boolean allowMoreStatus = true;
 	private Hashtable<Integer,Float> grblSettings = new Hashtable<Integer,Float>();
 	public GrblControl(String _port){
 		grblPort = new IOPortControl(_port, 115200);
@@ -212,10 +211,13 @@ public class GrblControl implements COMLineRecieved, ArrayAddListener{
 		return true;
 	}
 	public void getStatus(){
-		if (allowMoreStatus){
+		if (isBufferEmpty()){
 			sendLines.addForImmediateSend("?");
-			allowMoreStatus = false;
 		}
+		else{
+			machineState = MachineState.RUNNING;
+		}
+			
 		
 	}
 	
@@ -226,7 +228,6 @@ public class GrblControl implements COMLineRecieved, ArrayAddListener{
 			//We got the right thing!			
 		}
 		if (response.startsWith("<")&& response.endsWith(">")){
-			allowMoreStatus = true;
 			//We got a status response
 			response = response.replaceAll("<", "");
 			response = response.replaceAll(">", "");
