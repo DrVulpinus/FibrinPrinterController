@@ -150,8 +150,8 @@ public class MachineGraphic extends JPanel {
 		
 		output[0] = (int)xOut;
 		output[1] = (int)yOut;
-		System.out.println("Original Point here: (" + _positionX + "," + _positionY + ")");
-		System.out.println("Point here: (" + output[0] + "," + output[1] + ")");
+		//System.out.println("Original Point here: (" + _positionX + "," + _positionY + ")");
+		//System.out.println("Point here: (" + output[0] + "," + output[1] + ")");
 		return output;
 	}
 	
