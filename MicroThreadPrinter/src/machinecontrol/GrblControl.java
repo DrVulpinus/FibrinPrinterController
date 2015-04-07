@@ -213,7 +213,7 @@ public class GrblControl implements COMLineRecieved, ArrayAddListener{
 	}
 	public void getStatus(){
 		if (allowMoreStatus){
-			grblPort.sendDataLine("?");
+			sendLines.addForImmediateSend("?");
 			allowMoreStatus = false;
 		}
 		
