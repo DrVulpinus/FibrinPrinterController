@@ -2,6 +2,7 @@ package machinecontrol;
 
 import java.lang.Thread.State;
 import java.util.ArrayList;
+import java.util.Hashtable;
 
 import javax.swing.JOptionPane;
 
@@ -12,6 +13,7 @@ public class GrblControl implements COMLineRecieved, ArrayAddListener{
 	private IOPortControl grblPort;
 	private boolean isCOMReady = false;
 	private boolean allowMoreStatus = true;
+	private Hashtable<Integer,Float> grblSettings = new Hashtable<Integer,Float>();
 	public GrblControl(String _port){
 		grblPort = new IOPortControl(_port, 115200);
 		sendLines.addAddListener(this);
@@ -78,8 +80,41 @@ public class GrblControl implements COMLineRecieved, ArrayAddListener{
 			grblPort.sendDataLine("\u0018");
 		}
 	}
-	
-	
+	/**
+	 * This method is actually pretty dangerous.  It should only be called from within the checkForGrbl.
+	 * It asks for Grbl's settings, reads them, and loads them into the local ArrayList.
+	 * To do this it simply sends the command, waits 2.5 seconds, then looks for a reply.
+	 * If no reply is given, it simply returns, if a reply is given, it loads those settings into the Arraylist
+	 * @return
+	 */
+	private void getGrblSettings(){
+		grblPort.sendDataLine("$$");//Send the command to get the settings
+		try {
+			Thread.sleep(2500);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		//Grbl returns a bunch of lines, with each line containing a different setting and value
+		//The format of each line follows the following format (the items in quotes would be replaced with an actual value):
+		//$"setting key" = "setting value" ("setting description")
+		//Below is an example of this format:
+		//$0=10 (step pulse, usec)
+		while(grblPort.isNewAvail()){
+			String rawReturn = grblPort.readNextLine();
+			if (rawReturn.toCharArray()[0] == '$'){ //Make sure each line we are getting is actually a line with a setting
+				//Process the string to obtain the key and the value
+				rawReturn = rawReturn.substring(1, rawReturn.length()-1);
+				String settingKeyString = rawReturn.split("=")[0];
+				String rawValueString = rawReturn.split("=")[1];
+				String valueString = rawValueString.split(" ")[0];
+				grblSettings.put(Integer.getInteger(settingKeyString),Float.valueOf(valueString));
+			}
+		}
+	}
+	public float getGrblSettingValue(int _settingKey){
+		return grblSettings.get(_settingKey);
+	}
 	public boolean checkForGrbl(){
 		grblPort.removeAllListeners();
 		grblPort.connectPort();
@@ -93,11 +128,8 @@ public class GrblControl implements COMLineRecieved, ArrayAddListener{
 		while (grblPort.isNewAvail()){
 			//We got something!
 			String response = grblPort.readNextLine();
-			System.out.print("Here is the response: (");
-			System.out.print(response);
-			System.out.println(")");
 			if (response.contains("Grbl")){
-				//We got the right thing!
+				getGrblSettings();
 				isCOMReady = true;
 				System.out.println("Found the Grbl");
 				disconnect();
@@ -168,14 +200,12 @@ public class GrblControl implements COMLineRecieved, ArrayAddListener{
 	public void homeGrbl(){
 		grblPort.removeAllListeners();
 		grblPort.addNewLineListener(this);
-		System.out.println("I made it to the wait");
 		try {
 			Thread.sleep(1000);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		System.out.println("I made it past the wait");
 		sendLines.add("$H");
 		sendLines.add(new GCode('F', 3000));
 		sendLines.add(new GCode('G', 92, new GCodeParam('X',0),new GCodeParam('Y',0),new GCodeParam('Z',0)));
