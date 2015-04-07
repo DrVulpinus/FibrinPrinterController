@@ -296,10 +296,6 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 				
 			}
 		}
-		
-		else{
-			
-		}
 		}
 	}
 	
@@ -371,6 +367,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 			for (String portName : IOPortControl.getPorts()) {
 				getCb_GrblPort().addItem(portName);
 				getCb_PumpPort().addItem(portName);
+				
 			}
 			//System.out.println(prefs.getGrblPort());
 			//System.out.println(prefs.getPumpPort());
@@ -391,6 +388,10 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 		else{
 			getCb_GrblPort().setEnabled(false);
 			getCb_PumpPort().setEnabled(false);			
+		}
+		if(getChckbxManualPumpCtrl().isSelected()){
+			getCb_PumpPort().removeAllItems();
+			getCb_PumpPort().setEnabled(false);
 		}
 		isUpdating = false;
 		selectedPortChanged();
@@ -1397,14 +1398,26 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 			btnAutoConfigurePorts.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent arg0) {
 					updatePorts();
-					GrblControl gCtrl = new GrblControl();				
-					PumpControl pCtrl = new PumpControl();
+					GrblControl gCtrl = new GrblControl();		
 					try {
 						getCb_GrblPort().setSelectedItem(gCtrl.getPort());
-						getCb_PumpPort().setSelectedItem(pCtrl.getPort());
+						
 					} catch (Exception e) {
 						
 					}
+					//Only auto configure pump port if automatic pump control is enabled
+					if (!getChckbxManualPumpCtrl().isSelected()){
+						PumpControl pCtrl = new PumpControl();
+						try {
+							getCb_PumpPort().setSelectedItem(pCtrl.getPort());
+						} catch (Exception e) {
+							// TODO: handle exception
+						}
+						
+					}
+					
+					
+					
 					
 				}
 			});
@@ -1788,12 +1801,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 			chckbxManualPumpCtrl = new JCheckBox("Manual Pump Ctrl");
 			chckbxManualPumpCtrl.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent arg0) {
-					if (chckbxManualPumpCtrl.isSelected()){
-						getCb_PumpPort().setEnabled(false);
-					}
-					else{
-						getCb_PumpPort().setEnabled(true);
-					}
+					updatePorts();
 				}
 			});
 			chckbxManualPumpCtrl.setFont(new Font("Tahoma", Font.PLAIN, 14));
