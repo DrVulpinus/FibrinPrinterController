@@ -395,6 +395,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 	private JTabbedPane getTabbedPane() {
 		if (tabbedPane == null) {
 			tabbedPane = new JTabbedPane(JTabbedPane.TOP);
+			tabbedPane.setFont(new Font("Tahoma", Font.PLAIN, 14));
 			tabbedPane.addTab("General Settings", null, getPnlCfg(), "This page contains settings for the COM ports");
 			tabbedPane.addTab("Extrusion Settings", null, getPnlExtrusion(), null);
 			tabbedPane.addTab("Stretch Settings", null, getPnlStretch(), null);
@@ -435,18 +436,21 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 	private JLabel getLblGrblPort() {
 		if (lblGrblPort == null) {
 			lblGrblPort = new JLabel("GrbL Port:");
+			lblGrblPort.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		}
 		return lblGrblPort;
 	}
 	private JLabel getLblPumpPort() {
 		if (lblPumpPort == null) {
 			lblPumpPort = new JLabel("Pump Port:");
+			lblPumpPort.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		}
 		return lblPumpPort;
 	}
 	private JComboBox<String> getCb_GrblPort() {
 		if (cb_GrblPort == null) {
 			cb_GrblPort = new JComboBox<String>();
+			cb_GrblPort.setFont(new Font("Tahoma", Font.PLAIN, 14));
 			cb_GrblPort.setToolTipText("Select the com port for the Grbl device.");
 			cb_GrblPort.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
@@ -459,6 +463,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 	private JComboBox<String> getCb_PumpPort() {
 		if (cb_PumpPort == null) {
 			cb_PumpPort = new JComboBox<String>();
+			cb_PumpPort.setFont(new Font("Tahoma", Font.PLAIN, 14));
 			cb_PumpPort.setToolTipText("Select the com port for the syringe pump.");
 			cb_PumpPort.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
@@ -536,6 +541,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 	private JCheckBox getChckbxGenerateLogFiles() {
 		if (chckbxGenerateLogFiles == null) {
 			chckbxGenerateLogFiles = new JCheckBox("Generate Log Files");
+			chckbxGenerateLogFiles.setFont(new Font("Tahoma", Font.PLAIN, 14));
 			chckbxGenerateLogFiles.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					prefs.setLogFiles(chckbxGenerateLogFiles.isSelected());
@@ -555,6 +561,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 	private JTextField getTfLogDir() {
 		if (tfLogDir == null) {
 			tfLogDir = new JTextField();
+			tfLogDir.setFont(new Font("Tahoma", Font.PLAIN, 14));
 			tfLogDir.setEditable(false);
 			tfLogDir.setColumns(10);
 		}
@@ -563,6 +570,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 	private JButton getBtnBrowseLogDir() {
 		if (btnBrowseLogDir == null) {
 			btnBrowseLogDir = new JButton("Choose Log Folder");
+			btnBrowseLogDir.setFont(new Font("Tahoma", Font.PLAIN, 14));
 			btnBrowseLogDir.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					JFileChooser fc = new JFileChooser();
@@ -581,18 +589,21 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 	private JLabel getLblJobName() {
 		if (lblJobName == null) {
 			lblJobName = new JLabel("Job Name:");
+			lblJobName.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		}
 		return lblJobName;
 	}
 	private JLabel getLblJobDescription() {
 		if (lblJobDescription == null) {
 			lblJobDescription = new JLabel("Job Description:");
+			lblJobDescription.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		}
 		return lblJobDescription;
 	}
 	private JTextField getTxtJobName() {
 		if (txtJobName == null) {
 			txtJobName = new JTextField();
+			txtJobName.setFont(new Font("Tahoma", Font.PLAIN, 14));
 			txtJobName.setToolTipText("Type a name for this job here, it will be used as the filename for the log file, if no name is given the job timestamp will be used instead.");
 			txtJobName.setColumns(10);
 			
@@ -602,6 +613,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 	private JTextField getTxtJobDescription() {
 		if (txtJobDescription == null) {
 			txtJobDescription = new JTextField();
+			txtJobDescription.setFont(new Font("Tahoma", Font.PLAIN, 14));
 			txtJobDescription.setToolTipText("Type a brief description of the job here for it to be recorded at the top of the log file.");
 			txtJobDescription.setColumns(10);
 		}
@@ -632,6 +644,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 	private JButton getBtnRunOperation() {
 		if (btnRunOperation == null) {
 			btnRunOperation = new JButton("Run Operation");
+			btnRunOperation.setFont(new Font("Tahoma", Font.PLAIN, 14));
 			btnRunOperation.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					runOperation(true);					
@@ -713,6 +726,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 	private JLabel getLblSyringeDiameter() {
 		if (lblSyringeDiameter == null) {
 			lblSyringeDiameter = new JLabel("Syringe Diameter (mm):");
+			lblSyringeDiameter.setFont(new Font("Tahoma", Font.PLAIN, 14));
 			lblSyringeDiameter.setHorizontalAlignment(SwingConstants.RIGHT);
 		}
 		return lblSyringeDiameter;
@@ -730,6 +744,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 			nfr.setAllowsInvalid(false);
 			nfr.setOverwriteMode(false);
 			frmtdtxtfldSyringeDiameter = new JFormattedTextField(nfr);			
+			frmtdtxtfldSyringeDiameter.setFont(new Font("Tahoma", Font.PLAIN, 14));
 			frmtdtxtfldSyringeDiameter.addKeyListener(new KeyAdapter() {
 				@Override
 				public void keyReleased(KeyEvent e) {
@@ -757,6 +772,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 	private JLabel getLblSyringeUnits() {
 		if (lblSyringeUnits == null) {
 			lblSyringeUnits = new JLabel("Syringe Units:");
+			lblSyringeUnits.setFont(new Font("Tahoma", Font.PLAIN, 14));
 			lblSyringeUnits.setHorizontalAlignment(SwingConstants.RIGHT);
 		}
 		return lblSyringeUnits;
@@ -764,6 +780,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 	private JComboBox<String> getCbUnits() {
 		if (cbUnits == null) {
 			cbUnits = new JComboBox<String>();
+			cbUnits.setFont(new Font("Tahoma", Font.PLAIN, 14));
 			cbUnits.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					prefs.setSyringeUnits((String) cbUnits.getSelectedItem());
@@ -795,6 +812,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 	private JCheckBox getChckbxPerformExtrusion() {
 		if (chckbxPerformExtrusion == null) {
 			chckbxPerformExtrusion = new JCheckBox("Perform Extrusion");
+			chckbxPerformExtrusion.setFont(new Font("Tahoma", Font.PLAIN, 14));
 			chckbxPerformExtrusion.setSelected(true);
 			chckbxPerformExtrusion.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
@@ -846,12 +864,14 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 	private JLabel getLblExtrusionRate() {
 		if (lblExtrusionRate == null) {
 			lblExtrusionRate = new JLabel("Extrusion Rate:");
+			lblExtrusionRate.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		}
 		return lblExtrusionRate;
 	}
 	private JLabel getLblExtrusionRateUnits() {
 		if (lblExtrusionRateUnits == null) {
 			lblExtrusionRateUnits = new JLabel("(units)");
+			lblExtrusionRateUnits.setFont(new Font("Tahoma", Font.PLAIN, 14));
 			lblExtrusionRateUnits.setHorizontalAlignment(SwingConstants.LEFT);
 		}
 		return lblExtrusionRateUnits;
@@ -859,6 +879,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 	private JLabel getLblFeedrate() {
 		if (lblFeedrate == null) {
 			lblFeedrate = new JLabel("Feedrate:");
+			lblFeedrate.setFont(new Font("Tahoma", Font.PLAIN, 14));
 			lblFeedrate.setHorizontalAlignment(SwingConstants.RIGHT);
 		}
 		return lblFeedrate;
@@ -866,12 +887,14 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 	private JLabel getLblMms() {
 		if (lblMms == null) {
 			lblMms = new JLabel("mm/min");
+			lblMms.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		}
 		return lblMms;
 	}
 	private JLabel getLblThreadSpacing() {
 		if (lblThreadSpacing == null) {
 			lblThreadSpacing = new JLabel("Thread Spacing:");
+			lblThreadSpacing.setFont(new Font("Tahoma", Font.PLAIN, 14));
 			lblThreadSpacing.setHorizontalAlignment(SwingConstants.RIGHT);
 		}
 		return lblThreadSpacing;
@@ -879,18 +902,21 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 	private JLabel getLblMm() {
 		if (lblMm == null) {
 			lblMm = new JLabel("mm");
+			lblMm.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		}
 		return lblMm;
 	}
 	private JLabel getLblPolymerizationTime() {
 		if (lblPolymerizationTime == null) {
 			lblPolymerizationTime = new JLabel("Polymerization Time:");
+			lblPolymerizationTime.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		}
 		return lblPolymerizationTime;
 	}
 	private JFormattedTextField getFrmtdtxtfldPolyTime() {
 		if (frmtdtxtfldPolyTime == null) {
 			frmtdtxtfldPolyTime = new JFormattedTextField(createFormatter("##:##:##"));
+			frmtdtxtfldPolyTime.setFont(new Font("Tahoma", Font.PLAIN, 14));
 			frmtdtxtfldPolyTime.addKeyListener(new KeyAdapter() {
 				@Override
 				public void keyTyped(KeyEvent arg0) {
@@ -906,6 +932,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 	private JLabel getLblThreadStartPause() {
 		if (lblThreadStartPause == null) {
 			lblThreadStartPause = new JLabel("Thread Start Pause Time:");
+			lblThreadStartPause.setFont(new Font("Tahoma", Font.PLAIN, 14));
 			lblThreadStartPause.setHorizontalAlignment(SwingConstants.RIGHT);
 		}
 		return lblThreadStartPause;
@@ -913,6 +940,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 	private JLabel getLblSec() {
 		if (lblSec == null) {
 			lblSec = new JLabel("sec.");
+			lblSec.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		}
 		return lblSec;
 	}
@@ -938,6 +966,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 	private JCheckBox getChckbxPerformStretch() {
 		if (chckbxPerformStretch == null) {
 			chckbxPerformStretch = new JCheckBox("Perform Stretch");
+			chckbxPerformStretch.setFont(new Font("Tahoma", Font.PLAIN, 14));
 			chckbxPerformStretch.setToolTipText("<html>Check this box if stretching should be performed during this operation</html>");
 			chckbxPerformStretch.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent arg0) {
@@ -975,6 +1004,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 	private JLabel getLabel_1() {
 		if (lblStretchRate == null) {
 			lblStretchRate = new JLabel("Stretch Rate:");
+			lblStretchRate.setFont(new Font("Tahoma", Font.PLAIN, 14));
 			lblStretchRate.setHorizontalAlignment(SwingConstants.RIGHT);
 		}
 		return lblStretchRate;
@@ -982,6 +1012,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 	private JLabel getLabel_2() {
 		if (lblStretchAmount == null) {
 			lblStretchAmount = new JLabel("Stretch Amount:");
+			lblStretchAmount.setFont(new Font("Tahoma", Font.PLAIN, 14));
 			lblStretchAmount.setHorizontalAlignment(SwingConstants.RIGHT);
 		}
 		return lblStretchAmount;
@@ -989,12 +1020,14 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 	private JLabel getLabel_3() {
 		if (lblMms_1 == null) {
 			lblMms_1 = new JLabel("mm/min");
+			lblMms_1.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		}
 		return lblMms_1;
 	}
 	private JLabel getLabel_4() {
 		if (label == null) {
 			label = new JLabel("%");
+			label.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		}
 		return label;
 	}
@@ -1023,6 +1056,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 	private JLabel getLabel_1_1() {
 		if (lblSideMargins == null) {
 			lblSideMargins = new JLabel("Side Margins:");
+			lblSideMargins.setFont(new Font("Tahoma", Font.PLAIN, 14));
 			lblSideMargins.setHorizontalAlignment(SwingConstants.RIGHT);
 		}
 		return lblSideMargins;
@@ -1030,12 +1064,14 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 	private JLabel getLabel_1_2() {
 		if (lblMm_1 == null) {
 			lblMm_1 = new JLabel("mm");
+			lblMm_1.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		}
 		return lblMm_1;
 	}
 	private JLabel getLabel_1_3() {
 		if (lblThreadLength == null) {
 			lblThreadLength = new JLabel("Thread Length:");
+			lblThreadLength.setFont(new Font("Tahoma", Font.PLAIN, 14));
 			lblThreadLength.setHorizontalAlignment(SwingConstants.RIGHT);
 		}
 		return lblThreadLength;
@@ -1043,6 +1079,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 	private JSpinner getSpThreadLength() {
 		if (spThreadLength == null) {
 			spThreadLength = new JSpinner();
+			spThreadLength.setFont(new Font("Tahoma", Font.PLAIN, 14));
 			spThreadLength.setToolTipText("<html>The length that the threads should be made (between the end bars).<br>This parameter is limited by the bed length, the bar thickness, and the stretch percentage</html>");
 			spThreadLength.addChangeListener(new ChangeListener() {
 				public void stateChanged(ChangeEvent e) {
@@ -1058,6 +1095,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 	private JSpinner getSpExtRate() {
 		if (spExtRate == null) {
 			spExtRate = new JSpinner();
+			spExtRate.setFont(new Font("Tahoma", Font.PLAIN, 14));
 			spExtRate.addChangeListener(new ChangeListener() {
 				public void stateChanged(ChangeEvent arg0) {
 					prefs.setExtrusionRate((int) spExtRate.getValue());
@@ -1072,6 +1110,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 	private JSpinner getSpFeed() {
 		if (spFeed == null) {
 			spFeed = new JSpinner();
+			spFeed.setFont(new Font("Tahoma", Font.PLAIN, 14));
 			spFeed.addChangeListener(new ChangeListener() {
 				public void stateChanged(ChangeEvent e) {
 					prefs.setFeedrate((int) spFeed.getValue());
@@ -1086,6 +1125,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 	private JSpinner getSpThreadSpace() {
 		if (spThreadSpace == null) {
 			spThreadSpace = new JSpinner();
+			spThreadSpace.setFont(new Font("Tahoma", Font.PLAIN, 14));
 			spThreadSpace.addChangeListener(new ChangeListener() {
 				public void stateChanged(ChangeEvent e) {
 					updateRanges();
@@ -1100,6 +1140,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 	private JSpinner getSpTSPT() {
 		if (spTSPT == null) {
 			spTSPT = new JSpinner();
+			spTSPT.setFont(new Font("Tahoma", Font.PLAIN, 14));
 			spTSPT.addChangeListener(new ChangeListener() {
 				public void stateChanged(ChangeEvent e) {
 					prefs.setTSPT((int)spTSPT.getValue());
@@ -1114,6 +1155,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 	private JSpinner getSpSideMargins() {
 		if (spSideMargins == null) {
 			spSideMargins = new JSpinner();
+			spSideMargins.setFont(new Font("Tahoma", Font.PLAIN, 14));
 			spSideMargins.setToolTipText("<html>This is the distance from the side of the extrusion area to act as a buffer zone that threads should not be made in</html>");
 			spSideMargins.addChangeListener(new ChangeListener() {
 				public void stateChanged(ChangeEvent e) {
@@ -1129,12 +1171,14 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 	private JLabel getLabel_1_4() {
 		if (lblMm_2 == null) {
 			lblMm_2 = new JLabel("mm");
+			lblMm_2.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		}
 		return lblMm_2;
 	}
 	private JSpinner getSpBedY() {
 		if (spBedY == null) {
 			spBedY = new JSpinner();
+			spBedY.setFont(new Font("Tahoma", Font.PLAIN, 14));
 			spBedY.setToolTipText("This parameter sets the total length of the bed.  This is the total available length available to the machine.  This is limited to a minimum of 25 mm, anything else would be ridiculous...");
 			spBedY.addChangeListener(new ChangeListener() {
 				public void stateChanged(ChangeEvent e) {
@@ -1150,6 +1194,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 	private JLabel getLabel_1_5() {
 		if (lblBedLength == null) {
 			lblBedLength = new JLabel("Bed Length:");
+			lblBedLength.setFont(new Font("Tahoma", Font.PLAIN, 14));
 			lblBedLength.setHorizontalAlignment(SwingConstants.RIGHT);
 		}
 		return lblBedLength;
@@ -1157,12 +1202,14 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 	private JLabel getLabel_1_6() {
 		if (lblMm_3 == null) {
 			lblMm_3 = new JLabel("mm");
+			lblMm_3.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		}
 		return lblMm_3;
 	}
 	private JSpinner getSpBedX() {
 		if (spBedX == null) {
 			spBedX = new JSpinner();
+			spBedX.setFont(new Font("Tahoma", Font.PLAIN, 14));
 			spBedX.setToolTipText("This parameter is for setting the width of the extrusion bed.\r\nThe bed can be as wide as desired, but it is limited to a minimum of at least 25 mm wide, anything less would be kinda ridiculous...");
 			spBedX.addChangeListener(new ChangeListener() {
 				public void stateChanged(ChangeEvent e) {
@@ -1178,12 +1225,14 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 	private JLabel getLabel_1_7() {
 		if (lblMm_4 == null) {
 			lblMm_4 = new JLabel("mm");
+			lblMm_4.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		}
 		return lblMm_4;
 	}
 	private JLabel getLabel_1_8() {
 		if (lblBedWidth == null) {
 			lblBedWidth = new JLabel("Bed Width:");
+			lblBedWidth.setFont(new Font("Tahoma", Font.PLAIN, 14));
 			lblBedWidth.setHorizontalAlignment(SwingConstants.RIGHT);
 		}
 		return lblBedWidth;
@@ -1191,6 +1240,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 	private JSpinner getSpStretchPer() {
 		if (spStretchPer == null) {
 			spStretchPer = new JSpinner();
+			spStretchPer.setFont(new Font("Tahoma", Font.PLAIN, 14));
 			spStretchPer.setModel(new SpinnerNumberModel(new Integer(100), null, null, new Integer(1)));
 			spStretchPer.addChangeListener(new ChangeListener() {
 				public void stateChanged(ChangeEvent arg0) {
@@ -1206,6 +1256,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 	private JSpinner getSpStretchRate() {
 		if (spStretchRate == null) {
 			spStretchRate = new JSpinner();
+			spStretchRate.setFont(new Font("Tahoma", Font.PLAIN, 14));
 			spStretchRate.addChangeListener(new ChangeListener() {
 				public void stateChanged(ChangeEvent e) {
 					prefs.setStretchRate((int) spStretchRate.getValue());
@@ -1219,6 +1270,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 	private JLabel getLabel_1_9() {
 		if (lblBarThickness == null) {
 			lblBarThickness = new JLabel("Bar Thickness:");
+			lblBarThickness.setFont(new Font("Tahoma", Font.PLAIN, 14));
 			lblBarThickness.setHorizontalAlignment(SwingConstants.RIGHT);
 		}
 		return lblBarThickness;
@@ -1226,6 +1278,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 	private JSpinner getSpBarThick() {
 		if (spBarThick == null) {
 			spBarThick = new JSpinner();
+			spBarThick.setFont(new Font("Tahoma", Font.PLAIN, 14));
 			spBarThick.addChangeListener(new ChangeListener() {
 				public void stateChanged(ChangeEvent e) {
 					updateRanges();
@@ -1239,6 +1292,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 	private JLabel getLabel_1_10() {
 		if (lblMm_5 == null) {
 			lblMm_5 = new JLabel("mm");
+			lblMm_5.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		}
 		return lblMm_5;
 	}
@@ -1298,6 +1352,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 	private JLabel getLabel_1_11() {
 		if (lblOfThreads == null) {
 			lblOfThreads = new JLabel("# of Threads:");
+			lblOfThreads.setFont(new Font("Tahoma", Font.PLAIN, 14));
 			lblOfThreads.setHorizontalAlignment(SwingConstants.RIGHT);
 		}
 		return lblOfThreads;
@@ -1305,6 +1360,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 	private JSpinner getSpNumThreads() {
 		if (spNumThreads == null) {
 			spNumThreads = new JSpinner();
+			spNumThreads.setFont(new Font("Tahoma", Font.PLAIN, 14));
 			spNumThreads.setToolTipText("<html>This is the number of threads that will be made.<br>NOTE: If this number is increased too high, the thread spacing will be reduced to accomodate the number of threads</html>");
 			spNumThreads.addChangeListener(new ChangeListener() {
 				public void stateChanged(ChangeEvent e) {
@@ -1320,6 +1376,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 	private JButton getBtnAutoConfigurePorts() {
 		if (btnAutoConfigurePorts == null) {
 			btnAutoConfigurePorts = new JButton("Auto. Configure Ports");
+			btnAutoConfigurePorts.setFont(new Font("Tahoma", Font.PLAIN, 14));
 			btnAutoConfigurePorts.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent arg0) {
 					updatePorts();
@@ -1340,6 +1397,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 	private JButton getBtnSaveCurrentProfile() {
 		if (btnSaveCurrentProfile == null) {
 			btnSaveCurrentProfile = new JButton("Save Current Profile");
+			btnSaveCurrentProfile.setFont(new Font("Tahoma", Font.PLAIN, 14));
 			btnSaveCurrentProfile.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent arg0) {
 					saveProfile();
@@ -1404,6 +1462,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 	private JButton getBtnLoadProfile() {
 		if (btnLoadProfile == null) {
 			btnLoadProfile = new JButton("Load Profile");
+			btnLoadProfile.setFont(new Font("Tahoma", Font.PLAIN, 14));
 			btnLoadProfile.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent arg0) {
 					loadProfile();
@@ -1591,6 +1650,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 	private JButton getBtnRunOperationAuto() {
 		if (btnRunOperationAuto == null) {
 			btnRunOperationAuto = new JButton("Run Operation Auto Poly");
+			btnRunOperationAuto.setFont(new Font("Tahoma", Font.PLAIN, 14));
 			btnRunOperationAuto.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent arg0) {
 					runOperation(false);
@@ -1709,6 +1769,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 	private JCheckBox getChckbxManualPumpCtrl() {
 		if (chckbxManualPumpCtrl == null) {
 			chckbxManualPumpCtrl = new JCheckBox("Manual Pump Ctrl");
+			chckbxManualPumpCtrl.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		}
 		return chckbxManualPumpCtrl;
 	}
