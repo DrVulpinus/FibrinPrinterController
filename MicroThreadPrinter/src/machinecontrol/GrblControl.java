@@ -11,7 +11,6 @@ public class GrblControl implements COMLineRecieved, ArrayAddListener{
 	private COMOutLines sendLines = new COMOutLines(); //New Commands are put here, each time a new command is added it sends it, and will continue sending commands until there are none left
 	
 	private IOPortControl grblPort;
-	private boolean isCOMReady = false;
 	private boolean allowMoreStatus = true;
 	private Hashtable<Integer,Float> grblSettings = new Hashtable<Integer,Float>();
 	public GrblControl(String _port){
@@ -40,7 +39,7 @@ public class GrblControl implements COMLineRecieved, ArrayAddListener{
 		
 	}
 	public boolean isBufferEmpty(){
-		return isCOMReady;
+		return sendLines.isEmpty();
 	}
 	public void addNewGCode(GCode _code){
 		sendLines.add(_code);
@@ -130,7 +129,6 @@ public class GrblControl implements COMLineRecieved, ArrayAddListener{
 			String response = grblPort.readNextLine();
 			if (response.contains("Grbl")){
 				getGrblSettings();
-				isCOMReady = true;
 				System.out.println("Found the Grbl");
 				disconnect();
 				grblPort.addNewLineListener(this);
@@ -259,16 +257,17 @@ public class GrblControl implements COMLineRecieved, ArrayAddListener{
     		grblPort.sendDataLine(sendLines.get(0));
     		sendLines.remove(0);
     	}
-		else{
-			isCOMReady = true;// We got to the end of the buffer list, make sure that we allow for the cascade to restart
-		}
 		// TODO: Need to add error checking functionality here
 		
 	}
 	@Override
 	public void itemAdded() {
-		if (isCOMReady){
-			isCOMReady = false; //An Item was added to an empty list, i.e. the cascade has stopped
+		/*
+		 * If there is only one item in the list, we can safely assume
+		 * that the recursive COM loop has stopped, and we should now
+		 * trigger it to restart by send one line manually
+		 */
+		if (sendLines.size() == 1){
 			grblPort.sendDataLine(sendLines.get(0));
 			sendLines.remove(0);
 		}
