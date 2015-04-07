@@ -77,6 +77,7 @@ import javax.swing.ButtonGroup;
 import java.awt.Font;
 import java.awt.SystemColor;
 import java.awt.Color;
+import javax.swing.UIManager;
 
 public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 
@@ -158,7 +159,6 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 	private JLabel lblMm_5;
 	private JLabel lblOfThreads;
 	private JSpinner spNumThreads;
-	private JButton btnVerifyAndTest;
 	private JButton btnAutoConfigurePorts;
 	private JButton btnSaveCurrentProfile;
 	private JButton btnLoadProfile;
@@ -303,9 +303,11 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 	private void verifyAllSettings(){
 		 if (verifyPortSettings() && verifyLoggingSettings()){
 			 getBtnRunOperation().setEnabled(true);
+			 getBtnRunOperationAuto().setEnabled(true);
 		 }
 		 else{
 			 getBtnRunOperation().setEnabled(false);
+			 getBtnRunOperationAuto().setEnabled(false);
 		 }
 		
 	}
@@ -514,7 +516,6 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 			pnlRun.add(getLabelInitializeRun(), "cell 1 2");
 			pnlRun.add(getBtnSaveCurrentProfile(), "cell 0 3,growx");
 			pnlRun.add(getLabelReadyToHome(), "cell 1 3");
-			pnlRun.add(getBtnVerifyAndTest(), "cell 0 4,growx");
 			pnlRun.add(getLabelHoming(), "cell 1 4");
 			pnlRun.add(getBtnRunOperation(), "cell 0 5,growx");
 			pnlRun.add(getLabelAdjustStretchBar(), "cell 1 5");
@@ -594,6 +595,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 			txtJobName = new JTextField();
 			txtJobName.setToolTipText("Type a name for this job here, it will be used as the filename for the log file, if no name is given the job timestamp will be used instead.");
 			txtJobName.setColumns(10);
+			
 		}
 		return txtJobName;
 	}
@@ -639,14 +641,22 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 		return btnRunOperation;
 	}
 	
-	
+	/**
+	 * This method takes all of the input parameters and executes a run.
+	 * This method does not do any error or sanity checking on parameters, it simply feeds the
+	 * parameters to the execution class and which in turn executes the operation
+	 * @param manualPoly Set this to true to manually time polymerization of the threads, set it to false to
+	 * automatically time polymerization
+	 */
 	public void runOperation(boolean manualPoly){
+		
+		//This recolors all of the process stage labels to red to indicate that stage has not been started
+		for (JLabel label : stageLabels) {
+			label.setForeground(Color.RED);
+		}
+		
 		//This block of code parses the polymerization time string in the Formatted text box 
 		//and then converts that time into a number of seconds
-		for (JLabel label : stageLabels) {
-			label.setBackground(Color.RED);
-			label.setForeground(Color.BLACK);
-		}
 		int polyTime = 0;
 		String[] timeString = getFrmtdtxtfldPolyTime().getText().split(":");
 		int hours = Integer.parseInt(timeString[0]);
@@ -690,10 +700,12 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 			}
 			else{
 				processExec.setupExtrudeOnlyAuto();
+				//TODO Turn stage labels to not be run dark grey
 			}
 		}
 		else{
 			processExec.setupStretchOnlyAuto();
+			//TODO Turn stage labels to not be run dark grey
 		}
 		processExec.addStageListener(MainForm.this);
 		processExec.start();
@@ -1305,20 +1317,6 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 		}
 		return spNumThreads;
 	}
-	private JButton getBtnVerifyAndTest() {
-		if (btnVerifyAndTest == null) {
-			btnVerifyAndTest = new JButton("Verify and Test");
-			btnVerifyAndTest.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent arg0) {
-					PathCreator pC = new PathCreator();					
-					pC.setParams((int)getSpBedX().getValue(), (int)getSpBedY().getValue(), (int)getSpSideMargins().getValue(), (int)getSpExtRate().getValue(), (int)getSpThreadLength().getValue(), (int)getSpFeed().getValue(), (int)getSpThreadSpace().getValue(), (int)getSpTSPT().getValue(), 0, (int)getSpBarThick().getValue(), (int)getSpNumThreads().getValue(), (int)getSpStretchPer().getValue(), (int)getSpStretchRate().getValue());
-					pC.doCalculations();
-					pC.printCodes();
-				}
-			});
-		}
-		return btnVerifyAndTest;
-	}
 	private JButton getBtnAutoConfigurePorts() {
 		if (btnAutoConfigurePorts == null) {
 			btnAutoConfigurePorts = new JButton("Auto. Configure Ports");
@@ -1417,40 +1415,30 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 
 	@Override
 	public void stageCompleted(ProcessStage completeStage) {
-		System.out.println(completeStage.toString());
-		
-	}
-	
-	@Override
-	public void stageStarted(ProcessStage newStage) {
-		for (JLabel label : stageLabels) {
-			label.setBackground(Color.RED);
-			label.setForeground(Color.BLACK);
-		}
-		switch (processExec.getCurrentStage()){
+		switch (completeStage){
 		case ALIGNING_STRETCH_BAR:
-			getLabelAdjustStretchBar().setBackground(Color.GREEN);
+			setLabelColorToComplete(getLabelAdjustStretchBar());
 			break;
 		case CLEAN_PUMP:
-			getLabelWaitingForCleaning().setBackground(Color.GREEN);
+			setLabelColorToComplete(getLabelWaitingForCleaning());
 			break;
 		case EXTRUDING:
-			getLabelExtruding().setBackground(Color.GREEN);
+			setLabelColorToComplete(getLabelExtruding());
 			break;
 		case EXTRUSION_COMPLETE:
 			
 			break;
 		case HOMING:
-			getLabelHoming().setBackground(Color.GREEN);
+			setLabelColorToComplete(getLabelHoming());
 			break;
 		case INITIALIZE_PUMP:
-			getLabelInitializeRun().setBackground(Color.GREEN);
+			setLabelColorToComplete(getLabelInitializeRun());
 			break;
 		case OPERATION_COMPLETE:
-			getLabelOperationComplete().setBackground(Color.GREEN);
+			setLabelColorToComplete(getLabelOperationComplete());
 			break;
 		case POLYMERIZING:
-			getLabelPolymerizing().setBackground(Color.GREEN);
+			setLabelColorToComplete(getLabelPolymerizing());
 			break;
 		case PRESTART:
 			
@@ -1458,7 +1446,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 		case PRE_EXT_WIPE:
 			break;
 		case PURGING_PUMP:
-			getLabelPurging().setBackground(Color.GREEN);
+			setLabelColorToComplete(getLabelPurging());
 			break;
 		case READY_TO_ALIGN_STRETCH:
 			
@@ -1467,26 +1455,91 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 			
 			break;
 		case READY_TO_HOME:
-			getLabelReadyToHome().setBackground(Color.GREEN);
+			setLabelColorToComplete(getLabelReadyToHome());
 			break;
 		case READY_TO_START_PUMP:
-			getLabelReadyToPurge().setBackground(Color.GREEN);
+			setLabelColorToComplete(getLabelReadyToPurge());
 			break;
 		case READY_TO_STRETCH:
-			getLabelReadyToStretch().setBackground(Color.GREEN);
+			setLabelColorToComplete(getLabelReadyToStretch());
 			break;
 		case STRETCHING:
-			getLabelStretching().setBackground(Color.GREEN);
+			setLabelColorToComplete(getLabelStretching());
 			break;
 		case STRETCH_COMPLETE:
 			break;
 		default:
 			break;
 		
-		}
-		
+		}		
 	}
 	
+	@Override
+	public void stageStarted(ProcessStage newStage) {
+		switch (processExec.getCurrentStage()){
+		case ALIGNING_STRETCH_BAR:
+			setLabelColorToRunning(getLabelAdjustStretchBar());
+			break;
+		case CLEAN_PUMP:
+			setLabelColorToRunning(getLabelWaitingForCleaning());
+			break;
+		case EXTRUDING:
+			setLabelColorToRunning(getLabelExtruding());
+			break;
+		case EXTRUSION_COMPLETE:
+			
+			break;
+		case HOMING:
+			setLabelColorToRunning(getLabelHoming());
+			break;
+		case INITIALIZE_PUMP:
+			setLabelColorToRunning(getLabelInitializeRun());
+			break;
+		case OPERATION_COMPLETE:
+			setLabelColorToRunning(getLabelOperationComplete());
+			break;
+		case POLYMERIZING:
+			setLabelColorToRunning(getLabelPolymerizing());
+			break;
+		case PRESTART:
+			
+			break;
+		case PRE_EXT_WIPE:
+			break;
+		case PURGING_PUMP:
+			setLabelColorToRunning(getLabelPurging());
+			break;
+		case READY_TO_ALIGN_STRETCH:
+			
+			break;
+		case READY_TO_EXTRUDE:
+			
+			break;
+		case READY_TO_HOME:
+			setLabelColorToRunning(getLabelReadyToHome());
+			break;
+		case READY_TO_START_PUMP:
+			setLabelColorToRunning(getLabelReadyToPurge());
+			break;
+		case READY_TO_STRETCH:
+			setLabelColorToRunning(getLabelReadyToStretch());
+			break;
+		case STRETCHING:
+			setLabelColorToRunning(getLabelStretching());
+			break;
+		case STRETCH_COMPLETE:
+			break;
+		default:
+			break;
+		
+		}		
+	}
+	private void setLabelColorToRunning(JLabel _label){
+		_label.setForeground(Color.BLUE);
+	}
+	private void setLabelColorToComplete(JLabel _label){
+		_label.setForeground(Color.GREEN);
+	}
 	@Override
 	public void waitingForExternal() {
 		switch (processExec.getCurrentStage()) {
@@ -1549,7 +1602,9 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 	private JLabel getLabelInitializeRun() {
 		if (lblInitializeRun == null) {
 			lblInitializeRun = new JLabel(" Initialize Run");
-			lblInitializeRun.setFont(new Font("Tahoma", Font.PLAIN, 13));
+			lblInitializeRun.setForeground(Color.BLACK);
+			lblInitializeRun.setBackground(UIManager.getColor("Button.background"));
+			lblInitializeRun.setFont(new Font("Tahoma", Font.BOLD, 14));
 			lblInitializeRun.setHorizontalAlignment(SwingConstants.CENTER);
 			stageLabels.add(lblInitializeRun);
 		}
@@ -1558,7 +1613,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 	private JLabel getLabelReadyToHome() {
 		if (lblReadyToHome == null) {
 			lblReadyToHome = new JLabel(" Ready To Home");
-			lblReadyToHome.setFont(new Font("Tahoma", Font.PLAIN, 13));
+			lblReadyToHome.setFont(new Font("Tahoma", Font.BOLD, 14));
 			stageLabels.add(lblReadyToHome);
 		}
 		return lblReadyToHome;
@@ -1566,7 +1621,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 	private JLabel getLabelHoming() {
 		if (lblHoming == null) {
 			lblHoming = new JLabel(" Homing");
-			lblHoming.setFont(new Font("Tahoma", Font.PLAIN, 13));
+			lblHoming.setFont(new Font("Tahoma", Font.BOLD, 14));
 			stageLabels.add(lblHoming);
 		}
 		return lblHoming;
@@ -1574,7 +1629,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 	private JLabel getLabelAdjustStretchBar() {
 		if (lblAdjustingStretchBar == null) {
 			lblAdjustingStretchBar = new JLabel(" Adjusting Stretch Bar");
-			lblAdjustingStretchBar.setFont(new Font("Tahoma", Font.PLAIN, 13));
+			lblAdjustingStretchBar.setFont(new Font("Tahoma", Font.BOLD, 14));
 			stageLabels.add(lblAdjustingStretchBar);
 		}
 		return lblAdjustingStretchBar;
@@ -1582,7 +1637,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 	private JLabel getLabelReadyToPurge() {
 		if (lblReadyToPurge == null) {
 			lblReadyToPurge = new JLabel(" Ready To Purge");
-			lblReadyToPurge.setFont(new Font("Tahoma", Font.PLAIN, 13));
+			lblReadyToPurge.setFont(new Font("Tahoma", Font.BOLD, 14));
 			stageLabels.add(lblReadyToPurge);
 		}
 		return lblReadyToPurge;
@@ -1590,7 +1645,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 	private JLabel getLabelPurging() {
 		if (lblPurging == null) {
 			lblPurging = new JLabel(" Purging");
-			lblPurging.setFont(new Font("Tahoma", Font.PLAIN, 13));
+			lblPurging.setFont(new Font("Tahoma", Font.BOLD, 14));
 			stageLabels.add(lblPurging);
 		}
 		return lblPurging;
@@ -1598,7 +1653,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 	private JLabel getLabelReadyToExtrude() {
 		if (lblReadyToExtrude == null) {
 			lblReadyToExtrude = new JLabel(" Ready To Extrude");
-			lblReadyToExtrude.setFont(new Font("Tahoma", Font.PLAIN, 13));
+			lblReadyToExtrude.setFont(new Font("Tahoma", Font.BOLD, 14));
 			stageLabels.add(lblReadyToExtrude);
 		}
 		return lblReadyToExtrude;
@@ -1606,7 +1661,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 	private JLabel getLabelWaitingForCleaning() {
 		if (lblWaitingForCleaningpolymerizing == null) {
 			lblWaitingForCleaningpolymerizing = new JLabel(" Waiting for Cleaning/Polymerizing");
-			lblWaitingForCleaningpolymerizing.setFont(new Font("Tahoma", Font.PLAIN, 13));
+			lblWaitingForCleaningpolymerizing.setFont(new Font("Tahoma", Font.BOLD, 14));
 			stageLabels.add(lblWaitingForCleaningpolymerizing);
 		}
 		return lblWaitingForCleaningpolymerizing;
@@ -1614,7 +1669,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 	private JLabel getLabelPolymerizing() {
 		if (lblPolymerizing == null) {
 			lblPolymerizing = new JLabel(" Polymerizing");
-			lblPolymerizing.setFont(new Font("Tahoma", Font.PLAIN, 13));
+			lblPolymerizing.setFont(new Font("Tahoma", Font.BOLD, 14));
 			stageLabels.add(lblPolymerizing);
 		}
 		return lblPolymerizing;
@@ -1622,7 +1677,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 	private JLabel getLabelReadyToStretch() {
 		if (lblReadyToStretch == null) {
 			lblReadyToStretch = new JLabel(" Ready to Stretch");
-			lblReadyToStretch.setFont(new Font("Tahoma", Font.PLAIN, 13));
+			lblReadyToStretch.setFont(new Font("Tahoma", Font.BOLD, 14));
 			stageLabels.add(lblReadyToStretch);
 		}
 		return lblReadyToStretch;
@@ -1630,7 +1685,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 	private JLabel getLabelStretching() {
 		if (lblStretching == null) {
 			lblStretching = new JLabel(" Stretching");
-			lblStretching.setFont(new Font("Tahoma", Font.PLAIN, 13));
+			lblStretching.setFont(new Font("Tahoma", Font.BOLD, 14));
 			stageLabels.add(lblStretching);
 		}
 		return lblStretching;
@@ -1638,7 +1693,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 	private JLabel getLabelOperationComplete() {
 		if (lblOperationComplete == null) {
 			lblOperationComplete = new JLabel(" Operation Complete");
-			lblOperationComplete.setFont(new Font("Tahoma", Font.PLAIN, 13));
+			lblOperationComplete.setFont(new Font("Tahoma", Font.BOLD, 14));
 			stageLabels.add(lblOperationComplete);
 		}
 		return lblOperationComplete;
@@ -1646,7 +1701,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 	private JLabel getLabelExtruding() {
 		if (lblExtruding == null) {
 			lblExtruding = new JLabel(" Extruding");
-			lblExtruding.setFont(new Font("Tahoma", Font.PLAIN, 13));
+			lblExtruding.setFont(new Font("Tahoma", Font.BOLD, 14));
 			stageLabels.add(lblExtruding);
 		}
 		return lblExtruding;
