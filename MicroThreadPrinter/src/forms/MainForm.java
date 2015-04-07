@@ -1786,6 +1786,16 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 	private JCheckBox getChckbxManualPumpCtrl() {
 		if (chckbxManualPumpCtrl == null) {
 			chckbxManualPumpCtrl = new JCheckBox("Manual Pump Ctrl");
+			chckbxManualPumpCtrl.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent arg0) {
+					if (chckbxManualPumpCtrl.isSelected()){
+						getCb_PumpPort().setEnabled(false);
+					}
+					else{
+						getCb_PumpPort().setEnabled(true);
+					}
+				}
+			});
 			chckbxManualPumpCtrl.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		}
 		return chckbxManualPumpCtrl;
