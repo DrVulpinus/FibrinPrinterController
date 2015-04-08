@@ -2,6 +2,7 @@ package forms;
 
 import java.applet.AudioClip;
 import java.awt.Component;
+import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 
@@ -72,12 +73,16 @@ import javax.swing.event.ChangeEvent;
 
 import java.beans.VetoableChangeListener;
 import java.beans.PropertyChangeEvent;
+
 import javax.swing.JRadioButton;
 import javax.swing.ButtonGroup;
+
 import java.awt.Font;
 import java.awt.SystemColor;
 import java.awt.Color;
+
 import javax.swing.UIManager;
+
 import java.beans.PropertyChangeListener;
 
 public class MainForm implements PreferenceChangeListener, ProcessStageListener{
@@ -1391,12 +1396,40 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 		}
 		return spNumThreads;
 	}
+	
+	private void disableEverythingBelow(Component root){
+		root.setEnabled(false);
+		try {
+			Container c = (Container) root;
+			for (Component component : c.getComponents()) {
+				disableEverythingBelow(component);
+			}
+		} catch (Exception e) {
+			root.setEnabled(false);
+		}
+
+	}
+	private void enableEverythingBelow(Component root){
+		root.setEnabled(true);
+		try {
+			Container c = (Container) root;
+			for (Component component : c.getComponents()) {
+				enableEverythingBelow(component);
+			}
+		} catch (Exception e) {
+			root.setEnabled(true);
+		}
+
+	}	
+
 	private JButton getBtnAutoConfigurePorts() {
 		if (btnAutoConfigurePorts == null) {
 			btnAutoConfigurePorts = new JButton("Auto. Configure Ports");
 			btnAutoConfigurePorts.setFont(new Font("Tahoma", Font.PLAIN, 14));
 			btnAutoConfigurePorts.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent arg0) {
+					disableEverythingBelow(getTabbedPane());
+					
 					updatePorts();
 					GrblControl gCtrl = new GrblControl();		
 					try {
@@ -1415,10 +1448,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 						}
 						
 					}
-					
-					
-					
-					
+					enableEverythingBelow(getTabbedPane());
 				}
 			});
 		}
