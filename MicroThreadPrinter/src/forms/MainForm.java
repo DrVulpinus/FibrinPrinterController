@@ -1449,6 +1449,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 						
 					}
 					enableEverythingBelow(getTabbedPane());
+					getCb_PumpPort().setEnabled(!getChckbxManualPumpCtrl().isSelected());
 				}
 			});
 		}
