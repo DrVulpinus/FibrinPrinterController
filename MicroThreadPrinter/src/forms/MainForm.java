@@ -191,6 +191,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 	private JCheckBox chckbxManualPumpCtrl;
 	private JTextField txtExtrudeTimer;
 	private JTextField txtStretchTimer;
+	private JTextField txtOperationTimer;
 	
 	/**
 	 * Launch the application.
@@ -547,7 +548,8 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 			pnlRun.add(getLabelReadyToStretch(), "cell 1 12");
 			pnlRun.add(getLabelStretching(), "cell 1 13,alignx left");
 			pnlRun.add(getTxtStretchTimer(), "cell 2 13,growx");
-			pnlRun.add(getLabelOperationComplete(), "cell 1 14");
+			pnlRun.add(getLabelOperationComplete(), "cell 1 14,alignx left");
+			pnlRun.add(getTxtOperationTimer(), "cell 2 14,growx");
 		}
 		return pnlRun;
 	}
@@ -1864,6 +1866,17 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 			txtStretchTimer.setColumns(10);
 		}
 		return txtStretchTimer;
+	}
+	private JTextField getTxtOperationTimer() {
+		if (txtOperationTimer == null) {
+			txtOperationTimer = new JTextField();
+			txtOperationTimer.setText("00:00:00");
+			txtOperationTimer.setHorizontalAlignment(SwingConstants.LEFT);
+			txtOperationTimer.setFont(new Font("Tahoma", Font.BOLD, 24));
+			txtOperationTimer.setEditable(false);
+			txtOperationTimer.setColumns(10);
+		}
+		return txtOperationTimer;
 	}
 }
 
