@@ -9,6 +9,7 @@ public class IOPortControl implements SerialPortEventListener{
 	private DataOutputStream outs;
 	private ArrayList<String> recievedLines = new ArrayList<>();
 	private ArrayList<COMLineRecieved> listeners = new ArrayList<COMLineRecieved>();
+	public boolean ok = false;
     String port;
 	public IOPortControl(String _port, int _baud){
 		serial = new NRSerialPort(_port, _baud);
@@ -23,7 +24,11 @@ public class IOPortControl implements SerialPortEventListener{
 		return NRSerialPort.getAvailableSerialPorts();
 	}
 	public void addNewLineListener(COMLineRecieved _listener){
-		listeners.clear();
+		if (listeners.size() > 0){
+			System.out.println("Too Many Listeners");
+			return;
+		}
+		//recievedLines.clear();
 		listeners.add(_listener);
 	}
 	public void removeAllListeners(){
@@ -62,14 +67,23 @@ public class IOPortControl implements SerialPortEventListener{
 	}
 	public void sendDataLine(String _dataLine){
 		try {
-			outs.writeChars(_dataLine+"\r\n");
-			outs.flush();
-			System.out.println(_dataLine);
+			ok = false;
+			outs.writeChars(_dataLine);
+			System.out.println("Send: " +_dataLine);
+			outs.writeChars(" \n");
+			try {
+				Thread.sleep(100);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			//System.out.println(_dataLine);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
+	
 	public boolean isConnected(){
 		return serial.isConnected();
 	}
@@ -77,8 +91,9 @@ public class IOPortControl implements SerialPortEventListener{
 		if (!recievedLines.isEmpty()){
 			String outStr = recievedLines.get(0);
 			
-			System.out.println(outStr);
+			//System.out.println(outStr);
 			recievedLines.remove(0);
+			
 			return outStr;
 		}
 		return null;
@@ -98,7 +113,11 @@ public class IOPortControl implements SerialPortEventListener{
 			if (ins.ready()){
 				while (ins.ready()){
 					try {
-						recievedLines.add(ins.readLine());
+						String inline = ins.readLine();
+						if (listeners.size() >0){							
+								recievedLines.add(inline);
+								//System.out.println("Recieve: " + inline);							
+						}
 					} catch (IOException e) {
 						
 					}

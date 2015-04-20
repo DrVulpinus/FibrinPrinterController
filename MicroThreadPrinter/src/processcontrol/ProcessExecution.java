@@ -265,7 +265,6 @@ public class ProcessExecution extends Thread{
 					doSleep(500);
 					grblCtrl.getStatus();
 				}
-				//Start PolyTimer
 				break;
 			case CLEAN_PUMP:
 				if (pumpCtrl != null){
@@ -285,22 +284,23 @@ public class ProcessExecution extends Thread{
 						e.printStackTrace();
 					}
 				}
+				tmr.stopTimer();
 				break;
 			case READY_TO_STRETCH:
 				waitForExt();
+				tmr.stopTimer();
 				break;
 			case STRETCHING:
 				//Perform Stretch
 				for (GCode code : paths.getStretchCodes()) {
 					grblCtrl.addNewGCode(code);
 				}
+				while(grblCtrl.isIdle()){
+					doSleep(500);
+					grblCtrl.getStatus();
+				}
 				while(!grblCtrl.isIdle()){
-					try {
-						Thread.sleep(500);
-					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
+					doSleep(500);
 					grblCtrl.getStatus();
 				}
 				break;

@@ -45,6 +45,7 @@ public String toString(){
 		outCode += gCodeParam.getValue();
 		outCode += " ";
 	}
+	//outCode += ";";
 	return outCode;
 }
 	

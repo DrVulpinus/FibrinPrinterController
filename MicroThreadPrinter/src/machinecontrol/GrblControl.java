@@ -127,12 +127,14 @@ public class GrblControl implements COMLineRecieved, ArrayAddListener{
 				getGrblSettings();
 				System.out.println("Found the Grbl");
 				disconnect();
+				
 				return true;
 			}
 		}
 		}
 		
 		disconnect();
+		
 		return false;		
 	}
 	
@@ -199,7 +201,6 @@ public class GrblControl implements COMLineRecieved, ArrayAddListener{
 		}
 		sendLines.add("$H");
 		sendLines.add(new GCode('F', 3000));
-		sendLines.add(new GCode('G', 92, new GCodeParam('X',0),new GCodeParam('Y',0),new GCodeParam('Z',0)));
 		sendLines.add(new GCode('G', 1, new GCodeParam('X',0),new GCodeParam('Y',70),new GCodeParam('Z',70)));
 		sendLines.add(new GCode('G', 92, new GCodeParam('X',0),new GCodeParam('Y',0),new GCodeParam('Z',0)));
 		
@@ -224,14 +225,32 @@ public class GrblControl implements COMLineRecieved, ArrayAddListener{
 	@Override
 	public void newLineRecieved() {	//This gets called each time a new response is received from the GRBl	
 		String response = grblPort.readNextLine();
-		if (response.equals("ok")){
-			//We got the right thing!			
+		response.trim();
+		System.out.println("Recieve: " + response);
+		//System.out.println("HAHAHAH");
+		if (response.contains("ok") && grblPort.ok == false){			
+			grblPort.ok = true;		
+			System.out.println("Got ACK");
+			if (!sendLines.isEmpty()){//If there is more stuff in the buffer, keep on sending it.
+				sendLines.remove(0);
+				grblPort.sendDataLine(sendLines.get(0));   		
+	    	}
 		}
-		if (response.startsWith("<")&& response.endsWith(">")){
-			//We got a status response
+		if (response.contains("error")){
+			System.out.println("ERROR...ERROR...ERROR...ERROR...ERROR...ERROR...ERROR...ERROR...ERROR");
+			grblPort.sendDataLine(sendLines.get(0));  
+		}
+		if (response.contains("<")&&response.contains(">")){
+			if (!sendLines.isEmpty()){//If there is more stuff in the buffer, keep on sending it.
+			//	grblPort.sendDataLine(sendLines.remove(0));   		
+	    	}
 			response = response.replaceAll("<", "");
 			response = response.replaceAll(">", "");
 			String data[] = response.split(",");
+			for (String string : data) {
+				string = string.toUpperCase();
+			}
+			System.out.println("************************************* "+data[0]);
 			switch (data[0].toUpperCase()) {
 			case "IDLE":
 				machineState = MachineState.IDLE;
@@ -248,18 +267,9 @@ public class GrblControl implements COMLineRecieved, ArrayAddListener{
 			}
 			
 		}
-		if (!sendLines.isEmpty()){//If there is more stuff in the buffer, keep on sending it.
-    		grblPort.sendDataLine(sendLines.get(0));
-    		sendLines.remove(0);
-    	}
-		else{
-			/*
-			 * If we are done performing automatic line sending, then we should stop listening for automated replies
-			 * The reason for this is so that if we want to send something with a specially formatted reply, we can do
-			 * that as long as automatic sending is disabled
-			 */
-			grblPort.removeAllListeners(); 
-		}
+		
+		
+		
 		// TODO: Need to add error checking functionality here
 		
 	}
@@ -272,8 +282,15 @@ public class GrblControl implements COMLineRecieved, ArrayAddListener{
 		 */
 		if (sendLines.size() == 1){
 			grblPort.addNewLineListener(this);
-			grblPort.sendDataLine(sendLines.get(0));
-			sendLines.remove(0);
+			grblPort.sendDataLine(sendLines.get(0));		
+		}
+		
+	}
+	@Override
+	public void preAddNew() {
+		// TODO Auto-generated method stub
+		if (sendLines.isEmpty()){
+			//grblPort.removeAllListeners(); 
 		}
 	}
 	

@@ -896,7 +896,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 	}
 	private JLabel getLblFeedrate() {
 		if (lblFeedrate == null) {
-			lblFeedrate = new JLabel("Feedrate:");
+			lblFeedrate = new JLabel("Crosshead Speed:");
 			lblFeedrate.setFont(new Font("Tahoma", Font.PLAIN, 14));
 			lblFeedrate.setHorizontalAlignment(SwingConstants.RIGHT);
 		}
@@ -1140,7 +1140,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 				}
 			});
 			spFeed.setToolTipText("<html>This is the speed at which the nozzle will move throughout the operation.</html>");
-			spFeed.setModel(new SpinnerNumberModel(1, 1, 999, 1));
+			spFeed.setModel(new SpinnerNumberModel(new Integer(600), new Integer(1), null, new Integer(1)));
 			spFeed.setValue(prefs.getFeedrate());
 		}
 		return spFeed;

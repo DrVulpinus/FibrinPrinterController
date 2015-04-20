@@ -167,6 +167,7 @@ public class PathCreator {
 			currentX += xStep;
 			genExt.newFeedMove(currentX, bar1StartY, 0);
 		}
+		genExt.newRapidMove(xSize, ySize, extrusionLength);
 		//genExt.newRapidMove(0, 0, 0);
 		//System.out.println(currThreads);
 		
@@ -183,7 +184,7 @@ public class PathCreator {
 		//TODO may need more offset here
 		float stretchDist = (extrusionLength * stretchPercent)/100;
 		stretchDist += barThickness;
-		genStretch.newFeedMove(0, 0, stretchDist);
+		genStretch.newFeedMove(xSize, ySize, stretchDist);
 		System.out.println(getExtCodes().size());
 	}
 	public ArrayList<GCode> getExtCodes(){
