@@ -189,6 +189,8 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 	private ArrayList<JLabel> stageLabels = new ArrayList<JLabel>();
 	private JLabel lblExtruding;
 	private JCheckBox chckbxManualPumpCtrl;
+	private JTextField txtExtrudeTimer;
+	private JTextField txtStretchTimer;
 	
 	/**
 	 * Launch the application.
@@ -272,7 +274,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 				
 			}
 		});
-		frame.setBounds(100, 100, prefs.getWindowWidth(), prefs.getWindowHeight());
+		frame.setBounds(100, 100, 885, 594);
 		frame.setMinimumSize(new Dimension(500, 500));
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(new BorderLayout(0, 0));
@@ -521,7 +523,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 					verifyAllSettings();
 				}
 			});
-			pnlRun.setLayout(new MigLayout("", "[][grow]", "[][][][][][][][][][][][][][][][]"));
+			pnlRun.setLayout(new MigLayout("", "[][grow][grow]", "[][][][][][][][][][][][][][][][]"));
 			pnlRun.add(getLblJobName(), "cell 0 0,alignx trailing");
 			pnlRun.add(getTxtJobName(), "cell 1 0,growx");
 			pnlRun.add(getLblJobDescription(), "cell 0 1,alignx trailing");
@@ -537,13 +539,15 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 			pnlRun.add(getLabelReadyToPurge(), "cell 1 6");
 			pnlRun.add(getLabelPurging(), "cell 1 7");
 			pnlRun.add(getLabelReadyToExtrude(), "cell 1 8");
-			pnlRun.add(getLabelExtruding(), "cell 1 9");
+			pnlRun.add(getLabelExtruding(), "cell 1 9,alignx left");
+			pnlRun.add(getTxtExtrudeTimer(), "cell 2 9,growx");
 			pnlRun.add(getLabelWaitingForCleaning(), "cell 1 10");
 			pnlRun.add(getLabelPolymerizing(), "cell 1 11");
+			pnlRun.add(getTxtProcesstimer(), "cell 2 11,alignx left");
 			pnlRun.add(getLabelReadyToStretch(), "cell 1 12");
-			pnlRun.add(getLabelStretching(), "cell 1 13");
+			pnlRun.add(getLabelStretching(), "cell 1 13,alignx left");
+			pnlRun.add(getTxtStretchTimer(), "cell 2 13,growx");
 			pnlRun.add(getLabelOperationComplete(), "cell 1 14");
-			pnlRun.add(getTxtProcesstimer(), "cell 1 15,growx");
 		}
 		return pnlRun;
 	}
@@ -1691,8 +1695,8 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 	private JTextField getTxtProcesstimer() {
 		if (txtProcesstimer == null) {
 			txtProcesstimer = new JTextField();
-			txtProcesstimer.setFont(new Font("Tahoma", Font.BOLD, 30));
-			txtProcesstimer.setHorizontalAlignment(SwingConstants.CENTER);
+			txtProcesstimer.setFont(new Font("Tahoma", Font.BOLD, 24));
+			txtProcesstimer.setHorizontalAlignment(SwingConstants.LEFT);
 			txtProcesstimer.setEditable(false);
 			txtProcesstimer.setText("00:00:00");
 			txtProcesstimer.setColumns(10);
@@ -1725,7 +1729,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 			lblInitializeRun = new JLabel(" Initialize Run");
 			lblInitializeRun.setForeground(Color.BLACK);
 			lblInitializeRun.setBackground(UIManager.getColor("Button.background"));
-			lblInitializeRun.setFont(new Font("Tahoma", Font.BOLD, 14));
+			lblInitializeRun.setFont(new Font("Tahoma", Font.BOLD, 24));
 			lblInitializeRun.setHorizontalAlignment(SwingConstants.CENTER);
 			stageLabels.add(lblInitializeRun);
 		}
@@ -1734,7 +1738,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 	private JLabel getLabelReadyToHome() {
 		if (lblReadyToHome == null) {
 			lblReadyToHome = new JLabel(" Ready To Home");
-			lblReadyToHome.setFont(new Font("Tahoma", Font.BOLD, 14));
+			lblReadyToHome.setFont(new Font("Tahoma", Font.BOLD, 24));
 			stageLabels.add(lblReadyToHome);
 		}
 		return lblReadyToHome;
@@ -1742,7 +1746,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 	private JLabel getLabelHoming() {
 		if (lblHoming == null) {
 			lblHoming = new JLabel(" Homing");
-			lblHoming.setFont(new Font("Tahoma", Font.BOLD, 14));
+			lblHoming.setFont(new Font("Tahoma", Font.BOLD, 24));
 			stageLabels.add(lblHoming);
 		}
 		return lblHoming;
@@ -1750,7 +1754,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 	private JLabel getLabelAdjustStretchBar() {
 		if (lblAdjustingStretchBar == null) {
 			lblAdjustingStretchBar = new JLabel(" Adjusting Stretch Bar");
-			lblAdjustingStretchBar.setFont(new Font("Tahoma", Font.BOLD, 14));
+			lblAdjustingStretchBar.setFont(new Font("Tahoma", Font.BOLD, 24));
 			stageLabels.add(lblAdjustingStretchBar);
 		}
 		return lblAdjustingStretchBar;
@@ -1758,7 +1762,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 	private JLabel getLabelReadyToPurge() {
 		if (lblReadyToPurge == null) {
 			lblReadyToPurge = new JLabel(" Ready To Purge");
-			lblReadyToPurge.setFont(new Font("Tahoma", Font.BOLD, 14));
+			lblReadyToPurge.setFont(new Font("Tahoma", Font.BOLD, 24));
 			stageLabels.add(lblReadyToPurge);
 		}
 		return lblReadyToPurge;
@@ -1766,7 +1770,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 	private JLabel getLabelPurging() {
 		if (lblPurging == null) {
 			lblPurging = new JLabel(" Purging");
-			lblPurging.setFont(new Font("Tahoma", Font.BOLD, 14));
+			lblPurging.setFont(new Font("Tahoma", Font.BOLD, 24));
 			stageLabels.add(lblPurging);
 		}
 		return lblPurging;
@@ -1774,7 +1778,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 	private JLabel getLabelReadyToExtrude() {
 		if (lblReadyToExtrude == null) {
 			lblReadyToExtrude = new JLabel(" Ready To Extrude");
-			lblReadyToExtrude.setFont(new Font("Tahoma", Font.BOLD, 14));
+			lblReadyToExtrude.setFont(new Font("Tahoma", Font.BOLD, 24));
 			stageLabels.add(lblReadyToExtrude);
 		}
 		return lblReadyToExtrude;
@@ -1782,7 +1786,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 	private JLabel getLabelWaitingForCleaning() {
 		if (lblWaitingForCleaningpolymerizing == null) {
 			lblWaitingForCleaningpolymerizing = new JLabel(" Waiting for Cleaning/Polymerizing");
-			lblWaitingForCleaningpolymerizing.setFont(new Font("Tahoma", Font.BOLD, 14));
+			lblWaitingForCleaningpolymerizing.setFont(new Font("Tahoma", Font.BOLD, 24));
 			stageLabels.add(lblWaitingForCleaningpolymerizing);
 		}
 		return lblWaitingForCleaningpolymerizing;
@@ -1790,7 +1794,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 	private JLabel getLabelPolymerizing() {
 		if (lblPolymerizing == null) {
 			lblPolymerizing = new JLabel(" Polymerizing");
-			lblPolymerizing.setFont(new Font("Tahoma", Font.BOLD, 14));
+			lblPolymerizing.setFont(new Font("Tahoma", Font.BOLD, 24));
 			stageLabels.add(lblPolymerizing);
 		}
 		return lblPolymerizing;
@@ -1798,7 +1802,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 	private JLabel getLabelReadyToStretch() {
 		if (lblReadyToStretch == null) {
 			lblReadyToStretch = new JLabel(" Ready to Stretch");
-			lblReadyToStretch.setFont(new Font("Tahoma", Font.BOLD, 14));
+			lblReadyToStretch.setFont(new Font("Tahoma", Font.BOLD, 24));
 			stageLabels.add(lblReadyToStretch);
 		}
 		return lblReadyToStretch;
@@ -1806,7 +1810,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 	private JLabel getLabelStretching() {
 		if (lblStretching == null) {
 			lblStretching = new JLabel(" Stretching");
-			lblStretching.setFont(new Font("Tahoma", Font.BOLD, 14));
+			lblStretching.setFont(new Font("Tahoma", Font.BOLD, 24));
 			stageLabels.add(lblStretching);
 		}
 		return lblStretching;
@@ -1814,7 +1818,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 	private JLabel getLabelOperationComplete() {
 		if (lblOperationComplete == null) {
 			lblOperationComplete = new JLabel(" Operation Complete");
-			lblOperationComplete.setFont(new Font("Tahoma", Font.BOLD, 14));
+			lblOperationComplete.setFont(new Font("Tahoma", Font.BOLD, 24));
 			stageLabels.add(lblOperationComplete);
 		}
 		return lblOperationComplete;
@@ -1822,7 +1826,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 	private JLabel getLabelExtruding() {
 		if (lblExtruding == null) {
 			lblExtruding = new JLabel(" Extruding");
-			lblExtruding.setFont(new Font("Tahoma", Font.BOLD, 14));
+			lblExtruding.setFont(new Font("Tahoma", Font.BOLD, 24));
 			stageLabels.add(lblExtruding);
 		}
 		return lblExtruding;
@@ -1838,6 +1842,28 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 			chckbxManualPumpCtrl.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		}
 		return chckbxManualPumpCtrl;
+	}
+	private JTextField getTxtExtrudeTimer() {
+		if (txtExtrudeTimer == null) {
+			txtExtrudeTimer = new JTextField();
+			txtExtrudeTimer.setText("00:00:00");
+			txtExtrudeTimer.setHorizontalAlignment(SwingConstants.LEFT);
+			txtExtrudeTimer.setFont(new Font("Tahoma", Font.BOLD, 24));
+			txtExtrudeTimer.setEditable(false);
+			txtExtrudeTimer.setColumns(10);
+		}
+		return txtExtrudeTimer;
+	}
+	private JTextField getTxtStretchTimer() {
+		if (txtStretchTimer == null) {
+			txtStretchTimer = new JTextField();
+			txtStretchTimer.setText("00:00:00");
+			txtStretchTimer.setHorizontalAlignment(SwingConstants.LEFT);
+			txtStretchTimer.setFont(new Font("Tahoma", Font.BOLD, 24));
+			txtStretchTimer.setEditable(false);
+			txtStretchTimer.setColumns(10);
+		}
+		return txtStretchTimer;
 	}
 }
 
