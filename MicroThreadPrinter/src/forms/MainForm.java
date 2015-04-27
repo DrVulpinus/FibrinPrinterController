@@ -1609,6 +1609,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 			break;
 		case OPERATION_COMPLETE:
 			setLabelColorToRunning(getLabelOperationComplete());
+			grblDev.homeGrbl();
 			break;
 		case POLYMERIZING:
 			setLabelColorToRunning(getLabelPolymerizing());

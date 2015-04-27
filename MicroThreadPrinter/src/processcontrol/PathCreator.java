@@ -139,9 +139,9 @@ public class PathCreator {
 		finalWidth = xSize - (2*sideMargins);
 		genExt.newRapidMove(sideMargins, 0, 0);
 		float bar1StartY = barThickness;
-		float bar1EndY = 0;
+		float bar1EndY = -3;
 		float bar2StartY = barThickness + extrusionLength;
-		float bar2EndY = bar2StartY+ barThickness;
+		float bar2EndY = bar2StartY+ barThickness +3;
 		float currentX = sideMargins;
 		float xStep = threadSpacing/2;
 		int currThreads = 0;
@@ -173,10 +173,11 @@ public class PathCreator {
 		
 		
 		//Now calculate the initial stuff
+		genInit.setNewFeedRate(400);
 		//TODO find out the exact distance that this needs to move out
-		genInit.newRapidMove(0, 0, extrusionLength);
+		genInit.newFeedMove(0, 0, extrusionLength);
 		//TODO Input Offsets here, may need to add more steps for reliability
-		genInit.newRapidMove(0, 0, 0);
+		genInit.newRapidMove(0, 0, -75);
 		
 		//Now do the stretching
 		genStretch.setNewFeedRate(stretchRate);

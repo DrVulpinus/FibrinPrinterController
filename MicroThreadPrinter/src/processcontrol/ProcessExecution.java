@@ -318,6 +318,7 @@ public class ProcessExecution extends Thread{
 				break;
 			case OPERATION_COMPLETE:
 				tmrOp.stopTimer();
+				grblCtrl.sendHomeAtZero();
 				//Shutdown Sequence
 				break;
 			default:
