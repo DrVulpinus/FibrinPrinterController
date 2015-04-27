@@ -1,13 +1,10 @@
 package forms;
 
-import java.applet.AudioClip;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 
-import javax.sound.midi.Synthesizer;
-import javax.sound.sampled.AudioSystem;
 import javax.swing.JFrame;
 
 import java.awt.BorderLayout;
@@ -40,10 +37,8 @@ import javax.swing.JCheckBox;
 
 import java.io.File;
 import java.io.IOException;
-import java.sql.Time;
 import java.text.NumberFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.prefs.PreferenceChangeEvent;
 import java.util.prefs.PreferenceChangeListener;
 
@@ -52,7 +47,6 @@ import javax.swing.JTextField;
 import processcontrol.PathCreator;
 import processcontrol.ProcessExecution;
 import processcontrol.ProcessLogger;
-import processcontrol.ProcessParam;
 import processcontrol.ProcessStage;
 import processcontrol.ProcessStageListener;
 
@@ -71,14 +65,9 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ChangeEvent;
 
-import java.beans.VetoableChangeListener;
 import java.beans.PropertyChangeEvent;
 
-import javax.swing.JRadioButton;
-import javax.swing.ButtonGroup;
-
 import java.awt.Font;
-import java.awt.SystemColor;
 import java.awt.Color;
 
 import javax.swing.UIManager;
@@ -98,7 +87,6 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 	private boolean isConnected = false;
 	private boolean isUpdating = false;
 	private SettingsManager prefs = new SettingsManager();
-	private boolean goneOnce = false;
 	GrblControl grblDev;
 	PumpControl pumpDev;
 	PathCreator pathCreator = new PathCreator();
@@ -118,7 +106,6 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 	private JFormattedTextField frmtdtxtfldSyringeDiameter;
 	private JLabel lblSyringeUnits;
 	private JComboBox<String> cbUnits;
-	private ArrayList<ProcessParam> processParameters = new ArrayList<ProcessParam>();
 	private JSplitPane sPExtrusion;
 	private JPanel pnlExtCfg;
 	private JCheckBox chckbxPerformExtrusion;
@@ -170,7 +157,6 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 	private JButton btnLoadProfile;
 	private MachineGraphic mG;
 	private MachineGraphic mG2;
-	private final ButtonGroup btnGrpProcessStage = new ButtonGroup();
 	private JTextField txtProcesstimer;
 	private JPanel pnlStretchDraw;
 	private JButton btnRunOperationAuto;
@@ -246,7 +232,6 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 		try {
 			logger.generateLogFile();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -351,7 +336,6 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 		return settingsOK;
 	}
 	private boolean verifyLoggingSettings(){
-		boolean settingsOK = false;
 		if (prefs.getLogFiles()){
 			File logFile = new File(prefs.getLogFileDir());
 			if (!logFile.exists()){
@@ -716,7 +700,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 			pumpDev.connect();
 		}
 		grblDev.connect();
-		processExec = new ProcessExecution(pumpDev, grblDev, pathCreator, getTxtProcesstimer());
+		processExec = new ProcessExecution(pumpDev, grblDev, pathCreator, getTxtProcesstimer(),getTxtExtrudeTimer(),getTxtStretchTimer(),getTxtOperationTimer());
 		if (getChckbxPerformExtrusion().isSelected()){
 			if(getChckbxPerformStretch().isSelected()){
 				if (manualPoly){
@@ -1450,7 +1434,6 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 						try {
 							getCb_PumpPort().setSelectedItem(pCtrl.getPort());
 						} catch (Exception e) {
-							// TODO: handle exception
 						}
 						
 					}
@@ -1577,8 +1560,11 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 		case READY_TO_ALIGN_STRETCH:
 			
 			break;
+		case MANUALPOLYMERIZING:
+			setLabelColorToComplete(getLabelPolymerizing());
+			break;
 		case READY_TO_EXTRUDE:
-			
+			setLabelColorToComplete(getLabelReadyToExtrude());
 			break;
 		case READY_TO_HOME:
 			setLabelColorToComplete(getLabelReadyToHome());
@@ -1635,11 +1621,14 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 		case PURGING_PUMP:
 			setLabelColorToRunning(getLabelPurging());
 			break;
+		case MANUALPOLYMERIZING:
+			setLabelColorToRunning(getLabelPolymerizing());
+			break;
 		case READY_TO_ALIGN_STRETCH:
 			
 			break;
 		case READY_TO_EXTRUDE:
-			
+			setLabelColorToRunning(getLabelReadyToExtrude());
 			break;
 		case READY_TO_HOME:
 			setLabelColorToRunning(getLabelReadyToHome());

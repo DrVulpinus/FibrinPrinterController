@@ -3,6 +3,10 @@ package machinecontrol;
 import java.util.ArrayList;
 
 public class COMOutLines extends ArrayList<String>{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 5173091144610987468L;
 	private ArrayList<ArrayAddListener> listeners = new ArrayList<ArrayAddListener>();
 	
 

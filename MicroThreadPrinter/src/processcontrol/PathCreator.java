@@ -35,7 +35,7 @@ public class PathCreator {
 	 */
 	float finalWidth = 0;
 	
-	private ArrayList<Point> points = new ArrayList<Point>();
+	
 	public PathCreator(){
 		
 	}
@@ -142,7 +142,6 @@ public class PathCreator {
 		float bar1EndY = 0;
 		float bar2StartY = barThickness + extrusionLength;
 		float bar2EndY = bar2StartY+ barThickness;
-		float endX = xSize - sideMargins;
 		float currentX = sideMargins;
 		float xStep = threadSpacing/2;
 		int currThreads = 0;

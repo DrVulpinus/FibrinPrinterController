@@ -4,17 +4,12 @@ package forms;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
-import java.awt.Stroke;
-import java.awt.geom.Line2D;
 import java.util.ArrayList;
 
 import javax.swing.JPanel;
-import javax.swing.border.StrokeBorder;
-
 import processcontrol.PathCreator;
 import machinecontrol.GCode;
 
@@ -66,15 +61,7 @@ public class MachineGraphic extends JPanel {
 			int[] endPoint = extPoints.get(i);
 			
 			g.drawLine(startPoint[0], startPoint[1], endPoint[0], endPoint[1]);
-		}
-		
-		//TODO: Draw Bed Rectangle
-		//TODO: Draw Home Shoe
-		//TODO: Draw Stretch Shoe
-		//TODO: Draw Extrusions
-		
-		
-		
+		}		
 		//TODO: Animate the stretch shoe when stretching is active?
 		
 	}

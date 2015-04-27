@@ -1,7 +1,5 @@
 package machinecontrol;
 
-import java.lang.Thread.State;
-import java.util.ArrayList;
 import java.util.Hashtable;
 
 import javax.swing.JOptionPane;
@@ -87,7 +85,6 @@ public class GrblControl implements COMLineRecieved, ArrayAddListener{
 		try {
 			Thread.sleep(2500);
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		//Grbl returns a bunch of lines, with each line containing a different setting and value
@@ -152,7 +149,6 @@ public class GrblControl implements COMLineRecieved, ArrayAddListener{
 				//We got the right thing!
 				return true;
 			}
-			// TODO: Need to add error checking functionality here
 		}
 		return false;
 	}
@@ -196,7 +192,6 @@ public class GrblControl implements COMLineRecieved, ArrayAddListener{
 		try {
 			Thread.sleep(1000);
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		sendLines.add("$H");
@@ -268,10 +263,6 @@ public class GrblControl implements COMLineRecieved, ArrayAddListener{
 			
 		}
 		
-		
-		
-		// TODO: Need to add error checking functionality here
-		
 	}
 	@Override
 	public void itemAdded() {
@@ -288,7 +279,6 @@ public class GrblControl implements COMLineRecieved, ArrayAddListener{
 	}
 	@Override
 	public void preAddNew() {
-		// TODO Auto-generated method stub
 		if (sendLines.isEmpty()){
 			//grblPort.removeAllListeners(); 
 		}

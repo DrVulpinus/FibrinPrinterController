@@ -13,21 +13,32 @@ public class ProcessExecution extends Thread{
 	PumpControl pumpCtrl;
 	GrblControl grblCtrl;
 	GCodeGenerator codeProg;
-	private boolean readyForStaging = true;
 	private boolean extHold = true;
 	PathCreator paths;
 	ProcessStage currentStage;
 	JTextField timerView;
+	JTextField timerExtrudeView;
+	JTextField timerStretchView;
+	JTextField timerOpTime;
 	Timer tmr;
+	Timer tmrOp;
+	Timer tmrExtrude;
+	Timer tmrStretch;
 	private ArrayList<ProcessStage> executionPath = new ArrayList<ProcessStage>();
 	
 	private ArrayList<ProcessStageListener> listeners = new ArrayList<ProcessStageListener>();
-	public ProcessExecution(PumpControl _pumpCtrl, GrblControl _grblCtrl, PathCreator _paths, JTextField _timerView){
+	public ProcessExecution(PumpControl _pumpCtrl, GrblControl _grblCtrl, PathCreator _paths, JTextField _timerView, JTextField _timerExtrudeView, JTextField _timerStretchView, JTextField _timerOpTime){
 		pumpCtrl = _pumpCtrl;
 		grblCtrl = _grblCtrl;
 		paths = _paths;
 		timerView = _timerView;
+		timerOpTime = _timerOpTime;
+		timerStretchView = _timerStretchView;
+		timerExtrudeView = _timerExtrudeView;
 		tmr = new Timer(_timerView);
+		tmrOp = new Timer(timerOpTime);
+		tmrExtrude = new Timer(timerExtrudeView);
+		tmrStretch = new Timer(timerStretchView);
 		executionPath.add(ProcessStage.PRESTART);
 	}
 	
@@ -96,7 +107,6 @@ public class ProcessExecution extends Thread{
 		}
 	}
 	private void stageStarted(){
-		readyForStaging = false;
 		for (ProcessStageListener processStageListener : listeners) {
 			processStageListener.stageStarted(currentStage);
 		}
@@ -176,7 +186,6 @@ public class ProcessExecution extends Thread{
 		try {
 			Thread.sleep(_millis);
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -199,6 +208,7 @@ public class ProcessExecution extends Thread{
 				
 				break;
 			case INITIALIZE_PUMP:
+				tmrOp.startTimer();
 				if(pumpCtrl != null){
 				pumpCtrl.configurePump();
 				}
@@ -251,6 +261,7 @@ public class ProcessExecution extends Thread{
 				//Wipe the nozzle
 				break;
 			case EXTRUDING:
+				tmrExtrude.startTimer();
 				System.out.println(paths.getExtCodes().size());
 				for (GCode code : paths.getExtCodes()) {
 					System.out.println(code.toString());
@@ -265,6 +276,7 @@ public class ProcessExecution extends Thread{
 					doSleep(500);
 					grblCtrl.getStatus();
 				}
+				tmrExtrude.stopTimer();
 				break;
 			case CLEAN_PUMP:
 				if (pumpCtrl != null){
@@ -280,7 +292,6 @@ public class ProcessExecution extends Thread{
 					try {
 						Thread.sleep(500);
 					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 				}
@@ -291,7 +302,7 @@ public class ProcessExecution extends Thread{
 				tmr.stopTimer();
 				break;
 			case STRETCHING:
-				//Perform Stretch
+				tmrStretch.startTimer();
 				for (GCode code : paths.getStretchCodes()) {
 					grblCtrl.addNewGCode(code);
 				}
@@ -303,8 +314,10 @@ public class ProcessExecution extends Thread{
 					doSleep(500);
 					grblCtrl.getStatus();
 				}
+				tmrStretch.stopTimer();
 				break;
 			case OPERATION_COMPLETE:
+				tmrOp.stopTimer();
 				//Shutdown Sequence
 				break;
 			default:

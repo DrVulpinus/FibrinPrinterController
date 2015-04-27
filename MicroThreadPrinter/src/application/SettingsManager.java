@@ -1,6 +1,5 @@
 package application;
 
-import java.util.Properties;
 import java.util.prefs.PreferenceChangeListener;
 import java.util.prefs.Preferences;
 

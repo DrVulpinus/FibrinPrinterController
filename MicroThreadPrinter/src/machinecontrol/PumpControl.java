@@ -1,9 +1,5 @@
 package machinecontrol;
 
-import java.util.Properties;
-import java.util.prefs.Preferences;
-import java.util.prefs.PreferencesFactory;
-
 import javax.swing.JOptionPane;
 
 import application.SettingsManager;
