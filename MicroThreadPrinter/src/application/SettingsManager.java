@@ -61,22 +61,22 @@ public class SettingsManager {
 		return prefs.get(GRBL_COM_PORT, "COM1");
 	}
 	public int getBarThickness(){
-		return prefs.getInt(BAR_THICKNESS, 1);
+		return prefs.getInt(BAR_THICKNESS, 25);
 	}
 	public int getBedX(){
-		return prefs.getInt(BED_X, 50);
+		return prefs.getInt(BED_X, 310);
 	}
 	public int getBedY(){
-		return prefs.getInt(BED_Y, 50);
+		return prefs.getInt(BED_Y, 150);
 	}
 	public int getExtrusionRate(){
-		return prefs.getInt(EXTRUSION_RATE, 1);
+		return prefs.getInt(EXTRUSION_RATE, 3);
 	}
 	public int getFeedrate(){
-		return prefs.getInt(FEEDRATE, 1);
+		return prefs.getInt(FEEDRATE, 1000);
 	}
 	public int getNumThreads(){
-		return prefs.getInt(NUM_THREADS, 1);
+		return prefs.getInt(NUM_THREADS, 10);
 	}
 	public boolean getPerformExtrusion(){
 		return prefs.getBoolean(PERFORM_EXTRUSION, true);
@@ -88,19 +88,19 @@ public class SettingsManager {
 		return prefs.get(POLY_TIME, "00:00:00");
 	}
 	public int getSideMargins(){
-		return prefs.getInt(SIDE_MARGINS, 0);
+		return prefs.getInt(SIDE_MARGINS, 5);
 	}
 	public int getStretchPercent(){
-		return prefs.getInt(STRETCH_PERCENT, 100);
+		return prefs.getInt(STRETCH_PERCENT, 300);
 	}
 	public int getStretchRate(){
-		return prefs.getInt(STRETCH_RATE, 1);
+		return prefs.getInt(STRETCH_RATE, 100);
 	}
 	public int getThreadLength(){
-		return prefs.getInt(THREAD_LENGTH, 5);
+		return prefs.getInt(THREAD_LENGTH, 80);
 	}
 	public int getThreadSpacing(){
-		return prefs.getInt(THREAD_SPACING, 2);
+		return prefs.getInt(THREAD_SPACING, 10);
 	}
 	public int getTSPT(){
 		return prefs.getInt(THREAD_START_PAUSE_TIME, 0);

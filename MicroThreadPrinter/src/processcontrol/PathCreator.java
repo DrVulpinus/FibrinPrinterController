@@ -137,7 +137,7 @@ public class PathCreator {
 		genStretch.clearCodes();
 		genExt.setNewFeedRate(feedRate);
 		finalWidth = xSize - (2*sideMargins);
-		genExt.newRapidMove(sideMargins, 0, 0);
+		genExt.newRapidMove(sideMargins, 0, -75);
 		float bar1StartY = barThickness;
 		float bar1EndY = -3;
 		float bar2StartY = barThickness + extrusionLength;
@@ -147,25 +147,33 @@ public class PathCreator {
 		int currThreads = 0;
 		
 		while (currThreads < numThreads) {
-			genExt.newFeedMove(currentX, bar2StartY, 0);
+			genExt.newFeedMove(currentX, bar2StartY, -75);
 			currentX += xStep;
-			genExt.newFeedMove(currentX, bar2EndY, 0);
+			genExt.newFeedMove(currentX, bar2EndY, -75);
 			currThreads++;
+			if (threadStartPauseTime > 0){
+				genExt.newDwellCode(threadStartPauseTime);
+			}
 			if (currThreads >= numThreads){
 				break;
 			}
 			currentX += xStep;
-			genExt.newFeedMove(currentX, bar2StartY, 0);
-			genExt.newFeedMove(currentX, bar1StartY, 0);
+			genExt.newFeedMove(currentX, bar2StartY, -75);
+			genExt.newFeedMove(currentX, bar1StartY, -75);
 			currentX += xStep;
-			genExt.newFeedMove(currentX, bar1EndY, 0);
+			genExt.newFeedMove(currentX, bar1EndY, -75);
 			currThreads++;
+			if (threadStartPauseTime > 0){
+				genExt.newDwellCode(threadStartPauseTime);
+			}
 			if (currThreads >= numThreads){
 				break;
 			}
+			
 			currentX += xStep;
-			genExt.newFeedMove(currentX, bar1StartY, 0);
+			genExt.newFeedMove(currentX, bar1StartY, -75);
 		}
+		genExt.newRapidMove(xSize, ySize, -75);
 		genExt.newRapidMove(xSize, ySize, extrusionLength);
 		//genExt.newRapidMove(0, 0, 0);
 		//System.out.println(currThreads);
@@ -173,7 +181,7 @@ public class PathCreator {
 		
 		
 		//Now calculate the initial stuff
-		genInit.setNewFeedRate(400);
+		genInit.setNewFeedRate(1000);
 		//TODO find out the exact distance that this needs to move out
 		genInit.newFeedMove(0, 0, extrusionLength);
 		//TODO Input Offsets here, may need to add more steps for reliability

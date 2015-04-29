@@ -1199,7 +1199,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 					prefs.setBedY((int) spBedY.getValue());
 				}
 			});
-			spBedY.setModel(new SpinnerNumberModel(new Integer(50), new Integer(25), null, new Integer(1)));
+			spBedY.setModel(new SpinnerNumberModel(310, 25, 320, 1));
 			spBedY.setValue(prefs.getBedY());
 		}
 		return spBedY;
@@ -1230,7 +1230,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 					prefs.setBedX((int)spBedX.getValue());
 				}
 			});
-			spBedX.setModel(new SpinnerNumberModel(new Integer(50), new Integer(25), null, new Integer(1)));
+			spBedX.setModel(new SpinnerNumberModel(150, 25, 150, 1));
 			spBedX.setValue(prefs.getBedX());
 		}
 		return spBedX;
@@ -1609,7 +1609,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 			break;
 		case OPERATION_COMPLETE:
 			setLabelColorToRunning(getLabelOperationComplete());
-			grblDev.homeGrbl();
+			//grblDev.homeGrbl();
 			break;
 		case POLYMERIZING:
 			setLabelColorToRunning(getLabelPolymerizing());
@@ -1660,22 +1660,27 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 	public void waitingForExternal() {
 		switch (processExec.getCurrentStage()) {
 		case READY_TO_HOME:
-			JOptionPane.showMessageDialog(frame,"Please configure the machine for homing.  Homing will begin immediately after upon acknowledging this message.", "Ready to Begin Homing Procedure", JOptionPane.INFORMATION_MESSAGE);
+			JOptionPane.showMessageDialog(frame,"<html>Please configure the machine for homing.<br>Homing will begin immediately upon acknowledging this message.</html>", "Ready to Begin Homing Procedure", JOptionPane.INFORMATION_MESSAGE);
 			break;
 		case READY_TO_ALIGN_STRETCH:
-			JOptionPane.showMessageDialog(frame,"Please configure the machine for aligning the stretch bar.  Alignment will begin immediately upon acknowledging this message", "Ready to Align Stretch Bar", JOptionPane.INFORMATION_MESSAGE);
+			JOptionPane.showMessageDialog(frame,"<html>Please configure the machine for aligning the stretch bar.<br>Alignment will begin immediately upon acknowledging this message.<br>To avoid damage to machine, please ensure nozzle is not attached</html>", "Ready to Align Stretch Bar", JOptionPane.INFORMATION_MESSAGE);
 			break;
 		case READY_TO_START_PUMP:
-			JOptionPane.showMessageDialog(frame,"Please configure the machine for starting and purging the syringe pump. Pumping will begin immediately upon acknowledging this message", "Ready to Start/Purge Pump", JOptionPane.INFORMATION_MESSAGE);
+			if (getChckbxManualPumpCtrl().isSelected()){
+				JOptionPane.showMessageDialog(frame,"<html>Please configure the machine for starting and purging the syringe pump.<br>Move first shoe so that nozzle is positioned over the back of the shoe.<br>Please start pumping immediately upon acknowledging this message.</html>", "Ready to Start/Purge Pump", JOptionPane.INFORMATION_MESSAGE);
+			}
+			else{
+				JOptionPane.showMessageDialog(frame,"<html>Please configure the machine for starting and purging the syringe pump.<br>Move first shoe so that nozzle is positioned over the back of the shoe.<br>Pumping will begin immediately upon acknowledging this message.</html>", "Ready to Start/Purge Pump", JOptionPane.INFORMATION_MESSAGE);
+			}
 			break;
 		case READY_TO_EXTRUDE:
-			JOptionPane.showMessageDialog(frame,"Please make sure the machine is ready to begin extruding.  The pump should be purged and running, and the nozzle should be hooked up and ready.  Extrusion will begin immediately after acknowledging this message.", "Ready to Begin Extrusion", JOptionPane.INFORMATION_MESSAGE);
+			JOptionPane.showMessageDialog(frame,"<html>Please make sure the machine is ready to begin extruding.<br>The pump should be purged and running, and the nozzle should be hooked up and ready.<br>Extrusion will begin immediately after acknowledging this message.</html>", "Ready to Begin Extrusion", JOptionPane.INFORMATION_MESSAGE);
 			break;
 		case CLEAN_PUMP:
-			JOptionPane.showMessageDialog(frame,"Extrusion is complete.  Please disconnect and clean nozzle assembly.  Machine will return to home immediately after acknowledging this message.  Failure to remove nozzle may result in damage to the machine and/or threads", "Extrusion Complete", JOptionPane.INFORMATION_MESSAGE);
+			JOptionPane.showMessageDialog(frame,"<html>Extrusion is complete.<br>Please disconnect and clean nozzle assembly.<br>Machine will return to home immediately after acknowledging this message.<br>Failure to remove nozzle may result in damage to the machine and/or threads.</html>", "Extrusion Complete", JOptionPane.INFORMATION_MESSAGE);
 			break;
 		case READY_TO_STRETCH:
-			JOptionPane.showMessageDialog(frame,"Please configure the machine for stretching.  Stretching will begin immediately upon acknowledging this message", "Ready to Begin Stretching", JOptionPane.INFORMATION_MESSAGE);
+			JOptionPane.showMessageDialog(frame,"<html>Please configure the machine for stretching.<br>Stretching will begin immediately upon acknowledging this message.<br>Be sure to stop the pump and remove the nozzle from the machine before continuing to avoid damage.</html>", "Ready to Begin Stretching", JOptionPane.INFORMATION_MESSAGE);
 			break;
 		default:
 			break;

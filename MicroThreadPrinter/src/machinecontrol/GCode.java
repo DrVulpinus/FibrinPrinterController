@@ -42,7 +42,7 @@ public String toString(){
 	outCode += " ";
 	for (GCodeParam gCodeParam : parameters) {
 		outCode += gCodeParam.getParam();
-		outCode += gCodeParam.getValue();
+		outCode += Float.toString(gCodeParam.getValue());
 		outCode += " ";
 	}
 	//outCode += ";";

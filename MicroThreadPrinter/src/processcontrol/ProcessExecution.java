@@ -6,6 +6,7 @@ import javax.swing.JTextField;
 
 import machinecontrol.GCode;
 import machinecontrol.GCodeGenerator;
+import machinecontrol.GCodeParam;
 import machinecontrol.GrblControl;
 import machinecontrol.PumpControl;
 
@@ -248,6 +249,7 @@ public class ProcessExecution extends Thread{
 				break;
 			case READY_TO_START_PUMP:
 				waitForExt();
+				grblCtrl.addNewGCode(new GCode('G', 0, new GCodeParam('Y', -3)));
 				break;
 			case PURGING_PUMP:
 				if(pumpCtrl != null){
@@ -268,9 +270,16 @@ public class ProcessExecution extends Thread{
 					grblCtrl.addNewGCode(code);
 				}
 				System.out.println("Added All GCodes");
+				
 				while(grblCtrl.isIdle()){
 					doSleep(500);
 					grblCtrl.getStatus();
+				}
+				try {
+					Thread.sleep(1000);
+				} catch (InterruptedException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
 				}
 				while(!grblCtrl.isIdle()){
 					doSleep(500);
