@@ -174,7 +174,7 @@ public class PathCreator {
 			genExt.newFeedMove(currentX, bar1StartY, -75);
 		}
 		genExt.newRapidMove(xSize, ySize, -75);
-		genExt.newRapidMove(xSize, ySize, extrusionLength);
+		
 		//genExt.newRapidMove(0, 0, 0);
 		//System.out.println(currThreads);
 		
@@ -188,6 +188,7 @@ public class PathCreator {
 		genInit.newRapidMove(0, 0, -75);
 		
 		//Now do the stretching
+		genStretch.newRapidMove(xSize, ySize, extrusionLength-10);
 		genStretch.setNewFeedRate(stretchRate);
 		//TODO may need more offset here
 		float stretchDist = (extrusionLength * stretchPercent)/100;
