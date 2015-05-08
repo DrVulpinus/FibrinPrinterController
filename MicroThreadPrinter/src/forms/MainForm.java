@@ -203,6 +203,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 		initialize();
 		updatePorts();
 		getChckbxGenerateLogFiles().setSelected(prefs.getLogFiles());
+		getChckbxManualPumpCtrl().setSelected(prefs.getManualPump());
 		if (getChckbxGenerateLogFiles().isSelected()){
 			getTfLogDir().setText(prefs.getLogFileDir());
 			getBtnBrowseLogDir().setEnabled(true);
@@ -262,6 +263,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 		});
 		frame.setBounds(100, 100, 885, 594);
 		frame.setMinimumSize(new Dimension(500, 500));
+		frame.setMaximumSize(new Dimension(10000, 10000));
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(new BorderLayout(0, 0));
 		frame.getContentPane().add(getTabbedPane(), BorderLayout.CENTER);
