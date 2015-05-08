@@ -178,6 +178,8 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener 
 	JTextField txtExtrudeTimer;
 	JTextField txtStretchTimer;
 	JTextField txtOperationTimer;
+	static MainForm window;
+	private JButton btnCancelOperation;
 
 	/**
 	 * Launch the application.
@@ -186,7 +188,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener 
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					MainForm window = new MainForm();
+					window = new MainForm();
 					window.frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -223,7 +225,12 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener 
 		prefs.addPreferenceChangeListener(this);
 
 	}
-
+	static void startAgain(){
+		MainForm old = window;
+		main(null);
+		old.frame.dispose();
+		
+	}
 	void logFileGenerationTest() {
 		ProcessLogger logger = new ProcessLogger(prefs, getTxtJobName()
 				.getText(), getTxtJobDescription().getText());
@@ -544,10 +551,11 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener 
 			pnlRun.add(getBtnSaveCurrentProfile(), "cell 0 3,growx");
 			pnlRun.add(getLabelReadyToHome(), "cell 1 3");
 			pnlRun.add(getLabelHoming(), "cell 1 4");
-			pnlRun.add(getBtnRunOperation(), "cell 0 5,growx");
+			pnlRun.add(getBtnRunOperation(), "cell 0 5,grow");
 			pnlRun.add(getLabelAdjustStretchBar(), "cell 1 5");
-			pnlRun.add(getBtnRunOperationAuto(), "cell 0 6");
+			pnlRun.add(getBtnRunOperationAuto(), "cell 0 6,growy");
 			pnlRun.add(getLabelReadyToPurge(), "cell 1 6");
+			pnlRun.add(getBtnCancelOperation(), "cell 0 7,grow");
 			pnlRun.add(getLabelPurging(), "cell 1 7");
 			pnlRun.add(getLabelReadyToExtrude(), "cell 1 8");
 			pnlRun.add(getLabelExtruding(), "cell 1 9,alignx left");
@@ -705,6 +713,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener 
 	 *            threads, set it to false to automatically time polymerization
 	 */
 	public void runOperation(boolean manualPoly) {
+		getBtnRunOperation().setEnabled(true);
 
 		// This recolors all of the process stage labels to red to indicate that
 		// stage has not been started
@@ -1761,7 +1770,13 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener 
 			break;
 		case OPERATION_COMPLETE:
 			setLabelColorToRunning(getLabelOperationComplete());
-			// grblDev.homeGrbl();
+			JOptionPane
+			.showMessageDialog(
+					frame,
+					"<html>Operation is complete.</html>",
+					"Operation Complete",
+					JOptionPane.INFORMATION_MESSAGE);
+			startAgain();
 			break;
 		case POLYMERIZING:
 			setLabelColorToRunning(getLabelPolymerizing());
@@ -1813,63 +1828,112 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener 
 
 	@Override
 	public void waitingForExternal() {
+		int result;
 		switch (processExec.getCurrentStage()) {
 		case READY_TO_HOME:
-			JOptionPane
-					.showMessageDialog(
+			result = JOptionPane
+			.showOptionDialog(
 							frame,
-							"<html>Please configure the machine for homing.<br>Homing will begin immediately upon acknowledging this message.</html>",
-							"Ready to Begin Homing Procedure",
-							JOptionPane.INFORMATION_MESSAGE);
+							"<html>Please configure the machine for homing.<br>Homing will begin immediately upon acknowledging this message.<br>Not pressing OK will cancel the operation.</html>",
+							"Ready to Begin Homing Procedure",JOptionPane.OK_OPTION,
+							JOptionPane.INFORMATION_MESSAGE,
+							null,
+							null,
+							null);
+			if (result != JOptionPane.OK_OPTION){
+				startAgain();
+			}
 			break;
 		case READY_TO_ALIGN_STRETCH:
-			JOptionPane
-					.showMessageDialog(
+			result = JOptionPane
+					.showOptionDialog(
 							frame,
-							"<html>Please configure the machine for aligning the stretch bar.<br>Alignment will begin immediately upon acknowledging this message.<br>To avoid damage to machine, please ensure nozzle is not attached</html>",
+							"<html>Please configure the machine for aligning the stretch bar.<br>Alignment will begin immediately upon acknowledging this message.<br>To avoid damage to machine, please ensure nozzle is not attached.<br>Not pressing OK will cancel the operation.</html>",
 							"Ready to Align Stretch Bar",
-							JOptionPane.INFORMATION_MESSAGE);
+							JOptionPane.OK_OPTION,
+							JOptionPane.INFORMATION_MESSAGE,
+							null,
+							null,
+							null);
+			if (result != JOptionPane.OK_OPTION){
+				startAgain();
+			}
 			break;
 		case READY_TO_START_PUMP:
 			if (getChckbxManualPumpCtrl().isSelected()) {
-				JOptionPane
-						.showMessageDialog(
+				result = JOptionPane
+						.showOptionDialog(
 								frame,
-								"<html>Please configure the machine for starting and purging the syringe pump.<br>Move first shoe so that nozzle is positioned over the back of the shoe.<br>Please start pumping immediately upon acknowledging this message.</html>",
+								"<html>Please configure the machine for starting and purging the syringe pump.<br>Move first shoe so that nozzle is positioned over the back of the shoe.<br>Please start pumping immediately upon acknowledging this message.<br>Not pressing OK will cancel the operation.</html>",
 								"Ready to Start/Purge Pump",
-								JOptionPane.INFORMATION_MESSAGE);
+								JOptionPane.OK_OPTION,
+								JOptionPane.INFORMATION_MESSAGE,
+								null,
+								null,
+								null);
+				if (result != JOptionPane.OK_OPTION){
+					startAgain();
+				}
 			} else {
-				JOptionPane
-						.showMessageDialog(
+				result = JOptionPane
+						.showOptionDialog(
 								frame,
-								"<html>Please configure the machine for starting and purging the syringe pump.<br>Move first shoe so that nozzle is positioned over the back of the shoe.<br>Pumping will begin immediately upon acknowledging this message.</html>",
+								"<html>Please configure the machine for starting and purging the syringe pump.<br>Move first shoe so that nozzle is positioned over the back of the shoe.<br>Pumping will begin immediately upon acknowledging this message.<br>Not pressing OK will cancel the operation.</html>",
 								"Ready to Start/Purge Pump",
-								JOptionPane.INFORMATION_MESSAGE);
+								JOptionPane.OK_OPTION,
+								JOptionPane.INFORMATION_MESSAGE,
+								null,
+								null,
+								null);
+				if (result != JOptionPane.OK_OPTION){
+					startAgain();
+				}
 			}
 			break;
 		case READY_TO_EXTRUDE:
-			JOptionPane
-					.showMessageDialog(
+			result = JOptionPane
+				.showOptionDialog(
 							frame,
-							"<html>Please make sure the machine is ready to begin extruding.<br>The pump should be purged and running, and the nozzle should be hooked up and ready.<br>Extrusion will begin immediately after acknowledging this message.</html>",
+							"<html>Please make sure the machine is ready to begin extruding.<br>The pump should be purged and running, and the nozzle should be hooked up and ready.<br>Extrusion will begin immediately after acknowledging this message.<br>Not pressing OK will cancel the operation.</html>",
 							"Ready to Begin Extrusion",
-							JOptionPane.INFORMATION_MESSAGE);
+							JOptionPane.OK_OPTION,
+							JOptionPane.INFORMATION_MESSAGE,
+							null,
+							null,
+							null);
+			if (result != JOptionPane.OK_OPTION){
+				startAgain();
+			}
 			break;
 		case CLEAN_PUMP:
-			JOptionPane
-					.showMessageDialog(
+			result = JOptionPane
+			.showOptionDialog(
 							frame,
-							"<html>Extrusion is complete.<br>Please disconnect and clean nozzle assembly.<br>Machine will return to home immediately after acknowledging this message.<br>Failure to remove nozzle may result in damage to the machine and/or threads.</html>",
+							"<html>Extrusion is complete.<br>Please disconnect and clean nozzle assembly.<br>Machine will return to home immediately after acknowledging this message.<br>Failure to remove nozzle may result in damage to the machine and/or threads.<br>Not pressing OK will cancel the operation.</html>",
 							"Extrusion Complete",
-							JOptionPane.INFORMATION_MESSAGE);
+							JOptionPane.OK_OPTION,
+							JOptionPane.INFORMATION_MESSAGE,
+							null,
+							null,
+							null);
+			if (result != JOptionPane.OK_OPTION){
+				startAgain();
+			}
 			break;
 		case READY_TO_STRETCH:
-			JOptionPane
-					.showMessageDialog(
+			result = JOptionPane
+			.showOptionDialog(
 							frame,
-							"<html>Please configure the machine for stretching.<br>Stretching will begin immediately upon acknowledging this message.<br>Be sure to stop the pump and remove the nozzle from the machine before continuing to avoid damage.</html>",
+							"<html>Please configure the machine for stretching.<br>Stretching will begin immediately upon acknowledging this message.<br>Be sure to stop the pump and remove the nozzle from the machine before continuing to avoid damage.<br>Not pressing OK will cancel the operation.</html>",
 							"Ready to Begin Stretching",
-							JOptionPane.INFORMATION_MESSAGE);
+							JOptionPane.OK_OPTION,
+							JOptionPane.INFORMATION_MESSAGE,
+							null,
+							null,
+							null);
+			if (result != JOptionPane.OK_OPTION){
+				startAgain();
+			}
 			break;
 		default:
 			break;
@@ -2085,5 +2149,21 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener 
 			txtOperationTimer.setColumns(10);
 		}
 		return txtOperationTimer;
+	}
+	private JButton getBtnCancelOperation() {
+		if (btnCancelOperation == null) {
+			btnCancelOperation = new JButton("Cancel Operation");
+			btnCancelOperation.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent arg0) {
+					int result = JOptionPane.showOptionDialog(null, "Are you sure you want to cancel.  All progress will be lost.", "Are you sure?", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE, null, null, null);
+					if (result == JOptionPane.YES_OPTION){
+						startAgain();
+					}
+				}
+			});
+			btnCancelOperation.setEnabled(false);
+			btnCancelOperation.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		}
+		return btnCancelOperation;
 	}
 }

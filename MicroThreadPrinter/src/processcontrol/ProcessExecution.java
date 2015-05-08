@@ -25,6 +25,7 @@ public class ProcessExecution extends Thread{
 	Timer tmrOp;
 	Timer tmrExtrude;
 	Timer tmrStretch;
+	boolean cancelOperation = false;
 	private ArrayList<ProcessStage> executionPath = new ArrayList<ProcessStage>();
 	
 	private ArrayList<ProcessStageListener> listeners = new ArrayList<ProcessStageListener>();
@@ -179,6 +180,7 @@ public class ProcessExecution extends Thread{
 	 */
 	@Override
 	public synchronized void start(){
+		cancelOperation = false;
 		super.start();
 	}
 	
