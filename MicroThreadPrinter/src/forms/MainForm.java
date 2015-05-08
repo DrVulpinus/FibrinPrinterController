@@ -74,7 +74,7 @@ import javax.swing.UIManager;
 
 import java.beans.PropertyChangeListener;
 
-public class MainForm implements PreferenceChangeListener, ProcessStageListener{
+public class MainForm implements PreferenceChangeListener, ProcessStageListener {
 
 	private ProfileManager profileMan = new ProfileManager();
 	JFrame frame;
@@ -178,7 +178,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 	JTextField txtExtrudeTimer;
 	JTextField txtStretchTimer;
 	JTextField txtOperationTimer;
-	
+
 	/**
 	 * Launch the application.
 	 */
@@ -193,7 +193,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 				}
 			}
 		});
-		
+
 	}
 
 	/**
@@ -204,28 +204,29 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 		updatePorts();
 		getChckbxGenerateLogFiles().setSelected(prefs.getLogFiles());
 		getChckbxManualPumpCtrl().setSelected(prefs.getManualPump());
-		if (getChckbxGenerateLogFiles().isSelected()){
+		if (getChckbxGenerateLogFiles().isSelected()) {
 			getTfLogDir().setText(prefs.getLogFileDir());
 			getBtnBrowseLogDir().setEnabled(true);
-		}
-		else{
+		} else {
 			getTfLogDir().setText("File Logging Disabled");
 			getBtnBrowseLogDir().setEnabled(false);
 		}
 		getFrmtdtxtfldSyringeDiameter().setText(prefs.getSyringeDia());
 		for (int i = 0; i < getCbUnits().getItemCount(); i++) {
-			if (getCbUnits().getItemAt(i).equals(prefs.getSyringeUnits())){
+			if (getCbUnits().getItemAt(i).equals(prefs.getSyringeUnits())) {
 				getCbUnits().setSelectedIndex(i);
 				return;
 			}
-			
+
 		}
-		
+
 		prefs.addPreferenceChangeListener(this);
-		
+
 	}
-	void logFileGenerationTest(){
-		ProcessLogger logger = new ProcessLogger(prefs, getTxtJobName().getText(), getTxtJobDescription().getText());
+
+	void logFileGenerationTest() {
+		ProcessLogger logger = new ProcessLogger(prefs, getTxtJobName()
+				.getText(), getTxtJobDescription().getText());
 		logger.recordStartTime();
 		logger.addParam("Test1", 100);
 		logger.addParam("Test2", 9945.34561);
@@ -236,7 +237,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 			e.printStackTrace();
 		}
 	}
-	
+
 	/**
 	 * Initialize the contents of the frame.
 	 */
@@ -252,13 +253,13 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 		frame.addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing(WindowEvent arg0) {
-				if (grblDev != null){
+				if (grblDev != null) {
 					grblDev.disconnect();
 				}
-				if (pumpDev != null){
+				if (pumpDev != null) {
 					pumpDev.disconnect();
 				}
-				
+
 			}
 		});
 		frame.setBounds(100, 100, 885, 594);
@@ -267,80 +268,92 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(new BorderLayout(0, 0));
 		frame.getContentPane().add(getTabbedPane(), BorderLayout.CENTER);
-		
+
 		updateRanges();
 	}
-	void selectedPortChanged(){
-		if (!isUpdating){
-		if (getCb_GrblPort().getSelectedItem() != getCb_PumpPort().getSelectedItem()){
-			
-			
-			
-			if (getCb_GrblPort().getSelectedItem() != null){
-				prefs.setGrblPort(getCb_GrblPort().getSelectedItem().toString());
-				//System.out.print("Grbl Port: ");
-				//System.out.println(prefs.getGrblPort());
-				
-			}
-			
-			
-			if (getCb_PumpPort().getSelectedItem() != null){
-				prefs.setPumpPort(getCb_PumpPort().getSelectedItem().toString());
-				//System.out.print("Pump Port: ");
-				//System.out.println(prefs.getPumpPort());
-				
+
+	void selectedPortChanged() {
+		if (!isUpdating) {
+			if (getCb_GrblPort().getSelectedItem() != getCb_PumpPort()
+					.getSelectedItem()) {
+
+				if (getCb_GrblPort().getSelectedItem() != null) {
+					prefs.setGrblPort(getCb_GrblPort().getSelectedItem()
+							.toString());
+					// System.out.print("Grbl Port: ");
+					// System.out.println(prefs.getGrblPort());
+
+				}
+
+				if (getCb_PumpPort().getSelectedItem() != null) {
+					prefs.setPumpPort(getCb_PumpPort().getSelectedItem()
+							.toString());
+					// System.out.print("Pump Port: ");
+					// System.out.println(prefs.getPumpPort());
+
+				}
 			}
 		}
+	}
+
+	void verifyAllSettings() {
+		if (verifyPortSettings() && verifyLoggingSettings()) {
+			getBtnRunOperation().setEnabled(true);
+			getBtnRunOperationAuto().setEnabled(true);
+		} else {
+			getBtnRunOperation().setEnabled(false);
+			getBtnRunOperationAuto().setEnabled(false);
 		}
+
 	}
-	
-	void verifyAllSettings(){
-		 if (verifyPortSettings() && verifyLoggingSettings()){
-			 getBtnRunOperation().setEnabled(true);
-			 getBtnRunOperationAuto().setEnabled(true);
-		 }
-		 else{
-			 getBtnRunOperation().setEnabled(false);
-			 getBtnRunOperationAuto().setEnabled(false);
-		 }
-		
-	}
-	private boolean verifyPortSettings(){
+
+	private boolean verifyPortSettings() {
 		boolean settingsOK = false;
 		try {
-			grblDev = new GrblControl(getCb_GrblPort().getSelectedItem().toString());
-			if (getChckbxManualPumpCtrl().isSelected()){
+			grblDev = new GrblControl(getCb_GrblPort().getSelectedItem()
+					.toString());
+			if (getChckbxManualPumpCtrl().isSelected()) {
 				pumpDev = null;
-				if (grblDev.verifySettings()){
+				if (grblDev.verifySettings()) {
+					settingsOK = true;
+					System.out.println("Verification Succeeded");
+				}
+			} else {
+				pumpDev = new PumpControl(prefs, getCb_PumpPort()
+						.getSelectedItem().toString());
+				if (grblDev.verifySettings() && pumpDev.verifySettings()) {
 					settingsOK = true;
 					System.out.println("Verification Succeeded");
 				}
 			}
-			else{
-				pumpDev = new PumpControl(prefs,getCb_PumpPort().getSelectedItem().toString());
-				if (grblDev.verifySettings() && pumpDev.verifySettings()){
-					settingsOK = true;
-					System.out.println("Verification Succeeded");
-				}
-			}					
 		} catch (Exception e) {
-			//Catch any exceptions thrown for illegal selection of items
+			// Catch any exceptions thrown for illegal selection of items
 		}
-		
-		
-		if (settingsOK == false){			
-			JOptionPane.showMessageDialog(frame,"Port settings verification failed, please recheck port settings and device connection integrity before  continuing.", "Port Settings Verification Failure", JOptionPane.ERROR_MESSAGE);
-		
+
+		if (settingsOK == false) {
+			JOptionPane
+					.showMessageDialog(
+							frame,
+							"Port settings verification failed, please recheck port settings and device connection integrity before  continuing.",
+							"Port Settings Verification Failure",
+							JOptionPane.ERROR_MESSAGE);
+
 		}
-		
+
 		return settingsOK;
 	}
-	private boolean verifyLoggingSettings(){
-		if (prefs.getLogFiles()){
+
+	private boolean verifyLoggingSettings() {
+		if (prefs.getLogFiles()) {
 			File logFile = new File(prefs.getLogFileDir());
-			if (!logFile.exists()){
-				if(!logFile.mkdirs()){
-					JOptionPane.showMessageDialog(frame,"Logging is enabled, but the folder in which to store log files is invalid. Please either disable logging or try browsing for a different directory.", "Log File Directory Invalid", JOptionPane.ERROR_MESSAGE);
+			if (!logFile.exists()) {
+				if (!logFile.mkdirs()) {
+					JOptionPane
+							.showMessageDialog(
+									frame,
+									"Logging is enabled, but the folder in which to store log files is invalid. Please either disable logging or try browsing for a different directory.",
+									"Log File Directory Invalid",
+									JOptionPane.ERROR_MESSAGE);
 					getTabbedPane().setSelectedIndex(0);
 					return false;
 				}
@@ -348,10 +361,11 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 		}
 		return true;
 	}
-	void updatePorts(){
+
+	void updatePorts() {
 		isUpdating = true;
-		if (!isConnected){
-			
+		if (!isConnected) {
+
 			getCb_GrblPort().setEnabled(true);
 			getCb_PumpPort().setEnabled(true);
 			getCb_GrblPort().removeAllItems();
@@ -359,51 +373,54 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 			for (String portName : IOPortControl.getPorts()) {
 				getCb_GrblPort().addItem(portName);
 				getCb_PumpPort().addItem(portName);
-				
+
 			}
-			//System.out.println(prefs.getGrblPort());
-			//System.out.println(prefs.getPumpPort());
-			
-			
+			// System.out.println(prefs.getGrblPort());
+			// System.out.println(prefs.getPumpPort());
+
 			for (int j = 0; j < getCb_GrblPort().getItemCount(); j++) {
-				if(getCb_GrblPort().getItemAt(j).equals(prefs.getGrblPort())){
+				if (getCb_GrblPort().getItemAt(j).equals(prefs.getGrblPort())) {
 					getCb_GrblPort().setSelectedIndex(j);
 				}
 			}
 			for (int j = 0; j < getCb_PumpPort().getItemCount(); j++) {
-				if(getCb_PumpPort().getItemAt(j).equals(prefs.getPumpPort())){
+				if (getCb_PumpPort().getItemAt(j).equals(prefs.getPumpPort())) {
 					getCb_PumpPort().setSelectedIndex(j);
 				}
 			}
-			
-		}
-		else{
+
+		} else {
 			getCb_GrblPort().setEnabled(false);
-			getCb_PumpPort().setEnabled(false);			
+			getCb_PumpPort().setEnabled(false);
 		}
-		if(getChckbxManualPumpCtrl().isSelected()){
+		if (getChckbxManualPumpCtrl().isSelected()) {
 			getCb_PumpPort().removeAllItems();
 			getCb_PumpPort().setEnabled(false);
 		}
 		isUpdating = false;
 		selectedPortChanged();
 	}
+
 	JTabbedPane getTabbedPane() {
 		if (tabbedPane == null) {
 			tabbedPane = new JTabbedPane(SwingConstants.TOP);
 			tabbedPane.setFont(new Font("Tahoma", Font.PLAIN, 14));
-			tabbedPane.addTab("General Settings", null, getPnlCfg(), "This page contains settings for the COM ports");
-			tabbedPane.addTab("Extrusion Settings", null, getPnlExtrusion(), null);
+			tabbedPane.addTab("General Settings", null, getPnlCfg(),
+					"This page contains settings for the COM ports");
+			tabbedPane.addTab("Extrusion Settings", null, getPnlExtrusion(),
+					null);
 			tabbedPane.addTab("Stretch Settings", null, getPnlStretch(), null);
 			tabbedPane.addTab("Run Operation", null, getPnlRun(), null);
 		}
 		return tabbedPane;
 	}
+
 	private JPanel getPnlCfg() {
 		if (pnlCfg == null) {
 			pnlCfg = new JPanel();
-			
-			pnlCfg.setLayout(new MigLayout("", "[][grow][grow]", "[][][][][][][][]"));
+
+			pnlCfg.setLayout(new MigLayout("", "[][grow][grow]",
+					"[][][][][][][][]"));
 			pnlCfg.add(getBtnAutoConfigurePorts(), "cell 0 0");
 			pnlCfg.add(getLblGrblPort(), "cell 1 0,alignx trailing");
 			pnlCfg.add(getCb_GrblPort(), "cell 2 0,growx");
@@ -429,6 +446,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 		}
 		return pnlCfg;
 	}
+
 	private JLabel getLblGrblPort() {
 		if (lblGrblPort == null) {
 			lblGrblPort = new JLabel("GrbL Port:");
@@ -436,6 +454,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 		}
 		return lblGrblPort;
 	}
+
 	private JLabel getLblPumpPort() {
 		if (lblPumpPort == null) {
 			lblPumpPort = new JLabel("Pump Port:");
@@ -443,11 +462,13 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 		}
 		return lblPumpPort;
 	}
+
 	JComboBox<String> getCb_GrblPort() {
 		if (cb_GrblPort == null) {
 			cb_GrblPort = new JComboBox<String>();
 			cb_GrblPort.setFont(new Font("Tahoma", Font.PLAIN, 14));
-			cb_GrblPort.setToolTipText("Select the com port for the Grbl device.");
+			cb_GrblPort
+					.setToolTipText("Select the com port for the Grbl device.");
 			cb_GrblPort.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					selectedPortChanged();
@@ -456,21 +477,23 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 		}
 		return cb_GrblPort;
 	}
+
 	JComboBox<String> getCb_PumpPort() {
 		if (cb_PumpPort == null) {
 			cb_PumpPort = new JComboBox<String>();
 			cb_PumpPort.setFont(new Font("Tahoma", Font.PLAIN, 14));
-			cb_PumpPort.setToolTipText("Select the com port for the syringe pump.");
+			cb_PumpPort
+					.setToolTipText("Select the com port for the syringe pump.");
 			cb_PumpPort.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					selectedPortChanged();
 				}
 			});
 		}
-		
-		
+
 		return cb_PumpPort;
 	}
+
 	private JPanel getPnlExtrusion() {
 		if (pnlExtrusion == null) {
 			pnlExtrusion = new JPanel();
@@ -485,6 +508,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 		}
 		return pnlExtrusion;
 	}
+
 	private JPanel getPnlStretch() {
 		if (pnlStretch == null) {
 			pnlStretch = new JPanel();
@@ -499,6 +523,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 		}
 		return pnlStretch;
 	}
+
 	private JPanel getPnlRun() {
 		if (pnlRun == null) {
 			pnlRun = new JPanel();
@@ -508,7 +533,8 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 					verifyAllSettings();
 				}
 			});
-			pnlRun.setLayout(new MigLayout("", "[][grow][grow]", "[][][][][][][][][][][][][][][][]"));
+			pnlRun.setLayout(new MigLayout("", "[][grow][grow]",
+					"[][][][][][][][][][][][][][][][]"));
 			pnlRun.add(getLblJobName(), "cell 0 0,alignx trailing");
 			pnlRun.add(getTxtJobName(), "cell 1 0,growx");
 			pnlRun.add(getLblJobDescription(), "cell 0 1,alignx trailing");
@@ -537,6 +563,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 		}
 		return pnlRun;
 	}
+
 	private JCheckBox getChckbxGenerateLogFiles() {
 		if (chckbxGenerateLogFiles == null) {
 			chckbxGenerateLogFiles = new JCheckBox("Generate Log Files");
@@ -544,11 +571,10 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 			chckbxGenerateLogFiles.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					prefs.setLogFiles(chckbxGenerateLogFiles.isSelected());
-					if (chckbxGenerateLogFiles.isSelected()){
+					if (chckbxGenerateLogFiles.isSelected()) {
 						getTfLogDir().setText(prefs.getLogFileDir());
 						getBtnBrowseLogDir().setEnabled(true);
-					}
-					else{
+					} else {
 						getTfLogDir().setText("");
 						getBtnBrowseLogDir().setEnabled(false);
 					}
@@ -557,6 +583,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 		}
 		return chckbxGenerateLogFiles;
 	}
+
 	JTextField getTfLogDir() {
 		if (tfLogDir == null) {
 			tfLogDir = new JTextField();
@@ -566,6 +593,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 		}
 		return tfLogDir;
 	}
+
 	JButton getBtnBrowseLogDir() {
 		if (btnBrowseLogDir == null) {
 			btnBrowseLogDir = new JButton("Choose Log Folder");
@@ -575,7 +603,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 					JFileChooser fc = new JFileChooser();
 					fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 					int result = fc.showOpenDialog(frame);
-					if (result == JFileChooser.APPROVE_OPTION){
+					if (result == JFileChooser.APPROVE_OPTION) {
 						File file = fc.getSelectedFile();
 						prefs.setLogFileDir(file.getAbsolutePath());
 						getTfLogDir().setText(prefs.getLogFileDir());
@@ -585,6 +613,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 		}
 		return btnBrowseLogDir;
 	}
+
 	private JLabel getLblJobName() {
 		if (lblJobName == null) {
 			lblJobName = new JLabel("Job Name:");
@@ -592,6 +621,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 		}
 		return lblJobName;
 	}
+
 	private JLabel getLblJobDescription() {
 		if (lblJobDescription == null) {
 			lblJobDescription = new JLabel("Job Description:");
@@ -599,21 +629,25 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 		}
 		return lblJobDescription;
 	}
+
 	private JTextField getTxtJobName() {
 		if (txtJobName == null) {
 			txtJobName = new JTextField();
 			txtJobName.setFont(new Font("Tahoma", Font.PLAIN, 14));
-			txtJobName.setToolTipText("Type a name for this job here, it will be used as the filename for the log file, if no name is given the job timestamp will be used instead.");
+			txtJobName
+					.setToolTipText("Type a name for this job here, it will be used as the filename for the log file, if no name is given the job timestamp will be used instead.");
 			txtJobName.setColumns(10);
-			
+
 		}
 		return txtJobName;
 	}
+
 	private JTextField getTxtJobDescription() {
 		if (txtJobDescription == null) {
 			txtJobDescription = new JTextField();
 			txtJobDescription.setFont(new Font("Tahoma", Font.PLAIN, 14));
-			txtJobDescription.setToolTipText("Type a brief description of the job here for it to be recorded at the top of the log file.");
+			txtJobDescription
+					.setToolTipText("Type a brief description of the job here for it to be recorded at the top of the log file.");
 			txtJobDescription.setColumns(10);
 		}
 		return txtJobDescription;
@@ -621,107 +655,114 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 
 	@Override
 	public void preferenceChange(PreferenceChangeEvent evt) {
-		
-		if (!prefs.getLogFiles()){
+
+		if (!prefs.getLogFiles()) {
 			getTxtJobName().setEnabled(false);
 			getTxtJobDescription().setEnabled(false);
 			getTxtJobName().setText("Logging is Disabled");
 			getTxtJobDescription().setText("Logging is Disabled");
-			getTxtJobName().setToolTipText("Job name cannot be set because logging is disabled.");
-			getTxtJobDescription().setToolTipText("Job description cannot be set because logging is disabled.");
-		}
-		else{
+			getTxtJobName().setToolTipText(
+					"Job name cannot be set because logging is disabled.");
+			getTxtJobDescription()
+					.setToolTipText(
+							"Job description cannot be set because logging is disabled.");
+		} else {
 			getTxtJobName().setEnabled(true);
 			getTxtJobDescription().setEnabled(true);
 			getTxtJobName().setText("");
 			getTxtJobDescription().setText("");
-			getTxtJobName().setToolTipText("Type a name for this job here, it will be used as the filename for the log file, if no name is given the job timestamp will be used instead.");
-			getTxtJobDescription().setToolTipText("Type a brief description of the job here for it to be recorded at the top of the log file.");
+			getTxtJobName()
+					.setToolTipText(
+							"Type a name for this job here, it will be used as the filename for the log file, if no name is given the job timestamp will be used instead.");
+			getTxtJobDescription()
+					.setToolTipText(
+							"Type a brief description of the job here for it to be recorded at the top of the log file.");
 		}
-		
+
 	}
+
 	private JButton getBtnRunOperation() {
 		if (btnRunOperation == null) {
 			btnRunOperation = new JButton("Run Operation");
 			btnRunOperation.setFont(new Font("Tahoma", Font.PLAIN, 14));
 			btnRunOperation.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					runOperation(true);					
+					runOperation(true);
 				}
 			});
 		}
 		return btnRunOperation;
 	}
-	
+
 	/**
-	 * This method takes all of the input parameters and executes a run.
-	 * This method does not do any error or sanity checking on parameters, it simply feeds the
-	 * parameters to the execution class and which in turn executes the operation
-	 * @param manualPoly Set this to true to manually time polymerization of the threads, set it to false to
-	 * automatically time polymerization
+	 * This method takes all of the input parameters and executes a run. This
+	 * method does not do any error or sanity checking on parameters, it simply
+	 * feeds the parameters to the execution class and which in turn executes
+	 * the operation
+	 * 
+	 * @param manualPoly
+	 *            Set this to true to manually time polymerization of the
+	 *            threads, set it to false to automatically time polymerization
 	 */
-	public void runOperation(boolean manualPoly){
-		
-		//This recolors all of the process stage labels to red to indicate that stage has not been started
+	public void runOperation(boolean manualPoly) {
+
+		// This recolors all of the process stage labels to red to indicate that
+		// stage has not been started
 		for (JLabel label1 : stageLabels) {
 			label1.setForeground(Color.RED);
 		}
-		
-		//This block of code parses the polymerization time string in the Formatted text box 
-		//and then converts that time into a number of seconds
+
+		// This block of code parses the polymerization time string in the
+		// Formatted text box
+		// and then converts that time into a number of seconds
 		int polyTime = 0;
 		String[] timeString = getFrmtdtxtfldPolyTime().getText().split(":");
 		int hours = Integer.parseInt(timeString[0]);
 		int minutes = Integer.parseInt(timeString[1]);
-		int seconds = Integer.parseInt(timeString[2]);					
-		polyTime = (hours*3600) + (minutes*60) + (seconds);
-		
-		//Create a path creator, configure it, and then generate the path.
+		int seconds = Integer.parseInt(timeString[2]);
+		polyTime = (hours * 3600) + (minutes * 60) + (seconds);
+
+		// Create a path creator, configure it, and then generate the path.
 		pathCreator = new PathCreator();
-		pathCreator.setParams((int) getSpBedX().getValue(),
-				(int) getSpBedY().getValue(),
-				(int) getSpSideMargins().getValue(),
-				(int) getSpExtRate().getValue(),
-				(int) getSpThreadLength().getValue(),
-				(int) getSpFeed().getValue(),
-				(int) getSpThreadSpace().getValue(),
-				(int) getSpTSPT().getValue(),
-				polyTime,
-				(int) getSpBarThick().getValue(),
-				(int) getSpNumThreads().getValue(),
-				(int) getSpStretchPer().getValue(),
+		pathCreator.setParams((int) getSpBedX().getValue(), (int) getSpBedY()
+				.getValue(), (int) getSpSideMargins().getValue(),
+				(int) getSpExtRate().getValue(), (int) getSpThreadLength()
+						.getValue(), (int) getSpFeed().getValue(),
+				(int) getSpThreadSpace().getValue(), (int) getSpTSPT()
+						.getValue(), polyTime,
+				(int) getSpBarThick().getValue(), (int) getSpNumThreads()
+						.getValue(), (int) getSpStretchPer().getValue(),
 				(int) getSpStretchRate().getValue());
-		
+
 		pathCreator.doCalculations();
-		if (getChckbxManualPumpCtrl().isSelected()){
+		if (getChckbxManualPumpCtrl().isSelected()) {
 			pumpDev = null;
-		}
-		else{
+		} else {
 			pumpDev.connect();
 		}
 		grblDev.connect();
-		processExec = new ProcessExecution(pumpDev, grblDev, pathCreator, getTxtProcesstimer(),getTxtExtrudeTimer(),getTxtStretchTimer(),getTxtOperationTimer());
-		if (getChckbxPerformExtrusion().isSelected()){
-			if(getChckbxPerformStretch().isSelected()){
-				if (manualPoly){
-				processExec.setupCompleteRunManual();
-				}
-				else{
+		processExec = new ProcessExecution(pumpDev, grblDev, pathCreator,
+				getTxtProcesstimer(), getTxtExtrudeTimer(),
+				getTxtStretchTimer(), getTxtOperationTimer());
+		if (getChckbxPerformExtrusion().isSelected()) {
+			if (getChckbxPerformStretch().isSelected()) {
+				if (manualPoly) {
+					processExec.setupCompleteRunManual();
+				} else {
 					processExec.setupCompleteRunSemiAuto();
 				}
-			}
-			else{
+			} else {
 				processExec.setupExtrudeOnlyAuto();
-				//TODO Turn stage labels to not be run dark grey
+				// TODO Turn stage labels to not be run dark grey
 			}
-		}
-		else{
+		} else {
 			processExec.setupStretchOnlyAuto();
-			//TODO Turn stage labels to not be run dark grey
+			// TODO Turn stage labels to not be run dark grey
 		}
 		processExec.addStageListener(MainForm.this);
 		processExec.start();
 	}
+
 	private JLabel getLblSyringeDiameter() {
 		if (lblSyringeDiameter == null) {
 			lblSyringeDiameter = new JLabel("Syringe Diameter (mm):");
@@ -730,6 +771,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 		}
 		return lblSyringeDiameter;
 	}
+
 	private JFormattedTextField getFrmtdtxtfldSyringeDiameter() {
 		if (frmtdtxtfldSyringeDiameter == null) {
 			NumberFormat nf = NumberFormat.getInstance();
@@ -737,37 +779,38 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 			nf.setMinimumIntegerDigits(2);
 			nf.setMaximumIntegerDigits(2);
 			nf.setMaximumFractionDigits(2);
-			nf.setParseIntegerOnly(false);			
+			nf.setParseIntegerOnly(false);
 			nf.setGroupingUsed(false);
 			NumberFormatter nfr = new NumberFormatter(nf);
 			nfr.setAllowsInvalid(false);
 			nfr.setOverwriteMode(false);
-			frmtdtxtfldSyringeDiameter = new JFormattedTextField(nfr);			
-			frmtdtxtfldSyringeDiameter.setFont(new Font("Tahoma", Font.PLAIN, 14));
+			frmtdtxtfldSyringeDiameter = new JFormattedTextField(nfr);
+			frmtdtxtfldSyringeDiameter.setFont(new Font("Tahoma", Font.PLAIN,
+					14));
 			frmtdtxtfldSyringeDiameter.addKeyListener(new KeyAdapter() {
 				@Override
 				public void keyReleased(KeyEvent e) {
-					//System.out.println(frmtdtxtfldSyringeDiameter.getText());
+					// System.out.println(frmtdtxtfldSyringeDiameter.getText());
 					prefs.setSyringeDia(frmtdtxtfldSyringeDiameter.getText());
 				}
 			});
-			
+
 		}
 		return frmtdtxtfldSyringeDiameter;
 	}
-	
-	
+
 	protected static MaskFormatter createFormatter(String s) {
-	    MaskFormatter formatter = null;
-	    try {
-	        formatter = new MaskFormatter(s);
-	        
-	    } catch (java.text.ParseException exc) {
-	        System.err.println("formatter is bad: " + exc.getMessage());
-	        System.exit(-1);
-	    }
-	    return formatter;
+		MaskFormatter formatter = null;
+		try {
+			formatter = new MaskFormatter(s);
+
+		} catch (java.text.ParseException exc) {
+			System.err.println("formatter is bad: " + exc.getMessage());
+			System.exit(-1);
+		}
+		return formatter;
 	}
+
 	private JLabel getLblSyringeUnits() {
 		if (lblSyringeUnits == null) {
 			lblSyringeUnits = new JLabel("Syringe Units:");
@@ -776,6 +819,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 		}
 		return lblSyringeUnits;
 	}
+
 	private JComboBox<String> getCbUnits() {
 		if (cbUnits == null) {
 			cbUnits = new JComboBox<String>();
@@ -786,20 +830,24 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 					lblExtrusionRateUnits.setText(prefs.getSyringeUnits());
 				}
 			});
-			cbUnits.setModel(new DefaultComboBoxModel<String>(new String[] {"ul/m", "ul/h", "ml/m", "ml/h"}));
+			cbUnits.setModel(new DefaultComboBoxModel<String>(new String[] {
+					"ul/m", "ul/h", "ml/m", "ml/h" }));
 		}
 		return cbUnits;
 	}
+
 	JSplitPane getSplitPane_1() {
 		if (sPExtrusion == null) {
 			sPExtrusion = new JSplitPane();
 			sPExtrusion.addPropertyChangeListener(new PropertyChangeListener() {
 				public void propertyChange(PropertyChangeEvent arg0) {
 					prefs.setDividerWidth(sPExtrusion.getDividerLocation());
-					if (getSPStretch().getDividerLocation() != sPExtrusion.getDividerLocation()){
-						getSPStretch().setDividerLocation(sPExtrusion.getDividerLocation());
+					if (getSPStretch().getDividerLocation() != sPExtrusion
+							.getDividerLocation()) {
+						getSPStretch().setDividerLocation(
+								sPExtrusion.getDividerLocation());
 					}
-					
+
 				}
 			});
 			sPExtrusion.setRightComponent(getPnlExtCfg());
@@ -808,6 +856,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 		}
 		return sPExtrusion;
 	}
+
 	private JPanel getPnlExtCfg() {
 		if (pnlExtCfg == null) {
 			pnlExtCfg = new JPanel();
@@ -817,6 +866,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 		}
 		return pnlExtCfg;
 	}
+
 	private JCheckBox getChckbxPerformExtrusion() {
 		if (chckbxPerformExtrusion == null) {
 			chckbxPerformExtrusion = new JCheckBox("Perform Extrusion");
@@ -824,26 +874,30 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 			chckbxPerformExtrusion.setSelected(true);
 			chckbxPerformExtrusion.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					if (chckbxPerformExtrusion.isSelected()){
-						for (Component component : getPnlExtSet().getComponents()) {
+					if (chckbxPerformExtrusion.isSelected()) {
+						for (Component component : getPnlExtSet()
+								.getComponents()) {
 							component.setEnabled(true);
 						}
-					}
-					else{
-						for (Component component : getPnlExtSet().getComponents()) {
+					} else {
+						for (Component component : getPnlExtSet()
+								.getComponents()) {
 							component.setEnabled(false);
 						}
 					}
 				}
 			});
-			chckbxPerformExtrusion.setToolTipText("<html>Check this box if extrusion should be performed during this operation</html>");
+			chckbxPerformExtrusion
+					.setToolTipText("<html>Check this box if extrusion should be performed during this operation</html>");
 		}
 		return chckbxPerformExtrusion;
 	}
+
 	JPanel getPnlExtSet() {
 		if (pnlExtSet == null) {
 			pnlExtSet = new JPanel();
-			pnlExtSet.setLayout(new MigLayout("", "[][grow][]", "[][][][][][][][]"));
+			pnlExtSet.setLayout(new MigLayout("", "[][grow][]",
+					"[][][][][][][][]"));
 			pnlExtSet.add(getLabel_1_1(), "cell 0 0,alignx trailing");
 			pnlExtSet.add(getSpSideMargins(), "cell 1 0,growx");
 			pnlExtSet.add(getLabel_1_2(), "cell 2 0");
@@ -859,7 +913,8 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 			pnlExtSet.add(getLblThreadStartPause(), "cell 0 4,alignx trailing");
 			pnlExtSet.add(getSpTSPT(), "cell 1 4,growx");
 			pnlExtSet.add(getLblSec(), "cell 2 4");
-			pnlExtSet.add(getLblPolymerizationTime(), "cell 0 5,alignx trailing");
+			pnlExtSet.add(getLblPolymerizationTime(),
+					"cell 0 5,alignx trailing");
 			pnlExtSet.add(getFrmtdtxtfldPolyTime(), "cell 1 5,growx");
 			pnlExtSet.add(getLabel_1_3(), "cell 0 6,alignx right");
 			pnlExtSet.add(getSpThreadLength(), "cell 1 6,growx");
@@ -869,6 +924,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 		}
 		return pnlExtSet;
 	}
+
 	private JLabel getLblExtrusionRate() {
 		if (lblExtrusionRate == null) {
 			lblExtrusionRate = new JLabel("Extrusion Rate:");
@@ -876,6 +932,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 		}
 		return lblExtrusionRate;
 	}
+
 	private JLabel getLblExtrusionRateUnits() {
 		if (lblExtrusionRateUnits == null) {
 			lblExtrusionRateUnits = new JLabel("(units)");
@@ -884,6 +941,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 		}
 		return lblExtrusionRateUnits;
 	}
+
 	private JLabel getLblFeedrate() {
 		if (lblFeedrate == null) {
 			lblFeedrate = new JLabel("Crosshead Speed:");
@@ -892,6 +950,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 		}
 		return lblFeedrate;
 	}
+
 	private JLabel getLblMms() {
 		if (lblMms == null) {
 			lblMms = new JLabel("mm/min");
@@ -899,6 +958,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 		}
 		return lblMms;
 	}
+
 	private JLabel getLblThreadSpacing() {
 		if (lblThreadSpacing == null) {
 			lblThreadSpacing = new JLabel("Thread Spacing:");
@@ -907,6 +967,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 		}
 		return lblThreadSpacing;
 	}
+
 	private JLabel getLblMm() {
 		if (lblMm == null) {
 			lblMm = new JLabel("mm");
@@ -914,6 +975,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 		}
 		return lblMm;
 	}
+
 	private JLabel getLblPolymerizationTime() {
 		if (lblPolymerizationTime == null) {
 			lblPolymerizationTime = new JLabel("Polymerization Time:");
@@ -921,9 +983,11 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 		}
 		return lblPolymerizationTime;
 	}
+
 	private JFormattedTextField getFrmtdtxtfldPolyTime() {
 		if (frmtdtxtfldPolyTime == null) {
-			frmtdtxtfldPolyTime = new JFormattedTextField(createFormatter("##:##:##"));
+			frmtdtxtfldPolyTime = new JFormattedTextField(
+					createFormatter("##:##:##"));
 			frmtdtxtfldPolyTime.setFont(new Font("Tahoma", Font.PLAIN, 14));
 			frmtdtxtfldPolyTime.addKeyListener(new KeyAdapter() {
 				@Override
@@ -932,11 +996,13 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 				}
 			});
 			frmtdtxtfldPolyTime.setText("00:00:00");
-			frmtdtxtfldPolyTime.setToolTipText("<html>This is the delay between extrusion and stretching<br>Enter the time in this format: HH:MM:SS<br>For manual delay (the user must give input to continue to stretching) enter: 00:00:00</html>");
+			frmtdtxtfldPolyTime
+					.setToolTipText("<html>This is the delay between extrusion and stretching<br>Enter the time in this format: HH:MM:SS<br>For manual delay (the user must give input to continue to stretching) enter: 00:00:00</html>");
 			frmtdtxtfldPolyTime.setText(prefs.getPolyTime());
 		}
 		return frmtdtxtfldPolyTime;
 	}
+
 	private JLabel getLblThreadStartPause() {
 		if (lblThreadStartPause == null) {
 			lblThreadStartPause = new JLabel("Thread Start Pause Time:");
@@ -945,6 +1011,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 		}
 		return lblThreadStartPause;
 	}
+
 	private JLabel getLblSec() {
 		if (lblSec == null) {
 			lblSec = new JLabel("sec.");
@@ -952,12 +1019,14 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 		}
 		return lblSec;
 	}
+
 	JSplitPane getSPStretch() {
 		if (sPStretch == null) {
 			sPStretch = new JSplitPane();
 			sPStretch.addPropertyChangeListener(new PropertyChangeListener() {
 				public void propertyChange(PropertyChangeEvent evt) {
-					getSplitPane_1().setDividerLocation(sPStretch.getDividerLocation());
+					getSplitPane_1().setDividerLocation(
+							sPStretch.getDividerLocation());
 				}
 			});
 			sPStretch.setRightComponent(getPnlStretchCfg());
@@ -966,6 +1035,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 		}
 		return sPStretch;
 	}
+
 	private JPanel getPnlStretchCfg() {
 		if (pnlStretchCfg == null) {
 			pnlStretchCfg = new JPanel();
@@ -975,32 +1045,35 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 		}
 		return pnlStretchCfg;
 	}
-	
+
 	private JCheckBox getChckbxPerformStretch() {
 		if (chckbxPerformStretch == null) {
 			chckbxPerformStretch = new JCheckBox("Perform Stretch");
 			chckbxPerformStretch.setFont(new Font("Tahoma", Font.PLAIN, 14));
-			chckbxPerformStretch.setToolTipText("<html>Check this box if stretching should be performed during this operation</html>");
+			chckbxPerformStretch
+					.setToolTipText("<html>Check this box if stretching should be performed during this operation</html>");
 			chckbxPerformStretch.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent arg0) {
-					if (chckbxPerformStretch.isSelected()){
-						for (Component component : getPnlStretchSet().getComponents()) {
+					if (chckbxPerformStretch.isSelected()) {
+						for (Component component : getPnlStretchSet()
+								.getComponents()) {
 							component.setEnabled(true);
 						}
-					}
-					else{
+					} else {
 						getSpStretchPer().setValue(100);
-						for (Component component : getPnlStretchSet().getComponents()) {
+						for (Component component : getPnlStretchSet()
+								.getComponents()) {
 							component.setEnabled(false);
 						}
 					}
 				}
 			});
 			chckbxPerformStretch.setSelected(true);
-			
+
 		}
 		return chckbxPerformStretch;
 	}
+
 	JPanel getPnlStretchSet() {
 		if (pnlStretchSet == null) {
 			pnlStretchSet = new JPanel();
@@ -1014,6 +1087,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 		}
 		return pnlStretchSet;
 	}
+
 	private JLabel getLabel_1() {
 		if (lblStretchRate == null) {
 			lblStretchRate = new JLabel("Stretch Rate:");
@@ -1022,6 +1096,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 		}
 		return lblStretchRate;
 	}
+
 	private JLabel getLabel_2() {
 		if (lblStretchAmount == null) {
 			lblStretchAmount = new JLabel("Stretch Amount:");
@@ -1030,6 +1105,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 		}
 		return lblStretchAmount;
 	}
+
 	private JLabel getLabel_3() {
 		if (lblMms_1 == null) {
 			lblMms_1 = new JLabel("mm/min");
@@ -1037,6 +1113,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 		}
 		return lblMms_1;
 	}
+
 	private JLabel getLabel_4() {
 		if (label == null) {
 			label = new JLabel("%");
@@ -1044,28 +1121,31 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 		}
 		return label;
 	}
-	MachineGraphic getMG(){
-		if(mG == null){
+
+	MachineGraphic getMG() {
+		if (mG == null) {
 			mG = new MachineGraphic(pathCreator);
 		}
 		return mG;
 	}
-	MachineGraphic getMG2(){
-		if(mG2 == null){
+
+	MachineGraphic getMG2() {
+		if (mG2 == null) {
 			mG2 = new MachineGraphic(pathCreator);
 		}
 		return mG2;
 	}
-	
+
 	private JPanel getPnlExtDraw() {
 		if (pnlExtDraw == null) {
 			pnlExtDraw = new JPanel();
 			pnlExtDraw.setLayout(new BorderLayout(0, 0));
-			pnlExtDraw.setMinimumSize(new Dimension(50,50));
+			pnlExtDraw.setMinimumSize(new Dimension(50, 50));
 			pnlExtDraw.add(getMG());
 		}
 		return pnlExtDraw;
 	}
+
 	private JLabel getLabel_1_1() {
 		if (lblSideMargins == null) {
 			lblSideMargins = new JLabel("Side Margins:");
@@ -1074,6 +1154,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 		}
 		return lblSideMargins;
 	}
+
 	private JLabel getLabel_1_2() {
 		if (lblMm_1 == null) {
 			lblMm_1 = new JLabel("mm");
@@ -1081,6 +1162,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 		}
 		return lblMm_1;
 	}
+
 	private JLabel getLabel_1_3() {
 		if (lblThreadLength == null) {
 			lblThreadLength = new JLabel("Thread Length:");
@@ -1089,15 +1171,17 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 		}
 		return lblThreadLength;
 	}
+
 	private JSpinner getSpThreadLength() {
 		if (spThreadLength == null) {
 			spThreadLength = new JSpinner();
 			spThreadLength.setFont(new Font("Tahoma", Font.PLAIN, 14));
-			spThreadLength.setToolTipText("<html>The length that the threads should be made (between the end bars).<br>This parameter is limited by the bed length, the bar thickness, and the stretch percentage</html>");
+			spThreadLength
+					.setToolTipText("<html>The length that the threads should be made (between the end bars).<br>This parameter is limited by the bed length, the bar thickness, and the stretch percentage</html>");
 			spThreadLength.addChangeListener(new ChangeListener() {
 				public void stateChanged(ChangeEvent e) {
 					updateRanges();
-					prefs.setThreadLength((int)spThreadLength.getValue());
+					prefs.setThreadLength((int) spThreadLength.getValue());
 				}
 			});
 			spThreadLength.setModel(new SpinnerNumberModel(1, 1, 500, 1));
@@ -1105,6 +1189,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 		}
 		return spThreadLength;
 	}
+
 	private JSpinner getSpExtRate() {
 		if (spExtRate == null) {
 			spExtRate = new JSpinner();
@@ -1114,12 +1199,14 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 					prefs.setExtrusionRate((int) spExtRate.getValue());
 				}
 			});
-			spExtRate.setToolTipText("<html>This is the rate at which the syringe pump will be run (in the indicated units)</html>");
+			spExtRate
+					.setToolTipText("<html>This is the rate at which the syringe pump will be run (in the indicated units)</html>");
 			spExtRate.setModel(new SpinnerNumberModel(1, 1, 20000, 1));
 			spExtRate.setValue(prefs.getExtrusionRate());
 		}
 		return spExtRate;
 	}
+
 	private JSpinner getSpFeed() {
 		if (spFeed == null) {
 			spFeed = new JSpinner();
@@ -1135,6 +1222,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 		}
 		return spFeed;
 	}
+
 	private JSpinner getSpThreadSpace() {
 		if (spThreadSpace == null) {
 			spThreadSpace = new JSpinner();
@@ -1142,7 +1230,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 			spThreadSpace.addChangeListener(new ChangeListener() {
 				public void stateChanged(ChangeEvent e) {
 					updateRanges();
-					prefs.setThreadSpacing((int)spThreadSpace.getValue());
+					prefs.setThreadSpacing((int) spThreadSpace.getValue());
 				}
 			});
 			spThreadSpace.setModel(new SpinnerNumberModel(2, 2, 50, 1));
@@ -1150,13 +1238,14 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 		}
 		return spThreadSpace;
 	}
+
 	private JSpinner getSpTSPT() {
 		if (spTSPT == null) {
 			spTSPT = new JSpinner();
 			spTSPT.setFont(new Font("Tahoma", Font.PLAIN, 14));
 			spTSPT.addChangeListener(new ChangeListener() {
 				public void stateChanged(ChangeEvent e) {
-					prefs.setTSPT((int)spTSPT.getValue());
+					prefs.setTSPT((int) spTSPT.getValue());
 				}
 			});
 			spTSPT.setToolTipText("<html>This is the amount of time the machine should pause at the beginning of each thread.<br>This pause is to allow a small \"blob\" to form for better adhesion</html>");
@@ -1165,15 +1254,17 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 		}
 		return spTSPT;
 	}
+
 	private JSpinner getSpSideMargins() {
 		if (spSideMargins == null) {
 			spSideMargins = new JSpinner();
 			spSideMargins.setFont(new Font("Tahoma", Font.PLAIN, 14));
-			spSideMargins.setToolTipText("<html>This is the distance from the side of the extrusion area to act as a buffer zone that threads should not be made in</html>");
+			spSideMargins
+					.setToolTipText("<html>This is the distance from the side of the extrusion area to act as a buffer zone that threads should not be made in</html>");
 			spSideMargins.addChangeListener(new ChangeListener() {
 				public void stateChanged(ChangeEvent e) {
 					updateRanges();
-					prefs.setSideMargins((int)spSideMargins.getValue());
+					prefs.setSideMargins((int) spSideMargins.getValue());
 				}
 			});
 			spSideMargins.setModel(new SpinnerNumberModel(0, 0, 50, 1));
@@ -1181,6 +1272,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 		}
 		return spSideMargins;
 	}
+
 	private JLabel getLabel_1_4() {
 		if (lblMm_2 == null) {
 			lblMm_2 = new JLabel("mm");
@@ -1188,6 +1280,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 		}
 		return lblMm_2;
 	}
+
 	private JSpinner getSpBedY() {
 		if (spBedY == null) {
 			spBedY = new JSpinner();
@@ -1204,6 +1297,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 		}
 		return spBedY;
 	}
+
 	private JLabel getLabel_1_5() {
 		if (lblBedLength == null) {
 			lblBedLength = new JLabel("Bed Length:");
@@ -1212,6 +1306,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 		}
 		return lblBedLength;
 	}
+
 	private JLabel getLabel_1_6() {
 		if (lblMm_3 == null) {
 			lblMm_3 = new JLabel("mm");
@@ -1219,6 +1314,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 		}
 		return lblMm_3;
 	}
+
 	private JSpinner getSpBedX() {
 		if (spBedX == null) {
 			spBedX = new JSpinner();
@@ -1227,7 +1323,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 			spBedX.addChangeListener(new ChangeListener() {
 				public void stateChanged(ChangeEvent e) {
 					updateRanges();
-					prefs.setBedX((int)spBedX.getValue());
+					prefs.setBedX((int) spBedX.getValue());
 				}
 			});
 			spBedX.setModel(new SpinnerNumberModel(150, 25, 150, 1));
@@ -1235,6 +1331,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 		}
 		return spBedX;
 	}
+
 	private JLabel getLabel_1_7() {
 		if (lblMm_4 == null) {
 			lblMm_4 = new JLabel("mm");
@@ -1242,6 +1339,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 		}
 		return lblMm_4;
 	}
+
 	private JLabel getLabel_1_8() {
 		if (lblBedWidth == null) {
 			lblBedWidth = new JLabel("Bed Width:");
@@ -1250,6 +1348,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 		}
 		return lblBedWidth;
 	}
+
 	JSpinner getSpStretchPer() {
 		if (spStretchPer == null) {
 			spStretchPer = new JSpinner();
@@ -1258,14 +1357,16 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 			spStretchPer.addChangeListener(new ChangeListener() {
 				public void stateChanged(ChangeEvent arg0) {
 					updateRanges();
-					prefs.setStretchPercent((int)spStretchPer.getValue());
+					prefs.setStretchPercent((int) spStretchPer.getValue());
 				}
 			});
-			spStretchPer.setToolTipText("This determines the percentage of the original length the threads will be stretched.\r\n100% = The threads will remain their same length\r\n50% = The threads will be compressed to half of their length\r\n200% = The threads will be stretched to double their length");
+			spStretchPer
+					.setToolTipText("This determines the percentage of the original length the threads will be stretched.\r\n100% = The threads will remain their same length\r\n50% = The threads will be compressed to half of their length\r\n200% = The threads will be stretched to double their length");
 			spStretchPer.setValue(prefs.getStretchPercent());
 		}
 		return spStretchPer;
 	}
+
 	private JSpinner getSpStretchRate() {
 		if (spStretchRate == null) {
 			spStretchRate = new JSpinner();
@@ -1280,6 +1381,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 		}
 		return spStretchRate;
 	}
+
 	private JLabel getLabel_1_9() {
 		if (lblBarThickness == null) {
 			lblBarThickness = new JLabel("Bar Thickness:");
@@ -1288,6 +1390,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 		}
 		return lblBarThickness;
 	}
+
 	private JSpinner getSpBarThick() {
 		if (spBarThick == null) {
 			spBarThick = new JSpinner();
@@ -1302,6 +1405,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 		}
 		return spBarThick;
 	}
+
 	private JLabel getLabel_1_10() {
 		if (lblMm_5 == null) {
 			lblMm_5 = new JLabel("mm");
@@ -1309,66 +1413,70 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 		}
 		return lblMm_5;
 	}
-	private static void changeSpinner(JSpinner _spinner, int _min, int _max){
-		int curVal = (int)_spinner.getValue();
-		if (curVal < _min){
+
+	private static void changeSpinner(JSpinner _spinner, int _min, int _max) {
+		int curVal = (int) _spinner.getValue();
+		if (curVal < _min) {
 			curVal = _min;
 		}
-		if (curVal > _max){
+		if (curVal > _max) {
 			curVal = _max;
 		}
 		int min = _min;
 		int max = _max;
-		if (_min >= _max){
+		if (_min >= _max) {
 			int holder = _min;
 			min = _max;
 			max = holder;
 		}
 		SpinnerNumberModel model = (SpinnerNumberModel) _spinner.getModel();
-		_spinner.setModel(new SpinnerNumberModel(curVal, min, max, model.getStepSize()));
+		_spinner.setModel(new SpinnerNumberModel(curVal, min, max, model
+				.getStepSize()));
 	}
-	void updateRanges(){
-		int availWid = (int)getSpBedX().getValue() - ((int)getSpSideMargins().getValue()*2);
+
+	void updateRanges() {
+		int availWid = (int) getSpBedX().getValue()
+				- ((int) getSpSideMargins().getValue() * 2);
 		int maxLen = 0;
-		maxLen = (int) ((int)getSpBedY().getValue() - (((int)getSpBarThick().getValue())*2) - ((int)getSpThreadLength().getValue()*(((int)getSpStretchPer().getValue()-100d)/100d)));
+		maxLen = (int) ((int) getSpBedY().getValue()
+				- (((int) getSpBarThick().getValue()) * 2) - ((int) getSpThreadLength()
+				.getValue() * (((int) getSpStretchPer().getValue() - 100d) / 100d)));
 		System.out.println(maxLen);
-		changeSpinner(getSpThreadLength(),1,maxLen);
-		int maxMargin = (((int)getSpBedX().getValue()) - ((int)getSpThreadSpace().getValue()*(int)getSpNumThreads().getValue()))/2 - 3;
-		changeSpinner(getSpSideMargins(),1,maxMargin);
-		int maxSpacing = availWid/((int)getSpNumThreads().getValue());
-		changeSpinner(getSpThreadSpace(),2,maxSpacing);
-		int maxThreads = availWid/((int)getSpThreadSpace().getValue());
-		changeSpinner(getSpNumThreads(),1,maxThreads);
-		
+		changeSpinner(getSpThreadLength(), 1, maxLen);
+		int maxMargin = (((int) getSpBedX().getValue()) - ((int) getSpThreadSpace()
+				.getValue() * (int) getSpNumThreads().getValue())) / 2 - 3;
+		changeSpinner(getSpSideMargins(), 1, maxMargin);
+		int maxSpacing = availWid / ((int) getSpNumThreads().getValue());
+		changeSpinner(getSpThreadSpace(), 2, maxSpacing);
+		int maxThreads = availWid / ((int) getSpThreadSpace().getValue());
+		changeSpinner(getSpNumThreads(), 1, maxThreads);
+
 		int polyTime = 0;
 		String[] timeString = getFrmtdtxtfldPolyTime().getText().split(":");
 		int hours = Integer.parseInt(timeString[0]);
 		int minutes = Integer.parseInt(timeString[1]);
-		int seconds = Integer.parseInt(timeString[2]);					
-		polyTime = (hours*3600) + (minutes*60) + (seconds);
-		pathCreator.setParams((int) getSpBedX().getValue(),
-				(int) getSpBedY().getValue(),
-				(int) getSpSideMargins().getValue(),
-				(int) getSpExtRate().getValue(),
-				(int) getSpThreadLength().getValue(),
-				(int) getSpFeed().getValue(),
-				(int) getSpThreadSpace().getValue(),
-				(int) getSpTSPT().getValue(),
-				polyTime,
-				(int) getSpBarThick().getValue(),
-				(int) getSpNumThreads().getValue(),
-				(int) getSpStretchPer().getValue(),
+		int seconds = Integer.parseInt(timeString[2]);
+		polyTime = (hours * 3600) + (minutes * 60) + (seconds);
+		pathCreator.setParams((int) getSpBedX().getValue(), (int) getSpBedY()
+				.getValue(), (int) getSpSideMargins().getValue(),
+				(int) getSpExtRate().getValue(), (int) getSpThreadLength()
+						.getValue(), (int) getSpFeed().getValue(),
+				(int) getSpThreadSpace().getValue(), (int) getSpTSPT()
+						.getValue(), polyTime,
+				(int) getSpBarThick().getValue(), (int) getSpNumThreads()
+						.getValue(), (int) getSpStretchPer().getValue(),
 				(int) getSpStretchRate().getValue());
-		
+
 		pathCreator.doCalculations();
-		if(getMG().isShowing()){
+		if (getMG().isShowing()) {
 			getMG().repaint();
 		}
-		
-		if(getMG2().isShowing()){
-		getMG2().repaint();
+
+		if (getMG2().isShowing()) {
+			getMG2().repaint();
 		}
 	}
+
 	private JLabel getLabel_1_11() {
 		if (lblOfThreads == null) {
 			lblOfThreads = new JLabel("# of Threads:");
@@ -1377,15 +1485,17 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 		}
 		return lblOfThreads;
 	}
+
 	private JSpinner getSpNumThreads() {
 		if (spNumThreads == null) {
 			spNumThreads = new JSpinner();
 			spNumThreads.setFont(new Font("Tahoma", Font.PLAIN, 14));
-			spNumThreads.setToolTipText("<html>This is the number of threads that will be made.<br>NOTE: If this number is increased too high, the thread spacing will be reduced to accomodate the number of threads</html>");
+			spNumThreads
+					.setToolTipText("<html>This is the number of threads that will be made.<br>NOTE: If this number is increased too high, the thread spacing will be reduced to accomodate the number of threads</html>");
 			spNumThreads.addChangeListener(new ChangeListener() {
 				public void stateChanged(ChangeEvent e) {
 					updateRanges();
-					prefs.setNumThreads((int)spNumThreads.getValue());
+					prefs.setNumThreads((int) spNumThreads.getValue());
 				}
 			});
 			spNumThreads.setModel(new SpinnerNumberModel(1, 1, 20000, 1));
@@ -1393,8 +1503,8 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 		}
 		return spNumThreads;
 	}
-	
-	void disableEverythingBelow(Component root){
+
+	void disableEverythingBelow(Component root) {
 		root.setEnabled(false);
 		try {
 			Container c = (Container) root;
@@ -1406,7 +1516,8 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 		}
 
 	}
-	void enableEverythingBelow(Component root){
+
+	void enableEverythingBelow(Component root) {
 		root.setEnabled(true);
 		try {
 			Container c = (Container) root;
@@ -1417,7 +1528,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 			root.setEnabled(true);
 		}
 
-	}	
+	}
 
 	private JButton getBtnAutoConfigurePorts() {
 		if (btnAutoConfigurePorts == null) {
@@ -1426,32 +1537,37 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 			btnAutoConfigurePorts.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent arg0) {
 					disableEverythingBelow(getTabbedPane());
-					
+
 					updatePorts();
-					GrblControl gCtrl = new GrblControl();		
+					GrblControl gCtrl = new GrblControl();
 					try {
 						getCb_GrblPort().setSelectedItem(gCtrl.getPort());
-						
+
 					} catch (Exception e) {
-						//Catch any exceptions thrown for illegal selection of items
+						// Catch any exceptions thrown for illegal selection of
+						// items
 					}
-					//Only auto configure pump port if automatic pump control is enabled
-					if (!getChckbxManualPumpCtrl().isSelected()){
+					// Only auto configure pump port if automatic pump control
+					// is enabled
+					if (!getChckbxManualPumpCtrl().isSelected()) {
 						PumpControl pCtrl = new PumpControl();
 						try {
 							getCb_PumpPort().setSelectedItem(pCtrl.getPort());
 						} catch (Exception e) {
-							//Catch any exceptions thrown for illegal selection of items
+							// Catch any exceptions thrown for illegal selection
+							// of items
 						}
-						
+
 					}
 					enableEverythingBelow(getTabbedPane());
-					getCb_PumpPort().setEnabled(!getChckbxManualPumpCtrl().isSelected());
+					getCb_PumpPort().setEnabled(
+							!getChckbxManualPumpCtrl().isSelected());
 				}
 			});
 		}
 		return btnAutoConfigurePorts;
 	}
+
 	private JButton getBtnSaveCurrentProfile() {
 		if (btnSaveCurrentProfile == null) {
 			btnSaveCurrentProfile = new JButton("Save Current Profile");
@@ -1464,59 +1580,87 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 		}
 		return btnSaveCurrentProfile;
 	}
-	public void saveProfile(){
+
+	public void saveProfile() {
 		profileMan.setProfileOption("BedLength", getSpBedY().getValue());
 		profileMan.setProfileOption("BedWidth", getSpBedX().getValue());
 		profileMan.setProfileOption("BarThickness", getSpBarThick().getValue());
-		profileMan.setProfileOption("JobName", getTxtJobName().getText());	//Job Name
-		profileMan.setProfileOption("JobDescription", getTxtJobDescription().getText());	//Job Description
-		profileMan.setProfileOption("PerformStretch", getChckbxPerformStretch().isSelected());	//Perform Stretch
-		profileMan.setProfileOption("StretchRate", getSpStretchRate().getValue());	//Stretch Rate
-		profileMan.setProfileOption("StretchPercentage", getSpStretchPer().getValue());	//Stretch Percentage
-		profileMan.setProfileOption("PerformExtrusion", getChckbxPerformExtrusion().isSelected());	//Perform Extrusion
-		profileMan.setProfileOption("SideMargins", getSpSideMargins().getValue());	//Side Margins
-		profileMan.setProfileOption("ExtrusionRate", getSpExtRate().getValue());	//Extrusion Rate
-		profileMan.setProfileOption("Feedrate", getSpFeed().getValue());	//Feedrate
-		profileMan.setProfileOption("ThreadSpacing", getSpThreadSpace().getValue());	//Thread Spacing
-		profileMan.setProfileOption("ThreadStartPauseTime", getSpTSPT().getValue());	//Thread Start Pause Time
-		if (getFrmtdtxtfldPolyTime().getValue() != null){
-			profileMan.setProfileOption("PolymerizationTime", getFrmtdtxtfldPolyTime().getText());	//Polymerization Time
+		profileMan.setProfileOption("JobName", getTxtJobName().getText()); // Job
+																			// Name
+		profileMan.setProfileOption("JobDescription", getTxtJobDescription()
+				.getText()); // Job Description
+		profileMan.setProfileOption("PerformStretch", getChckbxPerformStretch()
+				.isSelected()); // Perform Stretch
+		profileMan.setProfileOption("StretchRate", getSpStretchRate()
+				.getValue()); // Stretch Rate
+		profileMan.setProfileOption("StretchPercentage", getSpStretchPer()
+				.getValue()); // Stretch Percentage
+		profileMan.setProfileOption("PerformExtrusion",
+				getChckbxPerformExtrusion().isSelected()); // Perform Extrusion
+		profileMan.setProfileOption("SideMargins", getSpSideMargins()
+				.getValue()); // Side Margins
+		profileMan.setProfileOption("ExtrusionRate", getSpExtRate().getValue()); // Extrusion
+																					// Rate
+		profileMan.setProfileOption("Feedrate", getSpFeed().getValue()); // Feedrate
+		profileMan.setProfileOption("ThreadSpacing", getSpThreadSpace()
+				.getValue()); // Thread Spacing
+		profileMan.setProfileOption("ThreadStartPauseTime", getSpTSPT()
+				.getValue()); // Thread Start Pause Time
+		if (getFrmtdtxtfldPolyTime().getValue() != null) {
+			profileMan.setProfileOption("PolymerizationTime",
+					getFrmtdtxtfldPolyTime().getText()); // Polymerization Time
+		} else {
+			profileMan.setProfileOption("PolymerizationTime", "00:00:00"); // Polymerization
+																			// Time
 		}
-		else{
-			profileMan.setProfileOption("PolymerizationTime", "00:00:00");	//Polymerization Time
-		}
-		profileMan.setProfileOption("ThreadLength", getSpThreadLength().getValue());	//Thread Length
-		profileMan.setProfileOption("ThreadNum", getSpNumThreads().getValue());	//# of Threads
-		
-		profileMan.setProfileOption("SyringeDia", getFrmtdtxtfldSyringeDiameter().getText());
-		
-		profileMan.setProfileOption("PumpUnits", getCbUnits().getSelectedItem());
+		profileMan.setProfileOption("ThreadLength", getSpThreadLength()
+				.getValue()); // Thread Length
+		profileMan.setProfileOption("ThreadNum", getSpNumThreads().getValue()); // #
+																				// of
+																				// Threads
+
+		profileMan.setProfileOption("SyringeDia",
+				getFrmtdtxtfldSyringeDiameter().getText());
+
+		profileMan
+				.setProfileOption("PumpUnits", getCbUnits().getSelectedItem());
 		profileMan.saveProfile();
 	}
-	
-	public void loadProfile(){
+
+	public void loadProfile() {
 		profileMan.loadProfile();
 		getSpBedY().setValue(profileMan.getProfileOption("BedLength"));
 		getSpBedX().setValue(profileMan.getProfileOption("BedWidth"));
-		getFrmtdtxtfldSyringeDiameter().setText((String) profileMan.getProfileOption("SyringeDia"));
+		getFrmtdtxtfldSyringeDiameter().setText(
+				(String) profileMan.getProfileOption("SyringeDia"));
 		getSpBarThick().setValue(profileMan.getProfileOption("BarThickness"));
 		getCbUnits().setSelectedItem(profileMan.getProfileOption("PumpUnits"));
-		getTxtJobName().setText((String) profileMan.getProfileOption("JobName"));
-		getTxtJobDescription().setText((String) profileMan.getProfileOption("JobDescription"));
-		getChckbxPerformStretch().setSelected((boolean) profileMan.getProfileOption("PerformStretch"));
+		getTxtJobName()
+				.setText((String) profileMan.getProfileOption("JobName"));
+		getTxtJobDescription().setText(
+				(String) profileMan.getProfileOption("JobDescription"));
+		getChckbxPerformStretch().setSelected(
+				(boolean) profileMan.getProfileOption("PerformStretch"));
 		getSpStretchRate().setValue(profileMan.getProfileOption("StretchRate"));
-		getSpStretchPer().setValue(profileMan.getProfileOption("StretchPercentage"));
-		getChckbxPerformExtrusion().setSelected((boolean) profileMan.getProfileOption("PerformExtrusion"));
+		getSpStretchPer().setValue(
+				profileMan.getProfileOption("StretchPercentage"));
+		getChckbxPerformExtrusion().setSelected(
+				(boolean) profileMan.getProfileOption("PerformExtrusion"));
 		getSpSideMargins().setValue(profileMan.getProfileOption("SideMargins"));
 		getSpExtRate().setValue(profileMan.getProfileOption("ExtrusionRate"));
 		getSpFeed().setValue(profileMan.getProfileOption("Feedrate"));
-		getSpThreadSpace().setValue(profileMan.getProfileOption("ThreadSpacing"));
-		getSpTSPT().setValue(profileMan.getProfileOption("ThreadStartPauseTime"));
-		getFrmtdtxtfldPolyTime().setValue(profileMan.getProfileOption("PolymerizationTime"));
-		getSpThreadLength().setValue(profileMan.getProfileOption("ThreadLength"));
+		getSpThreadSpace().setValue(
+				profileMan.getProfileOption("ThreadSpacing"));
+		getSpTSPT().setValue(
+				profileMan.getProfileOption("ThreadStartPauseTime"));
+		getFrmtdtxtfldPolyTime().setValue(
+				profileMan.getProfileOption("PolymerizationTime"));
+		getSpThreadLength().setValue(
+				profileMan.getProfileOption("ThreadLength"));
 		getSpNumThreads().setValue(profileMan.getProfileOption("ThreadNum"));
-		
+
 	}
+
 	private JButton getBtnLoadProfile() {
 		if (btnLoadProfile == null) {
 			btnLoadProfile = new JButton("Load Profile");
@@ -1532,7 +1676,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 
 	@Override
 	public void stageCompleted(ProcessStage completeStage) {
-		switch (completeStage){
+		switch (completeStage) {
 		case ALIGNING_STRETCH_BAR:
 			setLabelColorToComplete(getLabelAdjustStretchBar());
 			break;
@@ -1543,7 +1687,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 			setLabelColorToComplete(getLabelExtruding());
 			break;
 		case EXTRUSION_COMPLETE:
-			
+
 			break;
 		case HOMING:
 			setLabelColorToComplete(getLabelHoming());
@@ -1558,7 +1702,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 			setLabelColorToComplete(getLabelPolymerizing());
 			break;
 		case PRESTART:
-			
+
 			break;
 		case PRE_EXT_WIPE:
 			break;
@@ -1566,7 +1710,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 			setLabelColorToComplete(getLabelPurging());
 			break;
 		case READY_TO_ALIGN_STRETCH:
-			
+
 			break;
 		case MANUALPOLYMERIZING:
 			setLabelColorToComplete(getLabelPolymerizing());
@@ -1590,13 +1734,13 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 			break;
 		default:
 			break;
-		
-		}		
+
+		}
 	}
-	
+
 	@Override
 	public void stageStarted(ProcessStage newStage) {
-		switch (processExec.getCurrentStage()){
+		switch (processExec.getCurrentStage()) {
 		case ALIGNING_STRETCH_BAR:
 			setLabelColorToRunning(getLabelAdjustStretchBar());
 			break;
@@ -1607,7 +1751,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 			setLabelColorToRunning(getLabelExtruding());
 			break;
 		case EXTRUSION_COMPLETE:
-			
+
 			break;
 		case HOMING:
 			setLabelColorToRunning(getLabelHoming());
@@ -1617,13 +1761,13 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 			break;
 		case OPERATION_COMPLETE:
 			setLabelColorToRunning(getLabelOperationComplete());
-			//grblDev.homeGrbl();
+			// grblDev.homeGrbl();
 			break;
 		case POLYMERIZING:
 			setLabelColorToRunning(getLabelPolymerizing());
 			break;
 		case PRESTART:
-			
+
 			break;
 		case PRE_EXT_WIPE:
 			break;
@@ -1634,7 +1778,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 			setLabelColorToRunning(getLabelPolymerizing());
 			break;
 		case READY_TO_ALIGN_STRETCH:
-			
+
 			break;
 		case READY_TO_EXTRUDE:
 			setLabelColorToRunning(getLabelReadyToExtrude());
@@ -1655,48 +1799,86 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 			break;
 		default:
 			break;
-		
-		}		
+
+		}
 	}
-	private static void setLabelColorToRunning(JLabel _label){
+
+	private static void setLabelColorToRunning(JLabel _label) {
 		_label.setForeground(Color.BLUE);
 	}
-	private static void setLabelColorToComplete(JLabel _label){
+
+	private static void setLabelColorToComplete(JLabel _label) {
 		_label.setForeground(Color.GREEN);
 	}
+
 	@Override
 	public void waitingForExternal() {
 		switch (processExec.getCurrentStage()) {
 		case READY_TO_HOME:
-			JOptionPane.showMessageDialog(frame,"<html>Please configure the machine for homing.<br>Homing will begin immediately upon acknowledging this message.</html>", "Ready to Begin Homing Procedure", JOptionPane.INFORMATION_MESSAGE);
+			JOptionPane
+					.showMessageDialog(
+							frame,
+							"<html>Please configure the machine for homing.<br>Homing will begin immediately upon acknowledging this message.</html>",
+							"Ready to Begin Homing Procedure",
+							JOptionPane.INFORMATION_MESSAGE);
 			break;
 		case READY_TO_ALIGN_STRETCH:
-			JOptionPane.showMessageDialog(frame,"<html>Please configure the machine for aligning the stretch bar.<br>Alignment will begin immediately upon acknowledging this message.<br>To avoid damage to machine, please ensure nozzle is not attached</html>", "Ready to Align Stretch Bar", JOptionPane.INFORMATION_MESSAGE);
+			JOptionPane
+					.showMessageDialog(
+							frame,
+							"<html>Please configure the machine for aligning the stretch bar.<br>Alignment will begin immediately upon acknowledging this message.<br>To avoid damage to machine, please ensure nozzle is not attached</html>",
+							"Ready to Align Stretch Bar",
+							JOptionPane.INFORMATION_MESSAGE);
 			break;
 		case READY_TO_START_PUMP:
-			if (getChckbxManualPumpCtrl().isSelected()){
-				JOptionPane.showMessageDialog(frame,"<html>Please configure the machine for starting and purging the syringe pump.<br>Move first shoe so that nozzle is positioned over the back of the shoe.<br>Please start pumping immediately upon acknowledging this message.</html>", "Ready to Start/Purge Pump", JOptionPane.INFORMATION_MESSAGE);
-			}
-			else{
-				JOptionPane.showMessageDialog(frame,"<html>Please configure the machine for starting and purging the syringe pump.<br>Move first shoe so that nozzle is positioned over the back of the shoe.<br>Pumping will begin immediately upon acknowledging this message.</html>", "Ready to Start/Purge Pump", JOptionPane.INFORMATION_MESSAGE);
+			if (getChckbxManualPumpCtrl().isSelected()) {
+				JOptionPane
+						.showMessageDialog(
+								frame,
+								"<html>Please configure the machine for starting and purging the syringe pump.<br>Move first shoe so that nozzle is positioned over the back of the shoe.<br>Please start pumping immediately upon acknowledging this message.</html>",
+								"Ready to Start/Purge Pump",
+								JOptionPane.INFORMATION_MESSAGE);
+			} else {
+				JOptionPane
+						.showMessageDialog(
+								frame,
+								"<html>Please configure the machine for starting and purging the syringe pump.<br>Move first shoe so that nozzle is positioned over the back of the shoe.<br>Pumping will begin immediately upon acknowledging this message.</html>",
+								"Ready to Start/Purge Pump",
+								JOptionPane.INFORMATION_MESSAGE);
 			}
 			break;
 		case READY_TO_EXTRUDE:
-			JOptionPane.showMessageDialog(frame,"<html>Please make sure the machine is ready to begin extruding.<br>The pump should be purged and running, and the nozzle should be hooked up and ready.<br>Extrusion will begin immediately after acknowledging this message.</html>", "Ready to Begin Extrusion", JOptionPane.INFORMATION_MESSAGE);
+			JOptionPane
+					.showMessageDialog(
+							frame,
+							"<html>Please make sure the machine is ready to begin extruding.<br>The pump should be purged and running, and the nozzle should be hooked up and ready.<br>Extrusion will begin immediately after acknowledging this message.</html>",
+							"Ready to Begin Extrusion",
+							JOptionPane.INFORMATION_MESSAGE);
 			break;
 		case CLEAN_PUMP:
-			JOptionPane.showMessageDialog(frame,"<html>Extrusion is complete.<br>Please disconnect and clean nozzle assembly.<br>Machine will return to home immediately after acknowledging this message.<br>Failure to remove nozzle may result in damage to the machine and/or threads.</html>", "Extrusion Complete", JOptionPane.INFORMATION_MESSAGE);
+			JOptionPane
+					.showMessageDialog(
+							frame,
+							"<html>Extrusion is complete.<br>Please disconnect and clean nozzle assembly.<br>Machine will return to home immediately after acknowledging this message.<br>Failure to remove nozzle may result in damage to the machine and/or threads.</html>",
+							"Extrusion Complete",
+							JOptionPane.INFORMATION_MESSAGE);
 			break;
 		case READY_TO_STRETCH:
-			JOptionPane.showMessageDialog(frame,"<html>Please configure the machine for stretching.<br>Stretching will begin immediately upon acknowledging this message.<br>Be sure to stop the pump and remove the nozzle from the machine before continuing to avoid damage.</html>", "Ready to Begin Stretching", JOptionPane.INFORMATION_MESSAGE);
+			JOptionPane
+					.showMessageDialog(
+							frame,
+							"<html>Please configure the machine for stretching.<br>Stretching will begin immediately upon acknowledging this message.<br>Be sure to stop the pump and remove the nozzle from the machine before continuing to avoid damage.</html>",
+							"Ready to Begin Stretching",
+							JOptionPane.INFORMATION_MESSAGE);
 			break;
 		default:
 			break;
 		}
-		
+
 		processExec.finishHold();
-		
+
 	}
+
 	private JTextField getTxtProcesstimer() {
 		if (txtProcesstimer == null) {
 			txtProcesstimer = new JTextField();
@@ -1708,6 +1890,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 		}
 		return txtProcesstimer;
 	}
+
 	private JPanel getPnlStretchDraw() {
 		if (pnlStretchDraw == null) {
 			pnlStretchDraw = new JPanel();
@@ -1717,6 +1900,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 		}
 		return pnlStretchDraw;
 	}
+
 	private JButton getBtnRunOperationAuto() {
 		if (btnRunOperationAuto == null) {
 			btnRunOperationAuto = new JButton("Run Operation Auto Poly");
@@ -1729,17 +1913,20 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 		}
 		return btnRunOperationAuto;
 	}
+
 	private JLabel getLabelInitializeRun() {
 		if (lblInitializeRun == null) {
 			lblInitializeRun = new JLabel(" Initialize Run");
 			lblInitializeRun.setForeground(Color.BLACK);
-			lblInitializeRun.setBackground(UIManager.getColor("Button.background"));
+			lblInitializeRun.setBackground(UIManager
+					.getColor("Button.background"));
 			lblInitializeRun.setFont(new Font("Tahoma", Font.BOLD, 24));
 			lblInitializeRun.setHorizontalAlignment(SwingConstants.CENTER);
 			stageLabels.add(lblInitializeRun);
 		}
 		return lblInitializeRun;
 	}
+
 	private JLabel getLabelReadyToHome() {
 		if (lblReadyToHome == null) {
 			lblReadyToHome = new JLabel(" Ready To Home");
@@ -1748,6 +1935,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 		}
 		return lblReadyToHome;
 	}
+
 	private JLabel getLabelHoming() {
 		if (lblHoming == null) {
 			lblHoming = new JLabel(" Homing");
@@ -1756,6 +1944,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 		}
 		return lblHoming;
 	}
+
 	private JLabel getLabelAdjustStretchBar() {
 		if (lblAdjustingStretchBar == null) {
 			lblAdjustingStretchBar = new JLabel(" Adjusting Stretch Bar");
@@ -1764,6 +1953,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 		}
 		return lblAdjustingStretchBar;
 	}
+
 	private JLabel getLabelReadyToPurge() {
 		if (lblReadyToPurge == null) {
 			lblReadyToPurge = new JLabel(" Ready To Purge");
@@ -1772,6 +1962,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 		}
 		return lblReadyToPurge;
 	}
+
 	private JLabel getLabelPurging() {
 		if (lblPurging == null) {
 			lblPurging = new JLabel(" Purging");
@@ -1780,6 +1971,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 		}
 		return lblPurging;
 	}
+
 	private JLabel getLabelReadyToExtrude() {
 		if (lblReadyToExtrude == null) {
 			lblReadyToExtrude = new JLabel(" Ready To Extrude");
@@ -1788,14 +1980,18 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 		}
 		return lblReadyToExtrude;
 	}
+
 	private JLabel getLabelWaitingForCleaning() {
 		if (lblWaitingForCleaningpolymerizing == null) {
-			lblWaitingForCleaningpolymerizing = new JLabel(" Waiting for Cleaning/Polymerizing");
-			lblWaitingForCleaningpolymerizing.setFont(new Font("Tahoma", Font.BOLD, 24));
+			lblWaitingForCleaningpolymerizing = new JLabel(
+					" Waiting for Cleaning/Polymerizing");
+			lblWaitingForCleaningpolymerizing.setFont(new Font("Tahoma",
+					Font.BOLD, 24));
 			stageLabels.add(lblWaitingForCleaningpolymerizing);
 		}
 		return lblWaitingForCleaningpolymerizing;
 	}
+
 	private JLabel getLabelPolymerizing() {
 		if (lblPolymerizing == null) {
 			lblPolymerizing = new JLabel(" Polymerizing");
@@ -1804,6 +2000,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 		}
 		return lblPolymerizing;
 	}
+
 	private JLabel getLabelReadyToStretch() {
 		if (lblReadyToStretch == null) {
 			lblReadyToStretch = new JLabel(" Ready to Stretch");
@@ -1812,6 +2009,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 		}
 		return lblReadyToStretch;
 	}
+
 	private JLabel getLabelStretching() {
 		if (lblStretching == null) {
 			lblStretching = new JLabel(" Stretching");
@@ -1820,6 +2018,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 		}
 		return lblStretching;
 	}
+
 	private JLabel getLabelOperationComplete() {
 		if (lblOperationComplete == null) {
 			lblOperationComplete = new JLabel(" Operation Complete");
@@ -1828,6 +2027,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 		}
 		return lblOperationComplete;
 	}
+
 	private JLabel getLabelExtruding() {
 		if (lblExtruding == null) {
 			lblExtruding = new JLabel(" Extruding");
@@ -1836,11 +2036,13 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 		}
 		return lblExtruding;
 	}
+
 	JCheckBox getChckbxManualPumpCtrl() {
 		if (chckbxManualPumpCtrl == null) {
 			chckbxManualPumpCtrl = new JCheckBox("Manual Pump Ctrl");
 			chckbxManualPumpCtrl.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent arg0) {
+					prefs.setManualPump(chckbxManualPumpCtrl.isSelected());
 					updatePorts();
 				}
 			});
@@ -1848,10 +2050,11 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 		}
 		return chckbxManualPumpCtrl;
 	}
+
 	private JTextField getTxtExtrudeTimer() {
 		if (txtExtrudeTimer == null) {
 			txtExtrudeTimer = new JTextField();
-			txtExtrudeTimer.setText("00:00:00");
+			txtExtrudeTimer.setText("0:0:0");
 			txtExtrudeTimer.setHorizontalAlignment(SwingConstants.LEFT);
 			txtExtrudeTimer.setFont(new Font("Tahoma", Font.BOLD, 24));
 			txtExtrudeTimer.setEditable(false);
@@ -1859,10 +2062,11 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 		}
 		return txtExtrudeTimer;
 	}
+
 	private JTextField getTxtStretchTimer() {
 		if (txtStretchTimer == null) {
 			txtStretchTimer = new JTextField();
-			txtStretchTimer.setText("00:00:00");
+			txtStretchTimer.setText("0:0:0");
 			txtStretchTimer.setHorizontalAlignment(SwingConstants.LEFT);
 			txtStretchTimer.setFont(new Font("Tahoma", Font.BOLD, 24));
 			txtStretchTimer.setEditable(false);
@@ -1870,10 +2074,11 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 		}
 		return txtStretchTimer;
 	}
+
 	private JTextField getTxtOperationTimer() {
 		if (txtOperationTimer == null) {
 			txtOperationTimer = new JTextField();
-			txtOperationTimer.setText("00:00:00");
+			txtOperationTimer.setText("0:0:0");
 			txtOperationTimer.setHorizontalAlignment(SwingConstants.LEFT);
 			txtOperationTimer.setFont(new Font("Tahoma", Font.BOLD, 24));
 			txtOperationTimer.setEditable(false);
@@ -1882,4 +2087,3 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 		return txtOperationTimer;
 	}
 }
-
