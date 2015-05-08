@@ -1100,7 +1100,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 					prefs.setThreadLength((int)spThreadLength.getValue());
 				}
 			});
-			spThreadLength.setModel(new SpinnerNumberModel(new Integer(1), new Integer(1), null, new Integer(1)));
+			spThreadLength.setModel(new SpinnerNumberModel(1, 1, 500, 1));
 			spThreadLength.setValue(prefs.getThreadLength());
 		}
 		return spThreadLength;
@@ -1115,7 +1115,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 				}
 			});
 			spExtRate.setToolTipText("<html>This is the rate at which the syringe pump will be run (in the indicated units)</html>");
-			spExtRate.setModel(new SpinnerNumberModel(1, 1, 99999, 1));
+			spExtRate.setModel(new SpinnerNumberModel(1, 1, 20000, 1));
 			spExtRate.setValue(prefs.getExtrusionRate());
 		}
 		return spExtRate;
@@ -1130,7 +1130,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 				}
 			});
 			spFeed.setToolTipText("<html>This is the speed at which the nozzle will move throughout the operation.</html>");
-			spFeed.setModel(new SpinnerNumberModel(new Integer(600), new Integer(1), null, new Integer(1)));
+			spFeed.setModel(new SpinnerNumberModel(600, 1, 20000, 1));
 			spFeed.setValue(prefs.getFeedrate());
 		}
 		return spFeed;
@@ -1145,7 +1145,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 					prefs.setThreadSpacing((int)spThreadSpace.getValue());
 				}
 			});
-			spThreadSpace.setModel(new SpinnerNumberModel(new Integer(2), new Integer(2), null, new Integer(1)));
+			spThreadSpace.setModel(new SpinnerNumberModel(2, 2, 50, 1));
 			spThreadSpace.setValue(prefs.getThreadSpacing());
 		}
 		return spThreadSpace;
@@ -1160,7 +1160,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 				}
 			});
 			spTSPT.setToolTipText("<html>This is the amount of time the machine should pause at the beginning of each thread.<br>This pause is to allow a small \"blob\" to form for better adhesion</html>");
-			spTSPT.setModel(new SpinnerNumberModel(new Integer(0), new Integer(0), null, new Integer(1)));
+			spTSPT.setModel(new SpinnerNumberModel(0, 0, 1000, 1));
 			spTSPT.setValue(prefs.getTSPT());
 		}
 		return spTSPT;
@@ -1176,7 +1176,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 					prefs.setSideMargins((int)spSideMargins.getValue());
 				}
 			});
-			spSideMargins.setModel(new SpinnerNumberModel(new Integer(0), new Integer(0), null, new Integer(1)));
+			spSideMargins.setModel(new SpinnerNumberModel(0, 0, 50, 1));
 			spSideMargins.setValue(prefs.getSideMargins());
 		}
 		return spSideMargins;
@@ -1254,7 +1254,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 		if (spStretchPer == null) {
 			spStretchPer = new JSpinner();
 			spStretchPer.setFont(new Font("Tahoma", Font.PLAIN, 14));
-			spStretchPer.setModel(new SpinnerNumberModel(new Integer(100), null, null, new Integer(1)));
+			spStretchPer.setModel(new SpinnerNumberModel(100, 100, 700, 1));
 			spStretchPer.addChangeListener(new ChangeListener() {
 				public void stateChanged(ChangeEvent arg0) {
 					updateRanges();
@@ -1275,7 +1275,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 					prefs.setStretchRate((int) spStretchRate.getValue());
 				}
 			});
-			spStretchRate.setModel(new SpinnerNumberModel(new Integer(1), new Integer(1), null, new Integer(1)));
+			spStretchRate.setModel(new SpinnerNumberModel(1, 1, 20000, 1));
 			spStretchRate.setValue(prefs.getStretchRate());
 		}
 		return spStretchRate;
@@ -1316,6 +1316,11 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 		}
 		if (curVal > _max){
 			curVal = _max;
+		}
+		if (_min >= _max){
+			int holder = _min;
+			_min = _max;
+			_max = holder;
 		}
 		SpinnerNumberModel model = (SpinnerNumberModel) _spinner.getModel();
 		_spinner.setModel(new SpinnerNumberModel(curVal, _min, _max, model.getStepSize()));
@@ -1381,7 +1386,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 					prefs.setNumThreads((int)spNumThreads.getValue());
 				}
 			});
-			spNumThreads.setModel(new SpinnerNumberModel(new Integer(1), new Integer(1), null, new Integer(1)));
+			spNumThreads.setModel(new SpinnerNumberModel(1, 1, 20000, 1));
 			spNumThreads.setValue(prefs.getNumThreads());
 		}
 		return spNumThreads;

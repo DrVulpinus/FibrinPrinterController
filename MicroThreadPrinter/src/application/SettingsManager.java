@@ -64,10 +64,10 @@ public class SettingsManager {
 		return prefs.getInt(BAR_THICKNESS, 25);
 	}
 	public int getBedX(){
-		return prefs.getInt(BED_X, 310);
+		return prefs.getInt(BED_X, 150);
 	}
 	public int getBedY(){
-		return prefs.getInt(BED_Y, 150);
+		return prefs.getInt(BED_Y, 310);
 	}
 	public int getExtrusionRate(){
 		return prefs.getInt(EXTRUSION_RATE, 3);
