@@ -28,13 +28,14 @@ public class SettingsManager {
 	private static final String DIVIDER_WIDTH = "divider_width";
 	private static final String WINDOW_WIDTH = "window_width";
 	private static final String WINDOW_HEIGHT = "window_height";
+	private static final String MANUAL_PUMP = "manual_pump";
 	Preferences prefs = Preferences.userNodeForPackage(this.getClass());
 	public void addPreferenceChangeListener(PreferenceChangeListener _pcl){
 		prefs.addPreferenceChangeListener(_pcl);
 	}
 	
 	public int getDividerWidth(){
-		return prefs.getInt(DIVIDER_WIDTH, 100);
+		return prefs.getInt(DIVIDER_WIDTH, 50);
 	}
 	public int getWindowWidth(){
 		return prefs.getInt(WINDOW_WIDTH, 500);
@@ -104,6 +105,9 @@ public class SettingsManager {
 	}
 	public int getTSPT(){
 		return prefs.getInt(THREAD_START_PAUSE_TIME, 0);
+	}
+	public boolean getManualPump(){
+		return prefs.getBoolean(MANUAL_PUMP, true);
 	}
 	
 	
@@ -180,6 +184,9 @@ public class SettingsManager {
 	}
 	public void setWindowHeight(int _val){
 		prefs.putInt(WINDOW_HEIGHT,_val);
+	}	
+	public void setManualPump(boolean _val){
+		prefs.putBoolean(MANUAL_PUMP, _val);
 	}
 	
 }
