@@ -15,7 +15,7 @@ public GCode(char _letter, int _number, GCodeParam... param){
 	number = _number;
 	for (GCodeParam gCodeParam : param) {
 		parameters.add(gCodeParam);
-	};
+	}
 }
 public char getLetter(){
 	return letter;

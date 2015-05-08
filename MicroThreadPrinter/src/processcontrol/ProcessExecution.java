@@ -124,7 +124,7 @@ public class ProcessExecution extends Thread{
 		for (ProcessStageListener processStageListener : listeners) {
 			processStageListener.waitingForExternal();
 			while(extHold){
-			
+				//Wait until the external hold is cleared
 			}
 		}
 	}
@@ -178,12 +178,12 @@ public class ProcessExecution extends Thread{
 	 * the application called one of the setup functions.  The machine will begin operations as soon as this method is called
 	 */
 	@Override
-	public void start(){
+	public synchronized void start(){
 		super.start();
 	}
 	
 	
-	public void doSleep(long _millis){
+	public static void doSleep(long _millis){
 		try {
 			Thread.sleep(_millis);
 		} catch (InterruptedException e) {

@@ -107,27 +107,26 @@ public class IOPortControl implements SerialPortEventListener{
 	}
 	@Override
 	public void serialEvent(SerialPortEvent ev) {
-		try {
-			if (ins.ready()){
-				while (ins.ready()){
-					try {
-						String inline = ins.readLine();
-						if (listeners.size() >0){							
-								recievedLines.add(inline);
-								//System.out.println("Recieve: " + inline);							
-						}
-					} catch (IOException e) {
+			try {
+				if (ins.ready()){
+					while (ins.ready()){
+							String inline = ins.readLine();
+							if (listeners.size() >0){							
+									recievedLines.add(inline);
+									//System.out.println("Recieve: " + inline);							
+							}
 						
-					}
-					
-					for (COMLineRecieved comLineRecieved : listeners) {
-						comLineRecieved.newLineRecieved();
+						
+						for (COMLineRecieved comLineRecieved : listeners) {
+							comLineRecieved.newLineRecieved();
+						}
 					}
 				}
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		
 		
 	}
 }

@@ -63,7 +63,7 @@ public class ProcessLogger {
 	public void recordEndTime(){
 		recordEndTime(Calendar.getInstance().getTime());
 	}
-	public String newLineChar(){
+	public static String newLineChar(){
 		return "\r\n";
 	}
 	
@@ -101,6 +101,7 @@ public class ProcessLogger {
 				}
 			}
 		}
+		@SuppressWarnings("resource")
 		FileWriter writer = new FileWriter(logFile);
 		writer.write("Process Name: " + processName + newLineChar());
 		writer.write("Process Description: " + processDescription + newLineChar());

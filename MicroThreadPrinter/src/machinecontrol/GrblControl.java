@@ -115,7 +115,7 @@ public class GrblControl implements COMLineRecieved, ArrayAddListener{
 		long timeout =  System.currentTimeMillis() + 5000;
 		//Look for a response, but only for so long (timeout)
 		while (timeout > System.currentTimeMillis() && !grblPort.isNewAvail()){
-		
+			//This waits until the reply from Grbl
 		}		
 		while (grblPort.isNewAvail()){
 			//We got something!
@@ -139,7 +139,7 @@ public class GrblControl implements COMLineRecieved, ArrayAddListener{
 		long timeout =  System.currentTimeMillis() + 100000;
 		//Look for a response, but only for so long (timeout)
 		while (timeout > System.currentTimeMillis() && !grblPort.isNewAvail()){
-		
+			//This waits for the reply from Grbl
 		}
 		
 		if (grblPort.isNewAvail()){

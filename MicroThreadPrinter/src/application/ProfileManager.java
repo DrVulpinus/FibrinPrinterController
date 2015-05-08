@@ -53,13 +53,14 @@ public class ProfileManager{
 		}
 	}
 	public void saveProfile(File _file){
-		if(!_file.getPath().endsWith(".xml")){
-			String newPath = _file.getAbsolutePath();
+		File newFile = _file;
+		if(!newFile.getPath().endsWith(".xml")){
+			String newPath = newFile.getAbsolutePath();
 			newPath += ".xml";
-			_file = new File(newPath);
+			newFile = new File(newPath);
 		}
 		try {
-			fos = new FileOutputStream(_file);
+			fos = new FileOutputStream(newFile);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 			return;
@@ -94,8 +95,7 @@ public class ProfileManager{
 		String raw = props.getProperty(_key);
 		String[] raws = raw.split(":::");
 		try {
-			ClassLoader cl = new ClassLoader() {
-			};			
+			ClassLoader cl = ClassLoader.getSystemClassLoader();	
 			if (cl.loadClass(raws[0]) == Boolean.class){
 				return Boolean.parseBoolean(raws[1]);
 			}

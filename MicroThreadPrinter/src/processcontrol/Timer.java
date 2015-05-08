@@ -11,34 +11,34 @@ public Timer(){
 	
 }
 public Timer(JTextField _tf){
-	tf = _tf;
+	this.tf = _tf;
 }
 public void startTimer(){
-	startTime =  System.currentTimeMillis();
-	running = true;
+	this.startTime =  System.currentTimeMillis();
+	this.running = true;
 	this.start();
 }
 public void startCountDownTimer(long _seconds){
-	startTime = System.currentTimeMillis() + (_seconds*1000);
-	running = true;
+	this.startTime = System.currentTimeMillis() + (_seconds*1000);
+	this.running = true;
 	this.start();
 }
 public void stopTimer(){
-	stopTime = System.currentTimeMillis();
-	running = false;
+	this.stopTime = System.currentTimeMillis();
+	this.running = false;
 	//this.interrupt();
 }
 public void resetTimer(){
-	startTime = 0;
+	this.startTime = 0;
 }
 public long getTimeMillis(){
-	return Math.abs(System.currentTimeMillis() - startTime);
+	return Math.abs(System.currentTimeMillis() - this.startTime);
 }
 public String getTimeString(){
 	String outTime = "";
 	long thisTime = getTimeMillis()/1000;
-	if (!running){
-		thisTime = (stopTime-startTime)/1000;
+	if (!this.running){
+		thisTime = (this.stopTime-this.startTime)/1000;
 	}	
 	long hours = thisTime/3600;
 	long minutes = (thisTime%3600)/60;
@@ -50,8 +50,8 @@ public String getTimeString(){
 @Override
 public void run(){
 	while(true){
-	if (tf != null){
-		tf.setText(getTimeString());
+	if (this.tf != null){
+		this.tf.setText(getTimeString());
 		try {
 			Thread.sleep(500);
 		} catch (InterruptedException e) {

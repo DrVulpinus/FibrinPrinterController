@@ -77,7 +77,7 @@ import java.beans.PropertyChangeListener;
 public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 
 	private ProfileManager profileMan = new ProfileManager();
-	private JFrame frame;
+	JFrame frame;
 	private JTabbedPane tabbedPane;
 	private JPanel pnlCfg;
 	private JLabel lblGrblPort;
@@ -86,98 +86,98 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 	private JComboBox<String> cb_PumpPort;
 	private boolean isConnected = false;
 	private boolean isUpdating = false;
-	private SettingsManager prefs = new SettingsManager();
+	SettingsManager prefs = new SettingsManager();
 	GrblControl grblDev;
 	PumpControl pumpDev;
 	PathCreator pathCreator = new PathCreator();
 	ProcessExecution processExec;
-	private JPanel pnlExtrusion;
-	private JPanel pnlStretch;
-	private JPanel pnlRun;
-	private JCheckBox chckbxGenerateLogFiles;
-	private JTextField tfLogDir;
-	private JButton btnBrowseLogDir;
-	private JLabel lblJobName;
-	private JLabel lblJobDescription;
-	private JTextField txtJobName;
-	private JTextField txtJobDescription;
-	private JButton btnRunOperation;
-	private JLabel lblSyringeDiameter;
-	private JFormattedTextField frmtdtxtfldSyringeDiameter;
-	private JLabel lblSyringeUnits;
-	private JComboBox<String> cbUnits;
-	private JSplitPane sPExtrusion;
-	private JPanel pnlExtCfg;
-	private JCheckBox chckbxPerformExtrusion;
-	private JPanel pnlExtSet;
-	private JLabel lblExtrusionRate;
-	private JLabel lblExtrusionRateUnits;
-	private JLabel lblFeedrate;
-	private JLabel lblMms;
-	private JLabel lblThreadSpacing;
-	private JLabel lblMm;
-	private JLabel lblPolymerizationTime;
-	private JFormattedTextField frmtdtxtfldPolyTime;
-	private JLabel lblThreadStartPause;
-	private JLabel lblSec;
-	private JSplitPane sPStretch;
-	private JPanel pnlStretchCfg;
-	private JCheckBox chckbxPerformStretch;
-	private JPanel pnlStretchSet;
-	private JLabel lblStretchRate;
-	private JLabel lblStretchAmount;
-	private JLabel lblMms_1;
-	private JLabel label;
-	private JPanel pnlExtDraw;
-	private JLabel lblSideMargins;
-	private JLabel lblMm_1;
-	private JLabel lblThreadLength;
-	private JSpinner spThreadLength;
-	private JSpinner spExtRate;
-	private JSpinner spFeed;
-	private JSpinner spThreadSpace;
-	private JSpinner spTSPT;
-	private JSpinner spSideMargins;
-	private JLabel lblMm_2;
-	private JSpinner spBedY;
-	private JLabel lblBedLength;
-	private JLabel lblMm_3;
-	private JSpinner spBedX;
-	private JLabel lblMm_4;
-	private JLabel lblBedWidth;
-	private JSpinner spStretchPer;
-	private JSpinner spStretchRate;
-	private JLabel lblBarThickness;
-	private JSpinner spBarThick;
-	private JLabel lblMm_5;
-	private JLabel lblOfThreads;
-	private JSpinner spNumThreads;
-	private JButton btnAutoConfigurePorts;
-	private JButton btnSaveCurrentProfile;
-	private JButton btnLoadProfile;
-	private MachineGraphic mG;
-	private MachineGraphic mG2;
-	private JTextField txtProcesstimer;
-	private JPanel pnlStretchDraw;
-	private JButton btnRunOperationAuto;
-	private JLabel lblInitializeRun;
-	private JLabel lblReadyToHome;
-	private JLabel lblHoming;
-	private JLabel lblAdjustingStretchBar;
-	private JLabel lblReadyToPurge;
-	private JLabel lblPurging;
-	private JLabel lblReadyToExtrude;
-	private JLabel lblWaitingForCleaningpolymerizing;
-	private JLabel lblPolymerizing;
-	private JLabel lblReadyToStretch;
-	private JLabel lblStretching;
-	private JLabel lblOperationComplete;
-	private ArrayList<JLabel> stageLabels = new ArrayList<JLabel>();
-	private JLabel lblExtruding;
-	private JCheckBox chckbxManualPumpCtrl;
-	private JTextField txtExtrudeTimer;
-	private JTextField txtStretchTimer;
-	private JTextField txtOperationTimer;
+	JPanel pnlExtrusion;
+	JPanel pnlStretch;
+	JPanel pnlRun;
+	JCheckBox chckbxGenerateLogFiles;
+	JTextField tfLogDir;
+	JButton btnBrowseLogDir;
+	JLabel lblJobName;
+	JLabel lblJobDescription;
+	JTextField txtJobName;
+	JTextField txtJobDescription;
+	JButton btnRunOperation;
+	JLabel lblSyringeDiameter;
+	JFormattedTextField frmtdtxtfldSyringeDiameter;
+	JLabel lblSyringeUnits;
+	JComboBox<String> cbUnits;
+	JSplitPane sPExtrusion;
+	JPanel pnlExtCfg;
+	JCheckBox chckbxPerformExtrusion;
+	JPanel pnlExtSet;
+	JLabel lblExtrusionRate;
+	JLabel lblExtrusionRateUnits;
+	JLabel lblFeedrate;
+	JLabel lblMms;
+	JLabel lblThreadSpacing;
+	JLabel lblMm;
+	JLabel lblPolymerizationTime;
+	JFormattedTextField frmtdtxtfldPolyTime;
+	JLabel lblThreadStartPause;
+	JLabel lblSec;
+	JSplitPane sPStretch;
+	JPanel pnlStretchCfg;
+	JCheckBox chckbxPerformStretch;
+	JPanel pnlStretchSet;
+	JLabel lblStretchRate;
+	JLabel lblStretchAmount;
+	JLabel lblMms_1;
+	JLabel label;
+	JPanel pnlExtDraw;
+	JLabel lblSideMargins;
+	JLabel lblMm_1;
+	JLabel lblThreadLength;
+	JSpinner spThreadLength;
+	JSpinner spExtRate;
+	JSpinner spFeed;
+	JSpinner spThreadSpace;
+	JSpinner spTSPT;
+	JSpinner spSideMargins;
+	JLabel lblMm_2;
+	JSpinner spBedY;
+	JLabel lblBedLength;
+	JLabel lblMm_3;
+	JSpinner spBedX;
+	JLabel lblMm_4;
+	JLabel lblBedWidth;
+	JSpinner spStretchPer;
+	JSpinner spStretchRate;
+	JLabel lblBarThickness;
+	JSpinner spBarThick;
+	JLabel lblMm_5;
+	JLabel lblOfThreads;
+	JSpinner spNumThreads;
+	JButton btnAutoConfigurePorts;
+	JButton btnSaveCurrentProfile;
+	JButton btnLoadProfile;
+	MachineGraphic mG;
+	MachineGraphic mG2;
+	JTextField txtProcesstimer;
+	JPanel pnlStretchDraw;
+	JButton btnRunOperationAuto;
+	JLabel lblInitializeRun;
+	JLabel lblReadyToHome;
+	JLabel lblHoming;
+	JLabel lblAdjustingStretchBar;
+	JLabel lblReadyToPurge;
+	JLabel lblPurging;
+	JLabel lblReadyToExtrude;
+	JLabel lblWaitingForCleaningpolymerizing;
+	JLabel lblPolymerizing;
+	JLabel lblReadyToStretch;
+	JLabel lblStretching;
+	JLabel lblOperationComplete;
+	ArrayList<JLabel> stageLabels = new ArrayList<JLabel>();
+	JLabel lblExtruding;
+	JCheckBox chckbxManualPumpCtrl;
+	JTextField txtExtrudeTimer;
+	JTextField txtStretchTimer;
+	JTextField txtOperationTimer;
 	
 	/**
 	 * Launch the application.
@@ -268,7 +268,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 		
 		updateRanges();
 	}
-	private void selectedPortChanged(){
+	void selectedPortChanged(){
 		if (!isUpdating){
 		if (getCb_GrblPort().getSelectedItem() != getCb_PumpPort().getSelectedItem()){
 			
@@ -292,7 +292,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 		}
 	}
 	
-	private void verifyAllSettings(){
+	void verifyAllSettings(){
 		 if (verifyPortSettings() && verifyLoggingSettings()){
 			 getBtnRunOperation().setEnabled(true);
 			 getBtnRunOperationAuto().setEnabled(true);
@@ -320,11 +320,9 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 					settingsOK = true;
 					System.out.println("Verification Succeeded");
 				}
-			}
-			
-			
+			}					
 		} catch (Exception e) {
-			
+			//Catch any exceptions thrown for illegal selection of items
 		}
 		
 		
@@ -348,7 +346,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 		}
 		return true;
 	}
-	private void updatePorts(){
+	void updatePorts(){
 		isUpdating = true;
 		if (!isConnected){
 			
@@ -388,9 +386,9 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 		isUpdating = false;
 		selectedPortChanged();
 	}
-	private JTabbedPane getTabbedPane() {
+	JTabbedPane getTabbedPane() {
 		if (tabbedPane == null) {
-			tabbedPane = new JTabbedPane(JTabbedPane.TOP);
+			tabbedPane = new JTabbedPane(SwingConstants.TOP);
 			tabbedPane.setFont(new Font("Tahoma", Font.PLAIN, 14));
 			tabbedPane.addTab("General Settings", null, getPnlCfg(), "This page contains settings for the COM ports");
 			tabbedPane.addTab("Extrusion Settings", null, getPnlExtrusion(), null);
@@ -443,7 +441,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 		}
 		return lblPumpPort;
 	}
-	private JComboBox<String> getCb_GrblPort() {
+	JComboBox<String> getCb_GrblPort() {
 		if (cb_GrblPort == null) {
 			cb_GrblPort = new JComboBox<String>();
 			cb_GrblPort.setFont(new Font("Tahoma", Font.PLAIN, 14));
@@ -456,7 +454,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 		}
 		return cb_GrblPort;
 	}
-	private JComboBox<String> getCb_PumpPort() {
+	JComboBox<String> getCb_PumpPort() {
 		if (cb_PumpPort == null) {
 			cb_PumpPort = new JComboBox<String>();
 			cb_PumpPort.setFont(new Font("Tahoma", Font.PLAIN, 14));
@@ -557,7 +555,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 		}
 		return chckbxGenerateLogFiles;
 	}
-	private JTextField getTfLogDir() {
+	JTextField getTfLogDir() {
 		if (tfLogDir == null) {
 			tfLogDir = new JTextField();
 			tfLogDir.setFont(new Font("Tahoma", Font.PLAIN, 14));
@@ -566,7 +564,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 		}
 		return tfLogDir;
 	}
-	private JButton getBtnBrowseLogDir() {
+	JButton getBtnBrowseLogDir() {
 		if (btnBrowseLogDir == null) {
 			btnBrowseLogDir = new JButton("Choose Log Folder");
 			btnBrowseLogDir.setFont(new Font("Tahoma", Font.PLAIN, 14));
@@ -663,8 +661,8 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 	public void runOperation(boolean manualPoly){
 		
 		//This recolors all of the process stage labels to red to indicate that stage has not been started
-		for (JLabel label : stageLabels) {
-			label.setForeground(Color.RED);
+		for (JLabel label1 : stageLabels) {
+			label1.setForeground(Color.RED);
 		}
 		
 		//This block of code parses the polymerization time string in the Formatted text box 
@@ -757,7 +755,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 	}
 	
 	
-	protected MaskFormatter createFormatter(String s) {
+	protected static MaskFormatter createFormatter(String s) {
 	    MaskFormatter formatter = null;
 	    try {
 	        formatter = new MaskFormatter(s);
@@ -790,7 +788,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 		}
 		return cbUnits;
 	}
-	private JSplitPane getSplitPane_1() {
+	JSplitPane getSplitPane_1() {
 		if (sPExtrusion == null) {
 			sPExtrusion = new JSplitPane();
 			sPExtrusion.addPropertyChangeListener(new PropertyChangeListener() {
@@ -840,7 +838,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 		}
 		return chckbxPerformExtrusion;
 	}
-	private JPanel getPnlExtSet() {
+	JPanel getPnlExtSet() {
 		if (pnlExtSet == null) {
 			pnlExtSet = new JPanel();
 			pnlExtSet.setLayout(new MigLayout("", "[][grow][]", "[][][][][][][][]"));
@@ -952,7 +950,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 		}
 		return lblSec;
 	}
-	private JSplitPane getSPStretch() {
+	JSplitPane getSPStretch() {
 		if (sPStretch == null) {
 			sPStretch = new JSplitPane();
 			sPStretch.addPropertyChangeListener(new PropertyChangeListener() {
@@ -1001,7 +999,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 		}
 		return chckbxPerformStretch;
 	}
-	private JPanel getPnlStretchSet() {
+	JPanel getPnlStretchSet() {
 		if (pnlStretchSet == null) {
 			pnlStretchSet = new JPanel();
 			pnlStretchSet.setLayout(new MigLayout("", "[][grow][]", "[][]"));
@@ -1044,13 +1042,13 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 		}
 		return label;
 	}
-	private MachineGraphic getMG(){
+	MachineGraphic getMG(){
 		if(mG == null){
 			mG = new MachineGraphic(pathCreator);
 		}
 		return mG;
 	}
-	private MachineGraphic getMG2(){
+	MachineGraphic getMG2(){
 		if(mG2 == null){
 			mG2 = new MachineGraphic(pathCreator);
 		}
@@ -1250,7 +1248,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 		}
 		return lblBedWidth;
 	}
-	private JSpinner getSpStretchPer() {
+	JSpinner getSpStretchPer() {
 		if (spStretchPer == null) {
 			spStretchPer = new JSpinner();
 			spStretchPer.setFont(new Font("Tahoma", Font.PLAIN, 14));
@@ -1309,7 +1307,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 		}
 		return lblMm_5;
 	}
-	private void changeSpinner(JSpinner _spinner, int _min, int _max){
+	private static void changeSpinner(JSpinner _spinner, int _min, int _max){
 		int curVal = (int)_spinner.getValue();
 		if (curVal < _min){
 			curVal = _min;
@@ -1317,15 +1315,17 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 		if (curVal > _max){
 			curVal = _max;
 		}
+		int min = _min;
+		int max = _max;
 		if (_min >= _max){
 			int holder = _min;
-			_min = _max;
-			_max = holder;
+			min = _max;
+			max = holder;
 		}
 		SpinnerNumberModel model = (SpinnerNumberModel) _spinner.getModel();
-		_spinner.setModel(new SpinnerNumberModel(curVal, _min, _max, model.getStepSize()));
+		_spinner.setModel(new SpinnerNumberModel(curVal, min, max, model.getStepSize()));
 	}
-	private void updateRanges(){
+	void updateRanges(){
 		int availWid = (int)getSpBedX().getValue() - ((int)getSpSideMargins().getValue()*2);
 		int maxLen = 0;
 		maxLen = (int) ((int)getSpBedY().getValue() - (((int)getSpBarThick().getValue())*2) - ((int)getSpThreadLength().getValue()*(((int)getSpStretchPer().getValue()-100d)/100d)));
@@ -1392,7 +1392,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 		return spNumThreads;
 	}
 	
-	private void disableEverythingBelow(Component root){
+	void disableEverythingBelow(Component root){
 		root.setEnabled(false);
 		try {
 			Container c = (Container) root;
@@ -1404,7 +1404,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 		}
 
 	}
-	private void enableEverythingBelow(Component root){
+	void enableEverythingBelow(Component root){
 		root.setEnabled(true);
 		try {
 			Container c = (Container) root;
@@ -1431,7 +1431,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 						getCb_GrblPort().setSelectedItem(gCtrl.getPort());
 						
 					} catch (Exception e) {
-						
+						//Catch any exceptions thrown for illegal selection of items
 					}
 					//Only auto configure pump port if automatic pump control is enabled
 					if (!getChckbxManualPumpCtrl().isSelected()){
@@ -1439,6 +1439,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 						try {
 							getCb_PumpPort().setSelectedItem(pCtrl.getPort());
 						} catch (Exception e) {
+							//Catch any exceptions thrown for illegal selection of items
 						}
 						
 					}
@@ -1655,10 +1656,10 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 		
 		}		
 	}
-	private void setLabelColorToRunning(JLabel _label){
+	private static void setLabelColorToRunning(JLabel _label){
 		_label.setForeground(Color.BLUE);
 	}
-	private void setLabelColorToComplete(JLabel _label){
+	private static void setLabelColorToComplete(JLabel _label){
 		_label.setForeground(Color.GREEN);
 	}
 	@Override
@@ -1833,7 +1834,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener{
 		}
 		return lblExtruding;
 	}
-	private JCheckBox getChckbxManualPumpCtrl() {
+	JCheckBox getChckbxManualPumpCtrl() {
 		if (chckbxManualPumpCtrl == null) {
 			chckbxManualPumpCtrl = new JCheckBox("Manual Pump Ctrl");
 			chckbxManualPumpCtrl.addActionListener(new ActionListener() {

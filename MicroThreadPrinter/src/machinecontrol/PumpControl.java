@@ -68,7 +68,7 @@ public class PumpControl {
 		long timeout =  System.currentTimeMillis() + 5000;
 		//Look for a response, but only for so long (timeout)
 		while (timeout > System.currentTimeMillis() && !pumpPort.isNewAvail()){
-		
+			//Waits to recieve communication
 		}
 		
 		if (pumpPort.isNewAvail()){
