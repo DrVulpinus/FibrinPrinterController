@@ -91,6 +91,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener 
 	PumpControl pumpDev;
 	PathCreator pathCreator = new PathCreator();
 	ProcessExecution processExec;
+	ProcessLogger processLogger;
 	JPanel pnlExtrusion;
 	JPanel pnlStretch;
 	JPanel pnlRun;
@@ -546,9 +547,9 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener 
 			pnlRun.add(getTxtJobName(), "cell 1 0,growx");
 			pnlRun.add(getLblJobDescription(), "cell 0 1,alignx trailing");
 			pnlRun.add(getTxtJobDescription(), "cell 1 1,growx");
-			pnlRun.add(getBtnLoadProfile(), "cell 0 2,growx");
+			pnlRun.add(getBtnLoadProfile(), "cell 0 2,grow");
 			pnlRun.add(getLabelInitializeRun(), "cell 1 2");
-			pnlRun.add(getBtnSaveCurrentProfile(), "cell 0 3,growx");
+			pnlRun.add(getBtnSaveCurrentProfile(), "cell 0 3,grow");
 			pnlRun.add(getLabelReadyToHome(), "cell 1 3");
 			pnlRun.add(getLabelHoming(), "cell 1 4");
 			pnlRun.add(getBtnRunOperation(), "cell 0 5,grow");
@@ -692,6 +693,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener 
 	private JButton getBtnRunOperation() {
 		if (btnRunOperation == null) {
 			btnRunOperation = new JButton("Run Operation");
+			btnRunOperation.setToolTipText("<html>Runs the operation in manual mode.<br>This means that the polymerization timer will run in the count up mode.<br>Stretching will have to be started by the operator manually</html>");
 			btnRunOperation.setFont(new Font("Tahoma", Font.PLAIN, 14));
 			btnRunOperation.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
@@ -714,7 +716,15 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener 
 	 */
 	public void runOperation(boolean manualPoly) {
 		getBtnRunOperation().setEnabled(true);
-
+		if (getChckbxGenerateLogFiles().isSelected()){
+			processLogger = new ProcessLogger(prefs, getTxtJobName().getText(), getTxtJobDescription().getText());
+			if (manualPoly){
+				processLogger.markAsManual();
+			}
+			else{
+				processLogger.markAsAutomatic();
+			}
+		}
 		// This recolors all of the process stage labels to red to indicate that
 		// stage has not been started
 		for (JLabel label1 : stageLabels) {
@@ -1235,6 +1245,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener 
 	private JSpinner getSpThreadSpace() {
 		if (spThreadSpace == null) {
 			spThreadSpace = new JSpinner();
+			spThreadSpace.setToolTipText("This is the distance between the centers of each thread");
 			spThreadSpace.setFont(new Font("Tahoma", Font.PLAIN, 14));
 			spThreadSpace.addChangeListener(new ChangeListener() {
 				public void stateChanged(ChangeEvent e) {
@@ -1379,6 +1390,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener 
 	private JSpinner getSpStretchRate() {
 		if (spStretchRate == null) {
 			spStretchRate = new JSpinner();
+			spStretchRate.setToolTipText("This is the rate that the threads will be stretched");
 			spStretchRate.setFont(new Font("Tahoma", Font.PLAIN, 14));
 			spStretchRate.addChangeListener(new ChangeListener() {
 				public void stateChanged(ChangeEvent e) {
@@ -1393,7 +1405,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener 
 
 	private JLabel getLabel_1_9() {
 		if (lblBarThickness == null) {
-			lblBarThickness = new JLabel("Bar Thickness:");
+			lblBarThickness = new JLabel("Shoe Thickness:");
 			lblBarThickness.setFont(new Font("Tahoma", Font.PLAIN, 14));
 			lblBarThickness.setHorizontalAlignment(SwingConstants.RIGHT);
 		}
@@ -1403,6 +1415,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener 
 	private JSpinner getSpBarThick() {
 		if (spBarThick == null) {
 			spBarThick = new JSpinner();
+			spBarThick.setToolTipText("This is the size of the shoe in the \"Y\" or \"Length\" Axis");
 			spBarThick.setFont(new Font("Tahoma", Font.PLAIN, 14));
 			spBarThick.addChangeListener(new ChangeListener() {
 				public void stateChanged(ChangeEvent e) {
@@ -1542,6 +1555,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener 
 	private JButton getBtnAutoConfigurePorts() {
 		if (btnAutoConfigurePorts == null) {
 			btnAutoConfigurePorts = new JButton("Auto. Configure Ports");
+			btnAutoConfigurePorts.setToolTipText("Pressing this button will automatically select the correct port settings.  If devices cannot be found, It will error and ask you to try again");
 			btnAutoConfigurePorts.setFont(new Font("Tahoma", Font.PLAIN, 14));
 			btnAutoConfigurePorts.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent arg0) {
@@ -1580,6 +1594,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener 
 	private JButton getBtnSaveCurrentProfile() {
 		if (btnSaveCurrentProfile == null) {
 			btnSaveCurrentProfile = new JButton("Save Current Profile");
+			btnSaveCurrentProfile.setToolTipText("<html>This will save the current extrusion and stretch settings to a file that can be reloaded at a later date</html>");
 			btnSaveCurrentProfile.setFont(new Font("Tahoma", Font.PLAIN, 14));
 			btnSaveCurrentProfile.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent arg0) {
@@ -1673,6 +1688,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener 
 	private JButton getBtnLoadProfile() {
 		if (btnLoadProfile == null) {
 			btnLoadProfile = new JButton("Load Profile");
+			btnLoadProfile.setToolTipText("<html>This will allow you to select a previously saved settings file and load all of the settings from it</html>");
 			btnLoadProfile.setFont(new Font("Tahoma", Font.PLAIN, 14));
 			btnLoadProfile.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent arg0) {
@@ -1766,9 +1782,23 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener 
 			setLabelColorToRunning(getLabelHoming());
 			break;
 		case INITIALIZE_PUMP:
+			if(processLogger != null){
+				processLogger.recordStartTime();
+			}
 			setLabelColorToRunning(getLabelInitializeRun());
 			break;
 		case OPERATION_COMPLETE:
+			if (processLogger != null){
+				processLogger.recordEndTime();
+				processLogger.addParam("Actual Polymerization Time", getTxtProcesstimer().getText());
+				processLogger.addParam("Total Run Time", getTxtOperationTimer().getText());
+				try {
+					processLogger.generateLogFile();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
 			setLabelColorToRunning(getLabelOperationComplete());
 			JOptionPane
 			.showMessageDialog(
@@ -1946,6 +1976,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener 
 	private JTextField getTxtProcesstimer() {
 		if (txtProcesstimer == null) {
 			txtProcesstimer = new JTextField();
+			txtProcesstimer.setToolTipText("<html>This is the timer for the polymerization stage<br>This time is representative of how long the machine spent waiting for threads to polymerize<br>This timer will count up in manual mode, and will count down in auto mode<br>In auto mode, once the timer reaches 0, providing that there are no other message boxes open, the machine will begin stretching automatically</html>");
 			txtProcesstimer.setFont(new Font("Tahoma", Font.BOLD, 24));
 			txtProcesstimer.setHorizontalAlignment(SwingConstants.LEFT);
 			txtProcesstimer.setEditable(false);
@@ -1968,6 +1999,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener 
 	private JButton getBtnRunOperationAuto() {
 		if (btnRunOperationAuto == null) {
 			btnRunOperationAuto = new JButton("Run Operation Auto Poly");
+			btnRunOperationAuto.setToolTipText("<html>Runs the operation with the polymerization timer in countdown mode.<br> Once the countdown completes, as long as there are no other messages open, stretching will begin immediately</html>");
 			btnRunOperationAuto.setFont(new Font("Tahoma", Font.PLAIN, 14));
 			btnRunOperationAuto.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent arg0) {
@@ -2104,6 +2136,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener 
 	JCheckBox getChckbxManualPumpCtrl() {
 		if (chckbxManualPumpCtrl == null) {
 			chckbxManualPumpCtrl = new JCheckBox("Manual Pump Ctrl");
+			chckbxManualPumpCtrl.setToolTipText("Checking this box causes the appliccation to not connect to the syringe pump, unchecking requires that the application be connected to the syringe pump");
 			chckbxManualPumpCtrl.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent arg0) {
 					prefs.setManualPump(chckbxManualPumpCtrl.isSelected());
@@ -2118,7 +2151,8 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener 
 	private JTextField getTxtExtrudeTimer() {
 		if (txtExtrudeTimer == null) {
 			txtExtrudeTimer = new JTextField();
-			txtExtrudeTimer.setText("0:0:0");
+			txtExtrudeTimer.setToolTipText("<html>This is the timer for the extrusion stage<br>This time is representative of how long the machine spent drawing threads</html>");
+			txtExtrudeTimer.setText("00:00:00");
 			txtExtrudeTimer.setHorizontalAlignment(SwingConstants.LEFT);
 			txtExtrudeTimer.setFont(new Font("Tahoma", Font.BOLD, 24));
 			txtExtrudeTimer.setEditable(false);
@@ -2130,7 +2164,8 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener 
 	private JTextField getTxtStretchTimer() {
 		if (txtStretchTimer == null) {
 			txtStretchTimer = new JTextField();
-			txtStretchTimer.setText("0:0:0");
+			txtStretchTimer.setToolTipText("<html>This is the timer for the stretching stage<br>This time is representative of how long the machine spent stretching threads</html>");
+			txtStretchTimer.setText("00:00:00");
 			txtStretchTimer.setHorizontalAlignment(SwingConstants.LEFT);
 			txtStretchTimer.setFont(new Font("Tahoma", Font.BOLD, 24));
 			txtStretchTimer.setEditable(false);
@@ -2142,7 +2177,8 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener 
 	private JTextField getTxtOperationTimer() {
 		if (txtOperationTimer == null) {
 			txtOperationTimer = new JTextField();
-			txtOperationTimer.setText("0:0:0");
+			txtOperationTimer.setToolTipText("<html>This is the timer for the entire operation<br>This time is representative of how long the operation required from start to finish</html>");
+			txtOperationTimer.setText("00:00:00");
 			txtOperationTimer.setHorizontalAlignment(SwingConstants.LEFT);
 			txtOperationTimer.setFont(new Font("Tahoma", Font.BOLD, 24));
 			txtOperationTimer.setEditable(false);
