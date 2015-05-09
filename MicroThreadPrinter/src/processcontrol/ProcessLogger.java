@@ -15,6 +15,7 @@ public class ProcessLogger {
 	private Date endTime;
 	private String processName = "";
 	private String processDescription = "";
+	private String processType = "";
 	private SettingsManager prefs;
 	public ProcessLogger(SettingsManager _prefs){
 		prefs = _prefs;
@@ -34,6 +35,15 @@ public class ProcessLogger {
 	}
 	public void addParam(String _name, double _value){
 		addParam(new ProcessParam(_name, _value));
+	}	
+	public void addParam(String _name, String _value){
+		addParam(new ProcessParam(_name, _value));
+	}	
+	public void markAsManual(){
+		processType = "This operation was run in manual polymerization mode";
+	}
+	public void markAsAutomatic(){
+		processType = "This operation was run in automatic polymerization mode";
 	}
 	/**
 	 * Records the start time of the process using the specified date and time value
