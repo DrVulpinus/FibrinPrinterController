@@ -43,7 +43,19 @@ public String getTimeString(){
 	long hours = thisTime/3600;
 	long minutes = (thisTime%3600)/60;
 	long seconds = (thisTime%3600)%60;
-	outTime = hours + ":" + minutes + ":" + seconds;
+	String strHours = String.valueOf(hours);
+	String strMinutes = String.valueOf(minutes);
+	String strSeconds = String.valueOf(seconds);
+	if (hours < 10){
+		strHours = "0" + strHours;
+	}
+	if (minutes < 10){
+		strMinutes = "0" + strMinutes;
+	}
+	if (seconds < 10){
+		strSeconds = "0" + strSeconds;
+	}
+	outTime = strHours + ":" + strMinutes + ":" + strSeconds;
 	return outTime;
 }
 
