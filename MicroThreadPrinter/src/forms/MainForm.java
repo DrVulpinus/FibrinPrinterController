@@ -90,7 +90,7 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener 
 	GrblControl grblDev;
 	PumpControl pumpDev;
 	PathCreator pathCreator = new PathCreator();
-	ProcessExecution processExec;
+	static ProcessExecution processExec;
 	ProcessLogger processLogger;
 	JPanel pnlExtrusion;
 	JPanel pnlStretch;
@@ -227,11 +227,12 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener 
 
 	}
 	static void startAgain(){
+		processExec.cancelOperation();
 		MainForm old = window;
 		main(null);
-		old.frame.dispose();
-		
+		old.frame.dispose();		
 	}
+
 	void logFileGenerationTest() {
 		ProcessLogger logger = new ProcessLogger(prefs, getTxtJobName()
 				.getText(), getTxtJobDescription().getText());
@@ -1865,8 +1866,8 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener 
 			.showOptionDialog(
 							frame,
 							"<html>Please configure the machine for homing.<br>Homing will begin immediately upon acknowledging this message.<br>Not pressing OK will cancel the operation.</html>",
-							"Ready to Begin Homing Procedure",JOptionPane.OK_OPTION,
-							JOptionPane.INFORMATION_MESSAGE,
+							"Ready to Begin Homing Procedure",JOptionPane.OK_CANCEL_OPTION,
+							JOptionPane.QUESTION_MESSAGE,
 							null,
 							null,
 							null);
@@ -1880,8 +1881,8 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener 
 							frame,
 							"<html>Please configure the machine for aligning the stretch bar.<br>Alignment will begin immediately upon acknowledging this message.<br>To avoid damage to machine, please ensure nozzle is not attached.<br>Not pressing OK will cancel the operation.</html>",
 							"Ready to Align Stretch Bar",
-							JOptionPane.OK_OPTION,
-							JOptionPane.INFORMATION_MESSAGE,
+							JOptionPane.OK_CANCEL_OPTION,
+							JOptionPane.QUESTION_MESSAGE,
 							null,
 							null,
 							null);
@@ -1896,8 +1897,8 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener 
 								frame,
 								"<html>Please configure the machine for starting and purging the syringe pump.<br>Move first shoe so that nozzle is positioned over the back of the shoe.<br>Please start pumping immediately upon acknowledging this message.<br>Not pressing OK will cancel the operation.</html>",
 								"Ready to Start/Purge Pump",
-								JOptionPane.OK_OPTION,
-								JOptionPane.INFORMATION_MESSAGE,
+								JOptionPane.OK_CANCEL_OPTION,
+								JOptionPane.QUESTION_MESSAGE,
 								null,
 								null,
 								null);
@@ -1910,8 +1911,8 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener 
 								frame,
 								"<html>Please configure the machine for starting and purging the syringe pump.<br>Move first shoe so that nozzle is positioned over the back of the shoe.<br>Pumping will begin immediately upon acknowledging this message.<br>Not pressing OK will cancel the operation.</html>",
 								"Ready to Start/Purge Pump",
-								JOptionPane.OK_OPTION,
-								JOptionPane.INFORMATION_MESSAGE,
+								JOptionPane.OK_CANCEL_OPTION,
+								JOptionPane.QUESTION_MESSAGE,
 								null,
 								null,
 								null);
@@ -1926,8 +1927,8 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener 
 							frame,
 							"<html>Please make sure the machine is ready to begin extruding.<br>The pump should be purged and running, and the nozzle should be hooked up and ready.<br>Extrusion will begin immediately after acknowledging this message.<br>Not pressing OK will cancel the operation.</html>",
 							"Ready to Begin Extrusion",
-							JOptionPane.OK_OPTION,
-							JOptionPane.INFORMATION_MESSAGE,
+							JOptionPane.OK_CANCEL_OPTION,
+							JOptionPane.QUESTION_MESSAGE,
 							null,
 							null,
 							null);
@@ -1941,8 +1942,8 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener 
 							frame,
 							"<html>Extrusion is complete.<br>Please disconnect and clean nozzle assembly.<br>Machine will return to home immediately after acknowledging this message.<br>Failure to remove nozzle may result in damage to the machine and/or threads.<br>Not pressing OK will cancel the operation.</html>",
 							"Extrusion Complete",
-							JOptionPane.OK_OPTION,
-							JOptionPane.INFORMATION_MESSAGE,
+							JOptionPane.OK_CANCEL_OPTION,
+							JOptionPane.QUESTION_MESSAGE,
 							null,
 							null,
 							null);
@@ -1956,8 +1957,8 @@ public class MainForm implements PreferenceChangeListener, ProcessStageListener 
 							frame,
 							"<html>Please configure the machine for stretching.<br>Stretching will begin immediately upon acknowledging this message.<br>Be sure to stop the pump and remove the nozzle from the machine before continuing to avoid damage.<br>Not pressing OK will cancel the operation.</html>",
 							"Ready to Begin Stretching",
-							JOptionPane.OK_OPTION,
-							JOptionPane.INFORMATION_MESSAGE,
+							JOptionPane.OK_CANCEL_OPTION,
+							JOptionPane.QUESTION_MESSAGE,
 							null,
 							null,
 							null);

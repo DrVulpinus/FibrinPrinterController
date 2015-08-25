@@ -84,10 +84,10 @@ public class ProcessExecution extends Thread{
 	}
 	public void setupExtrudeOnlyAuto(){
 		setupRun(ProcessStage.INITIALIZE_PUMP, 
-				ProcessStage.HOMING,
-				ProcessStage.ALIGNING_STRETCH_BAR,
-				ProcessStage.PURGING_PUMP,
-				ProcessStage.EXTRUDING,
+				ProcessStage.READY_TO_HOME, ProcessStage.HOMING,
+				ProcessStage.READY_TO_ALIGN_STRETCH, ProcessStage.ALIGNING_STRETCH_BAR,
+				ProcessStage.READY_TO_START_PUMP, ProcessStage.PURGING_PUMP,
+				ProcessStage.READY_TO_EXTRUDE, ProcessStage.EXTRUDING,
 				ProcessStage.CLEAN_PUMP,
 				ProcessStage.OPERATION_COMPLETE);
 	}
@@ -147,7 +147,7 @@ public class ProcessExecution extends Thread{
 	 * everything to be restarted
 	 */
 	public void cancelOperation(){
-		this.interrupt();
+		cancelOperation = true;
 	}
 	//This Class should provide all of the functionality to combine all of the different elements that have been created/calculated
 	//and then use them to coordinate and execute a coherent series of events to perform the operation.
@@ -201,7 +201,19 @@ public class ProcessExecution extends Thread{
 	public void run(){
 		paths.checkValues();
 		for (ProcessStage processStage : executionPath) {
-			if (isInterrupted()){
+			if (cancelOperation){
+				try {
+					grblCtrl.disconnect();
+				} catch (Exception e) {
+					//Canceling is a hard stop, and restarts the application for safety.
+				}
+				try {
+					pumpCtrl.disconnect();
+				} catch (Exception e) {
+					//Canceling is a hard stop, and restarts the application for safety.
+				}
+				
+				
 				return;
 			}
 			currentStage = processStage;
