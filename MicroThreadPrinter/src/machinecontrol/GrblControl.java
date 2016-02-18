@@ -197,7 +197,7 @@ public class GrblControl implements COMLineRecieved, ArrayAddListener{
 		sendLines.add("$H");
 		sendLines.add(new GCode('F', 3000));
 		//sendLines.add(new GCode('G', 1, new GCodeParam('X',0),new GCodeParam('Y',130),new GCodeParam('Z',130)));
-		sendLines.add(new GCode('G', 92, new GCodeParam('X',0),new GCodeParam('Y',-70),new GCodeParam('Z',-130)));
+		sendLines.add(new GCode('G', 92, new GCodeParam('X',0),new GCodeParam('Y',-60),new GCodeParam('Z',-130)));
 		sendLines.add(new GCode('G', 1, new GCodeParam('X',0),new GCodeParam('Y',0),new GCodeParam('Z',-75)));
 	}
 	public void sendHomeAtZero(){
@@ -209,7 +209,7 @@ public class GrblControl implements COMLineRecieved, ArrayAddListener{
 		sendLines.add("$H");
 		sendLines.add(new GCode('F', 3000));
 		//sendLines.add(new GCode('G', 1, new GCodeParam('X',0),new GCodeParam('Y',130),new GCodeParam('Z',130)));
-		sendLines.add(new GCode('G', 92, new GCodeParam('X',0),new GCodeParam('Y',-70),new GCodeParam('Z',-130)));
+		sendLines.add(new GCode('G', 92, new GCodeParam('X',0),new GCodeParam('Y',-60),new GCodeParam('Z',-130)));
 		//sendLines.add(new GCode('G', 1, new GCodeParam('X',0),new GCodeParam('Y',0),new GCodeParam('Z',-60)));
 	}
 	public boolean isIdle(){
