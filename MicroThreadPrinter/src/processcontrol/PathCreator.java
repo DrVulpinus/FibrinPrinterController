@@ -173,7 +173,7 @@ public class PathCreator {
 			currentX += xStep;
 			genExt.newFeedMove(currentX, bar1StartY, -75);
 		}
-		genExt.newRapidMove(xSize, ySize, -75);
+		//genExt.newRapidMove(xSize, ySize, -75);//This line moves the extruder to the edge of the build area
 		
 		//genExt.newRapidMove(0, 0, 0);
 		//System.out.println(currThreads);
