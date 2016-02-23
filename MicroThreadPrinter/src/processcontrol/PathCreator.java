@@ -139,9 +139,9 @@ public class PathCreator {
 		finalWidth = xSize - (2*sideMargins);
 		genExt.newRapidMove(sideMargins, 0, -75);
 		float bar1StartY = barThickness;
-		float bar1EndY = -3;
+		float bar1EndY = -14;
 		float bar2StartY = barThickness + extrusionLength;
-		float bar2EndY = bar2StartY+ barThickness +3;
+		float bar2EndY = bar2StartY+ barThickness +4;
 		float currentX = sideMargins;
 		float xStep = threadSpacing/2;
 		int currThreads = 0;
